@@ -1,0 +1,273 @@
+#+TITLE: はじめてのAI
+#+SUBTITLE: 「AI は AI でも Automata Inferenceの方だがなぁぁーっ! 」
+
+- 方針 :: ID, L*, NL* を説明したら多分十分なので他は説明しない (多分触れるだけ)
+
+See related works section of https://learnlib.de/wp-content/uploads/2013/05/ttt.pdf for more papers.
+
+* はじめに
+
+俺の名前は兼江 直次 (かなえ なおつぐ)。
+埼玉県の川越市に在住の 17 歳の高校生だ。
+今日から夏休み!
+俺は億万長者になる為に AI の勉強に行く事にした。
+
+さて、どこに AI を勉強しに行くか…
+やはり基本は山だろう!
+山に行く!
+
+俺は山にやって来た。
+すると…
+
+なぜか山で水着の女の子が現れた。
+女の子「AIは好きですか？
+
+直次「好き。
+女の子「本当!?嬉しい…
+女の子は喜びに大きく目を…
+見開いた!
+女の子「AI は AI でも Automata Inference の方だがなぁぁーっ! 
+
+* ID
+
+絵美理「Angluin の Automata Inferenceは嫌いですか…？
+
+遼「ソンナコトナイ!
+
+遼「オレ、Angluin、ダイスキ!
+
+しかし初めて話す言葉がこれとは…
+
+絵美理「嬉しい…
+絵美理は喜びに大きく目を…
+見開いた!
+絵美理「 Angluin は Angluin でも ID Procedure の方だがなぁぁぁーっ! 
+
+
+- ID :: https://www.sciencedirect.com/science/article/pii/S0019995881900905
+- IDS :: https://arxiv.org/pdf/1206.2691.pdf
+
+* L* 
+
+[[https://people.eecs.berkeley.edu/~dawnsong/teaching/s10/papers/angluin87.pdf][Paper]]
+
+** Other (Related) Algorithms
+
+*** Maler and Pnueli
+
+ - [[https://www.sciencedirect.com/science/article/pii/S089054018571070X][Paper]]
+
+*** Rivest and Schapire
+
+ - [[https://people.csail.mit.edu/rivest/RivestSchapire-InferenceOfFiniteAutomataUsingHomingSequences-STOC89.pdf][Paper]]
+
+*** TTT
+
+ - [[https://learnlib.de/wp-content/uploads/2013/05/ttt.pdf][Paper]]
+
+*** Discrimination tree data structure
+
+ - https://link.springer.com/chapter/10.1007/978-1-4613-3394-4_2
+ - https://core.ac.uk/download/pdf/46911862.pdf
+
+*** Learning DFA from Simple Examples
+
+ - https://link.springer.com/article/10.1023/A:1010822518073
+
+*** Learning context-free grammars using tabular representations
+
+ - https://www.sciencedirect.com/science/article/abs/pii/S0031320305000245
+
+
+* NL*
+
+お母さん
+「おばあちゃんが教えてくれたの!
+  L* が DFA しか学習できないのは悪魔のせいだって!
+
+お母さん
+「だからお母さん、エクソシストさんを呼んであげたのよ!
+  必ず L* で NFA を学習してくれるから!
+
+明美
+「勝手に非決定的分岐を必要としてるんじゃねえ!
+  私は DFA で十分満足してるんだよ!
+
+ガミジン
+「その考え！
+  人格が悪魔に支配されている！
+
+- https://www.ijcai.org/Proceedings/09/Papers/170.pdf
+
+* Applications
+
+** Model Checking (BBC)
+
+- https://www.cs.rice.edu/~vardi/papers/pstv99.pdf
+
+** Model-driven test-case generation
+
+- https://link.springer.com/chapter/10.1007/3-540-45923-5_6
+
+* Implementations
+
+** LearnLib
+
+- [[https://learnlib.de/wp-content/uploads/2013/05/ttt.pdf][Official Web Page]]
+- Written in Java
+- Latest release
+  - version 0.14.0
+  - 2019/02/18
+- LICENSE :: Apache License 2.0
+
+** libalf
+
+- [[http://libalf.informatik.rwth-aachen.de/][Official Web Page]]
+- Written in C++
+- Latest release
+  - version 0.3
+  - 2011/04/09
+- LICENSE :: LGPL v3
+
+** AIDE
+
+- [[https://archive.codeplex.com/?p=aide][CodePlex Archive]]
+- Written in C#.NET
+- Latest release
+  - Unknown
+  - The last commit in the archive is 2015/05/28
+- LICENSE :: LGPL v2.1
+
+** Tomte
+
+- [[http://tomte.cs.ru.nl/][Official Web Page]]
+
+* COMMENT 元ネタ
+
+** Hell
+
+[[https://www.youtube.com/watch?v=3_FXxwfjz50&t=384s][妹が作った痛い RPG 「エッチな夏休み」]]
+
+俺の名前は兼江 直次 (かなえ なおつぐ)。
+埼玉県の川越市に在住の 17 歳の高校生だ。
+今日から夏休み!
+俺は億万長者になる為に宝探しに行く事にした。
+
+さて、どこに宝探しに行くか…
+やはり基本は山だろう!
+山に行く!
+
+俺は山にやって来た。
+すると…
+
+なぜか山で水着の女の子が現れた。
+女の子「エッチな女の子は好きですか？
+
+直次「好き。
+女の子「本当!?嬉しい…
+女の子は喜びに大きく目を…
+見開いた!
+女の子「エッチはエッチでも Hell の方だがなぁぁーっ! 
+
+** Hell 2
+
+[[https://www.youtube.com/watch?v=3_FXxwfjz50&t=384s][妹が作った痛い RPG 「エッチな夏休み」]]
+
+絵美理「エッチな女の子は嫌いですか…？
+
+遼「ソンナコトナイ!
+
+飾美「!?
+
+飾美「遼君が…
+
+飾美「遼君が…初めて人間の言葉を喋った…!
+
+初めて…
+今まで生きていて奇声しか上げていなかったのか…
+
+遼「オレ、エッチ、ダイスキ!
+
+しかし初めて話す言葉がこれとは…
+
+絵美理「嬉しい…
+絵美理は喜びに大きく目を…
+見開いた!
+絵美理「エッチはエッチでも Hell の方だがなぁぁぁーっ! 
+
+** ぶっぽる
+
+[[https://www.youtube.com/watch?v=3_FXxwfjz50&t=384s][妹が作った痛い RPG 「エッチな夏休み」]]
+
+突然、指名手配中の殺人鬼が現れた!
+殺人鬼「ぶっぽるぎゃるぴるぎゃっぽっぱぁぁぁぁぁーっ!
+殺人鬼は奇声を上げて…
+
+マキタ 26mm ハンマ・ドリルを振り上げた!
+そして殺人鬼はジャンプして思いっきりそれを…
+
+** 人格が
+
+[[https://www.youtube.com/watch?v=gAn-PtAVW88&t=377s][妹が作った痛い RPG「エロキュラ」]]
+
+お母さん
+「おばあちゃんが教えてくれたの!
+  明美が悪い子なのは悪魔のせいだって!
+
+お母さん
+「だからお母さん、エクソシストさんを呼んであげたのよ!
+  必ず明美を救ってくれるから!
+
+明美
+「勝手に救いを必要としてるんじゃねえ!
+  私は今の生き方に十分満足してるんだよ!
+
+ガミジン
+「その考え！
+  人格が悪魔に支配されている！
+
+** KBF
+
+[[https://www.youtube.com/watch?v=pIkr6k0MaY8][妹が作った痛い RPG「エミリーの大冒険」]]
+
+魔王
+「駄目じゃないか!そんな変なもの食べちゃ!
+
+猫
+「俺にゴキブリを食えと言ったのはエミリーだ。
+
+猫
+「そして俺はゴキブリの味に目覚めた。
+
+魔王
+「駄目!
+  絶対、駄目!
+
+魔王
+「猫は!
+
+魔王
+「キャットフード食べないと!
+
+魔王
+「駄目でしょぉぉぉぉぉぉぉぉぉぉぉぉ!
+
+猫
+「俺が正しいか貴様が正しいか… 
+
+猫
+「決着を付ける必要があるようだな！
+
+魔王
+「望むところだぁぁぁぁぁぁぁぁぁぁぁぁぁ！
+
+猫
+「では行くぞぉぉぉぉぉぉぉぉぉぉぉぉ！
+
+猫
+「決戦のバトル・フィールドへ！
+
+** 平和
+
+川越市は今日も平和だった。
+~完~
