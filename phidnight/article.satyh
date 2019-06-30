@@ -1,0 +1,23 @@
+@import: ../book-class
+
+module Phi : sig
+  val article : block-text
+end = struct
+
+let bibliography = []
+
+let article = '<
+    +chapter ?:(`phi-article`)
+    (|
+        bibliography = bibliography;
+        title = {pohe};
+        author = {phidnight};
+    |)
+    <
+        +section {} <
+            +p{Hello, world!}
+        >
+    >
+>
+
+end

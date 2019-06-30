@@ -1,0 +1,23 @@
+@import: ../book-class
+
+module Pohe : sig
+  val article : block-text
+end = struct
+
+let bibliography = []
+
+let article = '<
+    +chapter ?:(`pohe-article`)
+    (|
+        bibliography = bibliography;
+        title = {pohe};
+        author = {nullpo-head};
+    |)
+    <
+        +section {} <
+            +p{Hello, world!}
+        >
+    >
+>
+
+end

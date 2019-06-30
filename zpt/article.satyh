@@ -1,0 +1,23 @@
+@import: ../book-class
+
+module Zpt : sig
+  val article : block-text
+end = struct
+
+let bibliography = []
+
+let article = '<
+    +chapter ?:(`zpt-article`)
+    (|
+        bibliography = bibliography;
+        title = {真矛盾主義に関する小噺};
+        author = {zeptometer};
+    |)
+    <
+        +section {} <
+            +p{Hello, world!}
+        >
+    >
+>
+
+end

@@ -1,0 +1,23 @@
+@import: ../book-class
+
+module Koba : sig
+  val article : block-text
+end = struct
+
+let bibliography = []
+
+let article = '<
+    +chapter ?:(`koba-article`)
+    (|
+        bibliography = bibliography;
+        title = {pohe};
+        author = {koba};
+    |)
+    <
+        +section {} <
+            +p{Hello, world!}
+        >
+    >
+>
+
+end
