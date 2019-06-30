@@ -1,0 +1,13 @@
+% -*- coding: utf-8 -*-
+@import: book-class
+
+document (|
+  title = `yabaitech.tokyo vol.3`;
+  venue = `技術書典7`;
+  date = `2019.09.22`;
+  author = `yabaitech.tokyo`;
+  email = `admin@yabaitech.tokyo`;
+  website = `http://yabaitech.tokyo`;
+  publisher = `有限会社 ねこのしっぽ`
+  |) '<
+>
