@@ -1,0 +1,160 @@
+@require: pervasives
+@require: list
+@require: color
+@require: gr
+@require: vdecoset
+
+module Code : sig
+
+  val scheme : deco-set -> color -> context -> string -> block-boxes
+  direct +code : [string] block-cmd
+  direct +console : [string] block-cmd
+  direct \code : [string] inline-cmd
+  direct \console : [string] inline-cmd
+  direct \d-code : [string] inline-cmd
+
+end = struct
+
+  let code-text-color = Gray(0.1)
+  let code-fill-color = Gray(0.875)
+  let code-stroke-color = Gray(0.625)
+  let console-fill-color = Gray(0.25)
+
+
+  let decoset-code =
+    VDecoSet.simple-frame 1pt code-stroke-color code-fill-color
+
+
+  let dummy _ =
+    let strokef = stroke 1pt code-stroke-color in
+    let gr-back x y w d h =
+      fill code-fill-color (Gr.rectangle (x, y -' d) (x +' w, y +' h))
+    in
+    let decoS (x, y) w h d =
+      [
+        gr-back x y w d h;
+        strokef (Gr.rectangle (x, y -' d) (x +' w, y +' h));
+      ]
+    in
+    let decoH (x, y) w h d =
+      [
+        gr-back x y w d h;
+        strokef (Gr.poly-line (x, y -' d) [(x, y +' h); (x +' w, y +' h); (x +' w, y -' d);])
+      ]
+    in
+    let decoM (x, y) w h d =
+      [
+        gr-back x y w d h;
+        strokef (Gr.line (x, y -' d) (x, y +' h));
+        strokef (Gr.line (x +' w, y -' d) (x +' w, y +' h));
+      ]
+    in
+    let decoT (x, y) w h d =
+      [
+        gr-back x y w d h;
+        strokef (Gr.poly-line (x, y +' h) [(x, y -' d); (x +' w, y -' d); (x +' w, y +' h)])
+      ]
+    in
+      (decoS, decoH, decoM, decoT)
+
+
+  let decoset-console =
+    let deco (x, y) w h d =
+      [ fill console-fill-color (Gr.rectangle (x, y -' d) (x +' w, y +' h)) ]
+    in
+      (deco, deco, deco, deco)
+
+
+  let set-code-font ctx =
+    ctx |> set-font Latin (`DejaVuSansMono`, 1.,0.)
+        |> set-font OtherScript (`DejaVuSansMono`, 1.,0.)
+        |> set-font-size (get-font-size ctx *' .75)
+        |> set-leading 13.5pt
+        |> set-hyphen-penalty 100000
+
+
+  let string-explode s =
+    let l = string-length s in
+    let-rec go i acc =
+      match i with
+      | 0 -> acc
+      | _ -> go (i - 1) (string-sub s (i - 1) 1 :: acc)
+    in
+      go l []
+  
+  let intersperse s xs =
+    match xs with
+    | [] -> []
+    | (x :: xs) ->
+      x :: List.concat (xs |> List.map (fun x -> [s; x]))
+
+  let scheme decoset txtcolor ctx code =
+    let pads = (5pt, 5pt, 5pt, 5pt) in
+    block-frame-breakable ctx pads decoset (fun ctx -> (
+      let fontsize = get-font-size ctx in
+      let ctx = ctx |> set-code-font in
+      let charwid = get-natural-width (read-inline ctx {0}) in
+      let ctx-code =
+        ctx |> set-space-ratio (charwid /' fontsize) 0. 0.
+            |> set-text-color txtcolor
+      in
+
+      let lstraw = split-into-lines code in
+      let lst =
+        match lstraw with
+        | []        -> lstraw
+        | x :: []   -> lstraw
+        | _ :: tail -> tail
+      in
+      let ib-code =
+        lst |> List.fold-left-adjacent (fun ibacc (i, s) _ optnext -> (
+          let ib-last =
+            match optnext with
+            | Some(_) -> inline-fil ++ discretionary 0 (inline-skip ((get-text-width ctx) *' 2.)) inline-nil inline-nil
+            | None    -> inline-fil
+          in
+          let ib-main =
+            let ss = string-explode s in
+            let ibs = ss |> List.map (fun s ->
+              (if string-same s #` `#
+              then inline-skip charwid
+              else read-inline ctx-code (embed-string s))) in
+            let ibs-breakable = intersperse (discretionary (0-100000) inline-nil inline-nil inline-nil) ibs
+            in
+              ibs |> List.fold-left (fun ib1 ib2 -> (ib1 ++ ib2)) inline-nil
+          in 
+          let ib =
+            inline-skip (charwid *' (float i))
+              ++ ib-main
+              ++ ib-last
+          in
+            ibacc ++ ib
+        )) inline-nil
+      in
+        line-break true true ctx ib-code
+    ))
+
+
+  let-block ctx +code code =
+    scheme decoset-code code-text-color ctx code
+
+
+  let-inline ctx \d-code code =
+    inline-fil ++ embed-block-breakable ctx
+      (read-block ctx '<+code(code);>)
+
+
+  let-block ctx +console code =
+    scheme decoset-console Color.white ctx code
+
+
+  let-inline ctx \console code =
+    inline-fil ++ embed-block-breakable ctx
+      (read-block ctx '<+console(code);>)
+
+
+  let-inline ctx \code code =
+    script-guard Latin
+      (read-inline (ctx |> set-code-font) (embed-string code))
+
+end
