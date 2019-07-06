@@ -1,4 +1,5 @@
 @import: ../book-class
+@import: local
 
 module MasWag : sig
   val article : block-text
@@ -7,15 +8,84 @@ end = struct
 let bibliography = []
 
 let article = '<
-    +chapter ?:(`maswag-article`)
+    +chapter ?:(`maswag-article`) ?:({AI は AI でも Automata Inferenceの方だがなぁぁーっ!})
     (|
         bibliography = bibliography;
-        title = {pohe};
+        title = {はじめてのAI};
         author = {MasWag};
     |)
     <
-        +section {} <
+        +section {はじめに} <
+            +dialog(
+                [(None, {俺の名前は兼江 直次 (かなえ なおつぐ)。});
+                (None, {埼玉県の川越市に在住の 17 歳の高校生だ。});
+                (None, {今日から夏休み!});
+                (None, {俺は億万長者になる為に AI の勉強に行く事にした。});
+                (None,{　});
+                (None,{　          });
+                (None,{　          });                
+                (None, {さて、どこに AI を勉強しに行くか…});
+                (None, {やはり基本は山だろう!});
+                (None, {山に行く!});
+                (None,{　});
+                (None,{　          });
+                (None,{　          });                
+                (None,{俺は山にやって来た。});
+                (None,{すると…});
+                (None,{　});
+                (None,{　          });
+                (None,{　          });                
+                (None,{なぜか山で水着の女の子が現れた。});                
+                (Some({女の子}),{「AIは好きですか？});
+                (None,{　          });
+                (None,{　          });
+                (None,{　});
+                (Some({直次}),{「好き。});
+                (Some({女の子}),{「本当!?嬉しい…});
+                (None,{女の子は喜びに大きく目を…});
+                (None,{見開いた!});
+                (Some({女の子}),{「AI は AI でも Automata Inference の方だがなぁぁーっ!});]);
+        >
+        +section {準備} <
             +p{Hello, world!}
+        >
+        +section {IDアルゴリズム} <
+            +dialog(
+                [(Some({絵美理}),{「Angluin の Automata Inferenceは嫌いですか…？});
+                 (Some({遼}), {「ソンナコトナイ!});
+                 (Some({遼}),{「オレ、Angluin、ダイスキ!});
+                 (None,{　});
+                 (None,{　          });
+                 (None,{　          });
+                 (None,{しかし初めて話す言葉がこれとは…});
+                 (None,{　});
+                 (None,{　          });
+                 (None,{　          });
+                 (Some({絵美理}),{「嬉しい…});
+                 (None,{絵美理は喜びに大きく目を…});
+                 (None,{　          });
+                 (None,{　          });
+                 (None,{　          });
+                 (None,{見開いた!});
+                 (Some({絵美理}),{「 Angluin は Angluin でも ID アルゴリズム の方だがなぁぁぁーっ! })]);
+        >
+        +section {L\*アルゴリズム} <
+        >
+        +section {NL\*アルゴリズム} <
+            +dialog(
+                [(Some({お母さん}),{「おばあちゃんが教えてくれたの!});
+                 (None,{\skip(68pt);L\* が DFA しか学習できないのは悪魔のせいだって!});
+                 (None,{　});
+                 (None,{　          });
+                 (Some({お母さん}), {「だからお母さん、エクソシストさんを呼んであげたのよ!});
+                 (None,{\skip(68pt);必ず L\* で NFA を学習してくれるから!});
+                 (None,{　});
+                 (None,{　          });
+                 (Some({明美}),{「勝手に非決定的分岐を必要としてるんじゃねえ!});
+                 (None,{\skip(45pt);私は DFA で十分満足してるんだよ!});
+                 (None,{　});
+                 (None,{　          });
+                 (Some({ガミジン}),{「その考え！人格がMyhill–Nerodeに支配されている！});]);
         >
     >
 >
