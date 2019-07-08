@@ -2,7 +2,7 @@
 
 module String : sig
   val equal : string -> string -> bool
-  val len : string -> int
+  val length : string -> int
   val sub : string -> int -> int -> string
   val of-bool : bool -> string
   val of-int : int -> string
@@ -17,7 +17,7 @@ module String : sig
   val to-list : string -> string list
 end = struct
   let equal = string-same
-  let len = string-length
+  let length = string-length
   let sub = string-sub
   let of-bool b = if b then `true` else `false`
   let of-int = arabic
@@ -34,18 +34,18 @@ end = struct
     equal s of-empty
 
   let starts-with p s =
-    let s-len = len s in
-    let p-len = len p in
+    let s-len = length s in
+    let p-len = length p in
     s-len >= p-len && equal (sub s 0 p-len) p
 
   let ends-with p s =
-    let s-len = len s in
-    let p-len = len p in
+    let s-len = length s in
+    let p-len = length p in
     s-len >= p-len && equal (sub s (s-len - 1 - p-len) p-len) p
 
   let to-list s =
     let-rec go i acc = (match i with
     | 0 -> acc
     | _ -> go (i - 1) (sub s (i - 1) 1 :: acc)) in
-    go (len s) []
+    go (length s) []
 end

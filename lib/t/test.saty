@@ -1,0 +1,23 @@
+@require: stdjareport
+@import: ../ref
+@import: ../string
+@import: ../debug
+@import: ../error
+@import: ../array
+@import: ../regexp
+
+let r = Ref.make 1 in
+let () = Ref.get r |> String.of-int |> Debug.log in
+let () = Ref.set r 2 in
+let () = Ref.get r |> String.of-int |> Debug.print in
+let () = Debug.print (String.concat [`a`; `b`; `c`;]) in
+let () = Debug.print (String.of-bool (String.empty `  `)) in
+let _ = String.to-list `abc` |> List.map (fun s -> Debug.print s) in
+%let _ = Error.error `hoge` in
+let a = Array.make 3 42 in
+let () = Array.get a 0 |> String.of-int |> Debug.log in
+let () = Array.set a 0 43 in
+let () = Array.get a 0 |> String.of-int |> Debug.log in
+let () = RegExp.test (RegExp.of-string `ab.*ef`) `abcdef` |> String.of-bool |> Debug.log in
+
+document (| title = {}; author = {}; |) '<>

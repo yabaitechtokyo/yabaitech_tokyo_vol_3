@@ -1,0 +1,384 @@
+% based on hanachin-san's implementation
+
+@require: list
+@require: option
+@import: string
+@import: error
+
+module RegExp : sig
+
+  type t
+  val or : t -> t -> t
+  val seq : t -> t -> t
+  val any : t
+  val empty : t
+  val string : string -> t
+  val ngmany : t -> t % non-greedy
+  val group : t -> t
+  val many : t -> t
+  val many1 : t -> t
+  val opt : t -> t
+
+  val matches : t -> string -> ((int * string) list) option
+  val test : t -> string -> bool
+
+  val of-string : string -> t
+
+end = struct
+  type node =
+    | N-alt of node * node
+    | N-cat of node * node
+    | N-dot
+    | N-empty
+    | N-lit of string
+    | N-ng-star of node
+    | N-paren of node
+    | N-star of node
+    | N-plus of node
+    | N-question of node
+
+  type t = node
+  let or p q = N-alt (p, q)
+  let seq p q = N-cat (p, q)
+  let any = N-dot
+  let empty = N-empty
+  let string s = N-lit s
+  let ngmany p = N-ng-star p
+  let group p = N-paren p
+  let many p = N-star p
+  let many1 p = N-plus p 
+  let opt p = N-question p
+
+  type bytecode =
+    | O-any
+    | O-char of string
+    | O-jump of int
+    | O-match
+    | O-not-match
+    | O-split of int * int
+    | O-subend of int
+    | O-substart of int
+
+%   let inspect-ast root =
+%     let-rec inner a n =
+%       match n with
+%       | N-alt(t1, t2) -> a ^ `N-alt(` ^ (inner ` ` t1) ^ `, ` ^ (inner ` ` t2) ^ `)`
+%       | N-cat(t1, t2) -> a ^ `N-cat(` ^ (inner ` ` t1) ^ `, ` ^ (inner ` ` t2) ^ `)`
+%       | N-dot -> a ^ `N-dot`
+%       | N-empty -> a ^ `N-empty`
+%       | N-lit(c) -> a ^ `N-lit(` ^ c ^ `)`
+%       | N-ng-star(t) -> a ^ `N-ng-star(` ^ (inner ` ` t) ^ `)`
+%       | N-paren(t) -> a ^ `N-paren(` ^ (inner ` ` t) ^ `)`
+%       | N-star(t) -> a ^ `N-star(` ^ (inner ` ` t) ^ `)`
+%       | N-plus(t) -> a ^ `N-plus(` ^ (inner ` ` t) ^ `)`
+%       | N-question(t) -> a ^ `N-question(` ^ (inner ` ` t) ^ `)`
+%     in
+%     inner ` ` root
+
+  let compile ast =
+    let-mutable nparen <- 0 in
+    let-rec inner t bytecodes =
+      match t with
+      | N-alt(l, r) -> (
+          let bsl = (inner l []) in
+          let bsr = (inner r []) in
+          let bsl-len = List.length(bsl) in
+          let bsr-len = List.length(bsr) in
+          List.concat [
+            bytecodes;
+            [O-split(1, bsl-len + 2)];
+            bsl;
+            [O-jump(bsr-len + 1)];
+            bsr
+          ]
+        )
+      | N-cat(l, r) -> List.concat [bytecodes; (inner l []); (inner r [])]
+      | N-dot -> List.append bytecodes [O-any]
+      | N-empty -> List.append bytecodes []
+      | N-lit(c) -> List.append bytecodes [O-char(c)]
+      | N-ng-star(t) -> (
+          let bs = (inner t []) in
+          List.concat [
+            bytecodes;
+            [O-split(List.length(bs) + 2, 1)];
+            bs;
+            [O-jump(-List.length(bs) - 1)]
+          ]
+        )
+      | N-paren(t) -> (
+        let n = !nparen in
+        let () = nparen <- !nparen + 1 in
+        List.concat [
+          bytecodes;
+          [O-substart(n)];
+          (inner t []);
+          [O-subend(n)]
+        ]
+      )
+      | N-star(t) -> (
+          let bs = (inner t []) in
+          List.concat [
+            bytecodes;
+            [O-split(1, List.length(bs) + 2)];
+            bs;
+            [O-jump(-List.length(bs) - 1)]
+          ]
+        )
+      | N-plus(t) -> (
+          let bs = (inner t []) in
+          List.concat [
+            bytecodes;
+            [O-jump(2)];
+            [O-split(1, List.length(bs) + 2)];
+            bs;
+            [O-jump(-List.length(bs) - 1)]
+          ]
+        )
+      | N-question(t) -> (
+          let bs = inner t [] in
+          List.concat [
+            bytecodes;
+            [O-split(1, List.length(bs) + 1)];
+            bs
+          ]
+        )
+
+    in
+    List.append (inner ast []) [O-match]
+
+  let exec bytecodes str =
+    let-rec set-sub-start
+      | n cn [] = (n, cn, -1) :: []
+      | n cn ((n2, s, e) :: xs) =
+        if n == n2 then (n, cn, -1) :: xs
+        else (n2, s, e) :: (set-sub-start n cn xs)
+    in
+
+    let-rec set-sub-end
+      | n cn [] = (n, -1, cn) :: []
+      | n cn ((n2, s, e) :: xs) =
+        if n == n2 then ((n, s, cn) :: xs)
+        else ((n2, s, e) :: (set-sub-end n cn xs))
+    in
+
+    let substring-assoc str assoc =
+      assoc |> List.map (fun (n, s, e) -> (n, (string-sub str s (e - s))))
+    in
+
+    let-rec inner bytecodes bn cs cn assoc =
+      let b = Option.from O-not-match (List.nth bn bytecodes) in
+      match b with
+      | O-any -> (
+          if (List.length cs) <= cn then None
+          else (inner bytecodes (bn + 1) cs (cn + 1) assoc)
+        )
+      | O-char(c) -> (
+          match (List.nth cn cs) with
+          | Some(c2) ->
+            if (string-same c c2) then (inner bytecodes (bn + 1) cs (cn + 1) assoc)
+            else None
+          | None -> None
+        )
+      | O-jump(bn-offset) -> (inner bytecodes (bn + bn-offset) cs cn assoc)
+      | O-match -> Some((substring-assoc str assoc))
+      | O-not-match -> None
+      | O-split(bn-offset1, bn-offset2) -> (
+          match (inner bytecodes (bn + bn-offset1) cs cn assoc) with
+          | None -> (inner bytecodes (bn + bn-offset2) cs cn assoc)
+          | Some(x) -> Some(x)
+          )
+      | O-subend(n) -> (inner bytecodes (bn + 1) cs cn (set-sub-end n cn assoc))
+      | O-substart(n) -> (inner bytecodes (bn + 1) cs cn (set-sub-start n cn assoc))
+    in
+    inner bytecodes 0 (String.to-list str) 0 []
+
+%   let inspect-bytecodes bytecodes =
+%     let-rec inner a bs =
+%       match bs with
+%       | (O-any) :: rest -> inner (a ^ `O-any; `) rest
+%       | (O-char(c)) :: rest -> inner (a ^ `O-char(` ^ c ^ `); `) rest
+%       | (O-match) :: rest -> inner (a ^ `O-match; `) rest
+%       | (O-not-match) :: rest -> inner (a ^ `O-not-match; `) rest
+%       | (O-jump(n)) :: rest -> inner (a ^ `O-jump(` ^ (arabic n) ^ `); `) rest
+%       | (O-split(n, m)) :: rest -> inner (a ^ `O-split(` ^ (arabic n) ^ `, ` ^ (arabic m) ^ `); `) rest
+%       | (O-subend(m)) :: rest -> inner (a ^ `O-subend(` ^ (arabic m) ^ `); `) rest
+%       | (O-substart(n)) :: rest -> inner (a ^ `O-substart(` ^ (arabic n) ^ `); `) rest
+%       | [] -> a
+%     in
+%     inner ` ` bytecodes
+
+  let matches p s =
+    let bytecodes = compile p in
+    % Some([(0, (inspect-ast root))])
+    % Some([(0, (inspect-bytecodes bytecodes))])
+    exec bytecodes s
+
+  let test p s = match matches p s with
+  | None -> false
+  | Some _ -> true
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % POSIX-style regexp
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  type token =
+    | T-alt
+    | T-char of string
+    | T-dot
+    | T-lparen
+    | T-rparen
+    | T-star
+    | T-plus
+    | T-question
+
+  let lex s =
+    let-rec inner
+      | [] = []
+      | (`|` :: cs) = T-alt :: inner cs
+      | (`(` :: cs) = T-lparen :: inner cs
+      | (`)` :: cs) = T-rparen :: inner cs
+      | (`.` :: cs) = T-dot :: inner cs
+      | (`*` :: cs) = T-star :: inner cs
+      | (`+` :: cs) = T-plus :: inner cs
+      | (`?` :: cs) = T-question :: inner cs
+      | (c :: cs) = T-char(c) :: inner cs
+    in
+    inner (String.to-list s)
+
+  let parse tokens =
+    let choice fns =
+      let-rec inner
+        | [] tn tokens = None
+        | (fn :: fns) tn tokens = (
+          match !fn tn tokens with
+          | Some(tn, ret) -> Some(tn, ret)
+          | None -> inner fns tn tokens
+        )
+      in
+
+      fun tn tokens -> inner fns tn tokens
+    in
+
+    let many fn =
+      let-rec inner
+        | fn a tn tokens = (
+          match !fn tn tokens with
+          | Some(tn, ret) -> inner fn (List.concat [a; [ret]]) tn tokens
+          | None -> (tn, a)
+        )
+      in
+      fun tn tokens -> inner fn [] tn tokens
+    in
+
+    let seq fns =
+      let-rec inner
+      | [] a tn tokens = Some(tn, a)
+      | (fn :: fns) a tn tokens = (
+        match !fn tn tokens with
+        | Some(tn, ret) -> inner fns (List.concat [a; [[ret]]]) tn tokens
+        | None -> None
+      )
+      in
+      fun tn tokens -> inner fns [] tn tokens
+    in
+
+    let map token node =
+      let s-of token =
+        match token with
+        | T-alt -> `T-alt`
+        | T-char(c) -> `T-char(` ^ c ^`)`
+        | T-dot -> `T-dot`
+        | T-lparen -> `T-lparen`
+        | T-rparen -> `T-rparen`
+      in
+
+      fun tn tokens -> (
+        match List.nth tn tokens with
+        | Some(t) ->
+          if (string-same (s-of t) (s-of token)) then Some(tn + 1, node)
+          else None
+        | _ -> None
+      )
+    in
+
+    let quantifierize fn =
+      fun tn tokens -> (
+        match fn tn tokens with
+        | Some(tn, n) -> (
+          match List.nth tn tokens with
+            | Some(T-star) -> Some(tn + 1, N-star(n))
+            | Some(T-plus) -> Some(tn + 1, N-plus(n))
+            | Some(T-question) -> Some(tn + 1, N-question(n))
+            | _ -> Some(tn, n)
+        )
+        | None -> None
+      )
+    in
+
+    let default = (fun tn tokens -> None) in
+    let-mutable alt <- default in
+    let-mutable alt2 <- default in
+    let-mutable alt-bar <- default in
+    let-mutable cat <- default in
+    let-mutable char <- default in
+    let-mutable dot <- default in
+    let-mutable empty <- fun tn tokens -> Some(tn, N-empty) in
+    let-mutable lparen <- default in
+    let-mutable rparen <- default in
+    let-mutable paren <- default in
+    let-mutable single <- default in
+
+    let () = alt <- choice [alt2; cat; empty] in
+    let () = alt2 <- (fun tn tokens -> (
+      match (seq [cat; alt-bar; alt]) tn tokens with
+      | Some(tn, ((head1 :: ns1) :: _ :: (head2 :: ns2) :: [])) -> (
+        let t1 = ns1 |> (List.fold-left (fun a n -> N-cat(a, n)) head1) in
+        let t2 = ns2 |> (List.fold-left (fun a n -> N-cat(a, n)) head2) in
+        Some(tn, N-alt(t1, t2))
+      )
+      | _ -> None
+    ))
+    in
+
+    let () = cat <- (fun tn tokens -> (
+      match (many single) tn tokens with
+      | (tn, (head :: ns)) -> Some(tn, ns |> (List.fold-left (fun a n -> N-cat(a, n)) head))
+      | (tn, []) -> None
+    ))
+    in
+
+    let () = char <- quantifierize (fun tn tokens -> (
+      match List.nth tn tokens with
+      | Some(T-char(c)) -> Some(tn + 1, N-lit(c))
+      | _ -> None
+    ))
+    in
+
+    let () = alt-bar <- map T-alt N-empty in
+    let () = dot <- quantifierize (map T-dot N-dot) in
+    let () = lparen <- map T-lparen N-empty in
+    let () = rparen <- map T-rparen N-empty in
+
+    let () = paren <- quantifierize (fun tn tokens -> (
+      match (seq [lparen; alt; rparen]) tn tokens with
+      | Some(tn, (_ :: (head :: ns) :: _ :: [])) -> (
+        let t = ns |> (List.fold-left (fun a n -> N-cat(a, n)) head) in
+        Some(tn, N-paren(t))
+      )
+      | _ -> None
+    ))
+    in
+
+    let () = single <- choice [paren; char; dot] in
+
+    match !alt 0 tokens with
+    | Some(tn, root) -> (
+      if tn == (List.length tokens) then
+        Some (N-cat(N-ng-star(N-dot), N-paren(root)))
+      else
+        None
+    )
+
+  let of-string r = let (Some v) = lex r |> parse in v
+
+end
