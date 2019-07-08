@@ -1,0 +1,5 @@
+module Debug : sig
+  val print : string -> unit
+end = struct
+  let print = display-message
+end
