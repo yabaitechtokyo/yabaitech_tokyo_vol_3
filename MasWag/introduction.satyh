@@ -32,5 +32,8 @@ let introduction = '<
                 (None,{女の子は喜びに大きく目を…});
                 (None,{見開いた!});
                 (Some({女の子}),{「AI は AI でも Automata Inference の方だがなぁぁーっ!});]);
+           +acknowledgement {
+                本章の作成にあたり、川越が生んだ鬼才、高橋邦子先生に感謝します。
+           }
         >
 >

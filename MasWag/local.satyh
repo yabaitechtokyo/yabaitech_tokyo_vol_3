@@ -177,6 +177,18 @@ let-inline ctx \par =
     let len = get-font-size ctx *' font-ratio-cjk in
     inline-fil ++ (discretionary (0-100000) inline-nil inline-nil inline-nil) ++ inline-skip len
 
+let font-ratio-latin = 1.
+let font-ratio-cjk = 0.88
+
+let-block ctx +acknowledgement inner =
+    let len = get-font-size ctx *' font-ratio-cjk in
+    let ctx-title = ctx 
+                  |> set-paragraph-margin 3pt 3pt
+                  |> set-font HanIdeographic (`ipaexg`, 1.0, 0.)
+                  |> set-font Kana (`ipaexg`, 1.0, 0.) in 
+    let ib-inner = inline-skip len ++ read-inline ctx-title {謝辞} ++ inline-skip len ++ read-inline ctx inner ++ inline-fil in
+      form-paragraph ctx ib-inner
+
 % let-math \QED = math-char MathOrd `∎`
 
 % let-block ctx +proof-block ?:wordopt inner =
