@@ -1,4 +1,4 @@
-@require: list
+@import: list
 
 module String : sig
   val equal : string -> string -> bool

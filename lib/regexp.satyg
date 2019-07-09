@@ -1,7 +1,7 @@
 % based on hanachin-san's implementation
 
-@require: list
-@require: option
+@import: list
+@import: option
 @import: string
 @import: error
 
