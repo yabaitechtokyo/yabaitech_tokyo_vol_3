@@ -9,6 +9,19 @@
 @import: pohe/article
 @import: wasabiz/article
 @import: zpt/article
+@import: lib/debug
+
+let () = Debug.log ``
+=====================
+YABAITECH.TOKYO vol.3
+
+　 ∧,,∧
+　(；`・ω・）　　｡･ﾟ･⌒） チャーハン作るよ！！
+　/　　 ｏ━ヽニニフ))
+　しー-Ｊ
+
+=====================
+`` in
 
 document (|
   title = `yabaitech.tokyo vol.3`;
