@@ -1,12 +1,19 @@
+@require: math
 @import: ../book-class
+@import: ../lib/derive/derive
+@import: ../lib/derive/dsl
 
 module Zpt : sig
   val article : block-text
 end = struct
 
+let-math \neg = math-char MathBin `¬`
+
 let bibliography = []
 
-let article = '<
+let article =
+    open PoheDerive in
+    '<
     +chapter ?:(`zpt-article`)
     (|
         bibliography = bibliography;
@@ -15,7 +22,21 @@ let article = '<
     |)
     <
         +section {} <
-            +p{Hello, world!}
+            +math-list (${|
+                \proven!(
+                    open PoheDeriveDSL in
+                    derive(${\vdash \neg \paren{A \wedge \neg A}})
+                    |> by({${\neg}-R})
+                    |> from [
+                        derive(${A \wedge \neg A \vdash })
+                        |> by({${\neg}-L})
+                        |> from [
+                            derive(${A \vdash A})
+                            |> by({Id})
+                        ]
+                    ]
+                )
+            |});
         >
     >
 >
