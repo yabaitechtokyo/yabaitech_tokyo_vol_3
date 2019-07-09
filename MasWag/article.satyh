@@ -1,16 +1,17 @@
 @import: ../book-class
 @import: local
+@import: automata
+@import: lstar
+@import: bib
 
 module MasWag : sig
   val article : block-text
 end = struct
 
-let bibliography = []
-
 let article = '<
     +chapter ?:(`maswag-article`) ?:({AI は AI でも Automata Inferenceの方だがなぁぁーっ!})
     (|
-        bibliography = bibliography;
+        bibliography = maswag-bibliography;
         title = {はじめてのAI};
         author = {MasWag};
     |)
@@ -46,9 +47,7 @@ let article = '<
                 (None,{見開いた!});
                 (Some({女の子}),{「AI は AI でも Automata Inference の方だがなぁぁーっ!});]);
         >
-        +section {準備} <
-            +p{Hello, world!}
-        >
+        #automata;
         +section {IDアルゴリズム} <
             +dialog(
                 [(Some({絵美理}),{「Angluin の Automata Inferenceは嫌いですか…？});
@@ -69,8 +68,7 @@ let article = '<
                  (None,{見開いた!});
                  (Some({絵美理}),{「 Angluin は Angluin でも ID アルゴリズム の方だがなぁぁぁーっ! })]);
         >
-        +section {L\*アルゴリズム} <
-        >
+        #lstar;
         +section {NL\*アルゴリズム} <
             +dialog(
                 [(Some({お母さん}),{「おばあちゃんが教えてくれたの!});
@@ -86,6 +84,10 @@ let article = '<
                  (None,{　});
                  (None,{　          });
                  (Some({ガミジン}),{「その考え！人格がMyhill–Nerodeに支配されている！});]);
+        >
+        +section {まとめ} <
+             +dialog([(None,{川越市は今日も平和だった。});
+                      (None,{\centering{~完~}})]);
         >
     >
 >

@@ -1,2 +1,16 @@
 main.pdf
 main.satysfi-aux
+
+# for Emacs
+*~
+
+# for LaTeX
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# for MasWag
+MasWag/standalone_main.satysfi-aux
+MasWag/standalone_main.pdf

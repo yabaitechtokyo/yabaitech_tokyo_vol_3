@@ -1,0 +1,48 @@
+@import: local
+
+let maswag-bibliography = [
+  
+
+  (`journals/iandc/Angluin81`, Article(|
+    author = {|Dana Angluin|};
+    title = {A Note on the Number of Queries Needed to Identify Regular Languages};
+    journal = {Information and Control};
+    volume = Some(51);
+    number = Some({1});
+    pages = (76,87);
+    year = 1981;
+  |));
+
+
+  (`journals/iandc/Angluin87`, Article(|
+    author = {|Dana Angluin|};
+    title = {Learning Regular Sets from Queries and Counterexamples};
+    journal = {Inf. Comput.};
+    volume = Some(75);
+    number = Some({2});
+    pages = (87,106);
+    year = 1987;
+  |));
+
+
+  (`conf/ijcai/BolligHKL09`, InProceedings(|
+    author = {|Benedikt Bollig, Peter Habermehl, Carsten Kern, Martin Leucker|};
+    title = {Angluin-Style Learning of NFA.};
+    booktitle = {IJCAI};
+    series = None; 
+    volume = None; 
+    number = None; 
+    pages = (1004,1009);
+    year = 2009;
+  |));
+
+
+  (`HopcroftMU2003`, Book(|
+    author = {|J. ホップクロフト, R. モトワニ, J. ウルマン|};
+    title = {オートマトン言語理論計算論 I};
+    publisher = {サイエンス社};
+    year = 2003;
+  |));
+
+
+]
