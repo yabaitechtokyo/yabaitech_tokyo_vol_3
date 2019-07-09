@@ -1,0 +1,25 @@
+@require: itemize
+@import: local
+
+let id = '<
+        +section {IDアルゴリズム} <
+            +dialog(
+                [(Some({絵美理}),{「Angluin の Automata Inferenceは嫌いですか…？});
+                 (Some({遼}), {「ソンナコトナイ!});
+                 (Some({遼}),{「オレ、Angluin、ダイスキ!});
+                 (None,{　});
+                 (None,{　          });
+                 (None,{　          });
+                 (None,{しかし初めて話す言葉がこれとは…});
+                 (None,{　});
+                 (None,{　          });
+                 (None,{　          });
+                 (Some({絵美理}),{「嬉しい…});
+                 (None,{絵美理は喜びに大きく目を…});
+                 (None,{　          });
+                 (None,{　          });
+                 (None,{　          });
+                 (None,{見開いた!});
+                 (Some({絵美理}),{「 Angluin は Angluin でも ID アルゴリズム の方だがなぁぁぁーっ! })]);
+        >
+>

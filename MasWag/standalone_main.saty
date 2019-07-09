@@ -1,6 +1,13 @@
 % -*- coding: utf-8 -*-
 @import: ../book-class
-@import: article
+@import: introduction
+
+@import: automata
+@import: id
+@import: lstar
+@import: nlstar
+@import: conclusion
+@import: bib
 
 document (|
   title = `yabaitech.tokyo vol.3`;
@@ -11,5 +18,18 @@ document (|
   website = `http://yabaitech.tokyo`;
   publisher = `有限会社 ねこのしっぽ`
   |) '<
-    #MasWag.article;
+    +chapter ?:(`maswag-article`) ?:({AI は AI でも Automata Inferenceの方だがなぁぁーっ!})
+    (|
+        bibliography = maswag-bibliography;
+        title = {はじめてのAI};
+        author = {MasWag};
+    |)
+    <
+        #introduction;
+        #automata;
+        #id;
+        #lstar;
+        #nlstar;
+        #conclusion;
+    >
 >

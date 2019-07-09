@@ -1,0 +1,21 @@
+@require: itemize
+@import: local
+
+let nlstar = '<
+        +section {NL\*アルゴリズム} <
+            +dialog(
+                [(Some({お母さん}),{「おばあちゃんが教えてくれたの!});
+                 (None,{\skip(68pt);L\* が DFA しか学習できないのは悪魔のせいだって!});
+                 (None,{　});
+                 (None,{　          });
+                 (Some({お母さん}), {「だからお母さん、エクソシストさんを呼んであげたのよ!});
+                 (None,{\skip(68pt);必ず L\* で NFA を学習してくれるから!});
+                 (None,{　});
+                 (None,{　          });
+                 (Some({明美}),{「勝手に非決定的分岐を必要としてるんじゃねえ!});
+                 (None,{\skip(45pt);私は DFA で十分満足してるんだよ!});
+                 (None,{　});
+                 (None,{　          });
+                 (Some({ガミジン}),{「その考え！人格がMyhill–Nerodeに支配されている！});]);
+        >
+>

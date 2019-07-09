@@ -1,0 +1,9 @@
+@require: itemize
+@import: local
+
+let conclusion = '<
+        +section {まとめ} <
+             +dialog([(None,{川越市は今日も平和だった。});
+                      (None,{\centering{~完~}})]);
+        >
+>
