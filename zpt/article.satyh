@@ -17,10 +17,21 @@ let article =
     +chapter ?:(`zpt-article`)
     (|
         bibliography = bibliography;
-        title = {真矛盾主義に関する小噺};
+        title = {真矛盾主義についての小噺};
         author = {zeptometer};
     |)
     <
+        +section {序文} <
+            +p{韓非子に以下のような一編がある。}
+            +p{楚人に盾と矛とを鬻ぐ者有り。之を誉めて曰く「吾が盾の堅きこと能く陥すものなきなり」と。またその矛を誉めて曰く「わが矛の利きこと物において陥さざるなきなり」と。ある人曰く「子の矛を以て、子の盾を陥さばいかん。」と。その人応ふること能はざるなり。}
+            +p{ものごとのつじつまが合っていないことを意味する「矛盾」という言葉がこの一編から来ていることはそれなりに知られている事実だろう。}
+        >
+        +section {嘘つきのパラドックス} <
+
+        >
+        +section {First Degree Entailment} <
+            
+        >
         +section {} <
             +math-list (${|
                 \proven!(
