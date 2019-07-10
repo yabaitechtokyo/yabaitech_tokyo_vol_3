@@ -1,0 +1,12 @@
+module Option2 : sig
+  val is-none : 'a option -> bool
+  val is-some : 'a option -> bool
+end = struct
+  let-rec is-none
+    | (None) = true
+    | (Some(_)) = false
+
+  let-rec is-some
+    | (None) = false
+    | (Some(_)) = true
+end

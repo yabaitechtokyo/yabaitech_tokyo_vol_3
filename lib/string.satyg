@@ -1,4 +1,4 @@
-@import: list
+@require: list
 
 module String : sig
   val equal : string -> string -> bool
@@ -15,6 +15,7 @@ module String : sig
   val starts-with : string -> string -> bool
   val ends-with : string -> string -> bool
   val to-list : string -> string list
+  val at : string -> int -> string
 end = struct
   let equal = string-same
   let length = string-length
@@ -48,4 +49,9 @@ end = struct
     | 0 -> acc
     | _ -> go (i - 1) (sub s (i - 1) 1 :: acc)) in
     go (length s) []
+
+  let at s i =
+    let () = display-message s in
+    let () = display-message (of-int i) in
+    sub s i 1
 end

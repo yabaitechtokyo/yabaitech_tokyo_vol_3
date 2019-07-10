@@ -1,4 +1,4 @@
-@import: list
+@require: list
 @import: ref
 @import: error
 
@@ -11,9 +11,10 @@ module Array : sig
   type 'a t
   val length : 'a t -> int
   val nth : 'a t -> int -> ('a Ref.t) option
-  val get : 'a t -> int -> 'a
-  val set : 'a t -> int -> 'a -> unit
+  val get : int -> 'a t -> 'a
+  val set : int -> 'a -> 'a t -> unit
   val make : int -> 'a -> 'a t
+  val init : int -> (int -> 'a) -> 'a t
   val append : 'a t -> 'a t -> 'a t
   val concat : ('a t) list -> 'a t
 %  val sub : 'a t -> int -> int -> 'a t
@@ -33,15 +34,18 @@ end = struct
   | (Nil, _) -> None
   | (Cons (r, _), 0) -> Some r
   | (Cons (_, a), i) -> nth a (i - 1)
-  let get a i = match nth a i with
+  let get i a = match nth a i with
   | None -> Error.error `array: index out of range`
   | Some r -> Ref.get r
-  let set a i v = match nth a i with
+  let set i v a = match nth a i with
   | None -> Error.error `array: index out of range`
   | Some r -> Ref.set r v
   let make n v =
     let-rec go i acc = if i == n then acc else go (i + 1) (Cons (Ref.make v, acc)) in
     go 0 Nil
+  let init n f =
+    let-rec go i = if i == n then Nil else let v = f i in Cons (Ref.make v, go (i + 1)) in
+    go 0
   let-rec append a1 a2 = match a1 with
   | Nil -> a2
   | Cons (r, a1) -> Cons (r, append a1 a2)
