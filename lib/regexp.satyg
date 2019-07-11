@@ -7,6 +7,7 @@
 @import: option2
 @require: list
 @import: list2
+@import: char
 
 module RegExp : sig
   type t
@@ -26,6 +27,8 @@ module RegExp : sig
 %  val ref : int -> t
   val bof : t  % beginning of file
   val eof : t
+  val bol : t
+  val eol : t
   val none : t
   val satisfy : (string -> bool) -> t
 
@@ -48,6 +51,8 @@ module RegExp : sig
   val print-iseq : vm-inst Array.t -> unit
 end = struct
 
+  type anchor = BOF | EOF | BOL | EOL | NOWHERE
+
   type vm-inst =
   | MATCH
   | CHAR of string
@@ -57,10 +62,8 @@ end = struct
   | STRING of string
   | SAVE of int
 %  | REF of int   % backreference
-  | BEGIN
-  | END
+  | ANCHOR of anchor
   | PRED of string -> bool
-  | NONE
 
   let run iseq ngroup s =
     let len = String.length s in
@@ -102,13 +105,16 @@ end = struct
         %     let c = String.sub s st (j - st) in
         %     let l = String.length c in
         %     if sp + l <= len then if String.equal c (String.sub s sp l) then loop (pc + 1) (sp + l) else false else false)
-        | BEGIN ->
-          if sp == 0 then loop (pc + 1) sp else false
-        | END ->
-          if sp == String.length s then loop (pc + 1) sp else false
+        | ANCHOR a ->
+          ~(&(match a with
+              | BOF -> sp == 0
+              | EOF -> sp == String.length s
+              | BOL -> ~(&(sp == 0) ||| &(String.equal (String.at s (sp - 1)) Char.newline))
+              | EOL -> ~(&(sp == String.length s) ||| &(String.equal (String.at s sp) Char.newline))
+              | NOWHERE -> false)
+            &&& &(loop (pc + 1) sp))
         | PRED f ->
-          if sp < len then if f (String.at s sp) then loop (pc + 1) (sp + 1) else false else false
-        | NONE -> false in
+          ~(&(sp < len) &&& &(f (String.at s sp)) &&& &(loop (pc + 1) (sp + 1))) in
       memoize2 main pc sp in
     let r = loop 0 0 in
     (r, trace)
@@ -128,10 +134,8 @@ end = struct
   | P-opt-ng of pattern
   | P-group of pattern
 %  | P-ref of int
-  | P-bof
-  | P-eof
+  | P-anchor of anchor
   | P-satisfy of string -> bool
-  | P-none
 
   type t = pattern
 
@@ -149,10 +153,12 @@ end = struct
   let opt-ng p = P-opt-ng p
   let group p = P-group p
 %  let ref i = P-ref i
-  let bof = P-bof
-  let eof = P-eof
+  let bof = P-anchor (BOF)
+  let eof = P-anchor (EOF)
+  let bol = P-anchor (BOL)
+  let eol = P-anchor (EOL)
+  let none = P-anchor (NOWHERE)
   let satisfy f = P-satisfy f
-  let none = P-none
 
   let oneof s =
     let s = String.to-list s in
@@ -245,14 +251,10 @@ end = struct
         ()
 %      | P-ref i ->
 %        emit (REF i)
-      | P-bof ->
-        emit BEGIN
-      | P-eof ->
-        emit END
+      | P-anchor a ->
+        emit (ANCHOR a)
       | P-satisfy f ->
-        emit (PRED f)
-      | P-none ->
-        emit NONE in
+        emit (PRED f) in
       let () = loop p in
       (!acc, !cnt) in
     let (chunk, _) = codegen p in
@@ -290,8 +292,13 @@ end = struct
           | SPLIT (i,j) -> `SPLIT `# ^ (String.of-int i) ^ #` `# ^ (String.of-int j)
           | SAVE i -> `SAVE `# ^ (String.of-int i)
 %          | REF i -> `REF `# ^ (String.of-int i)
-          | BEGIN -> `BEGIN`
-          | END -> `END`
+          | ANCHOR a ->
+            `ANCHOR `# ^ (match a with
+            | BOF -> `BOF`
+            | EOF -> `EOF`
+            | BOL -> `BOL`
+            | EOL -> `EOL`
+            | NOWHERE -> `NOWHERE`)
           | PRED f -> `PRED <function>` in
         let () = Debug.log (String.of-int i ^ `: `# ^ inst) in
         loop (i + 1) xs in

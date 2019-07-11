@@ -1,0 +1,11 @@
+@import: string
+
+module Char : sig
+%  type t
+
+  val of-codepoint : int -> string
+  val newline : string
+end = struct
+  let of-codepoint c = String.of-codepoints [c]
+  let newline = of-codepoint 10
+end
