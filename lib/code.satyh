@@ -1,17 +1,23 @@
 @require: pervasives
-@require: list
 @require: color
 @require: gr
 @require: vdecoset
+@require: list
+@import: string
+@import: regexp
+@import: lexer
+@import: debug
+
+type syntax-def = (|groups : ((|color : color; keywords : string list|)) list; ident-regexp : RegExp.t|)
 
 module Code : sig
 
-  val scheme : deco-set -> color -> context -> string -> block-boxes
-  direct +code : [string] block-cmd
-  direct +console : [string] block-cmd
+  val scheme : deco-set -> color -> context -> syntax-def option -> string -> block-boxes
+  direct +code : [syntax-def?; string] block-cmd
+  direct +console : [syntax-def?; string] block-cmd
   direct \code : [string] inline-cmd
-  direct \console : [string] inline-cmd
-  direct \d-code : [string] inline-cmd
+  direct \console : [syntax-def?; string] inline-cmd
+  direct \d-code : [syntax-def?; string] inline-cmd
 
 end = struct
 
@@ -72,23 +78,23 @@ end = struct
         |> set-leading 13.5pt
         |> set-hyphen-penalty 100000
 
+  let get-color syntax ident =
+    let keywords-re kws =
+      kws |> List.map RegExp.string |> RegExp.choice |> RegExp.between RegExp.bof RegExp.eof in
+    let g-opt = List2.find (fun g -> (RegExp.test (keywords-re g#keywords) ident)) syntax#groups in
+    match g-opt with
+    | None -> None
+    | Some g -> Some g#color
 
-  let string-explode s =
-    let l = string-length s in
-    let-rec go i acc =
-      match i with
-      | 0 -> acc
-      | _ -> go (i - 1) (string-sub s (i - 1) 1 :: acc)
-    in
-      go l []
-  
-  let intersperse s xs =
-    match xs with
-    | [] -> []
-    | (x :: xs) ->
-      x :: List.concat (xs |> List.map (fun x -> [s; x]))
-
-  let scheme decoset txtcolor ctx code =
+  let scheme decoset txtcolor ctx syntax-opt code =
+    let syntax = match syntax-opt with
+    | None -> (| ident-regexp = RegExp.fail; groups = []; |)
+    | Some s -> s in
+    let rules = [
+      (| kind = `identifier`; regexp = syntax#ident-regexp |);
+      (| kind = `space`; regexp = RegExp.space |);
+      (| kind = `other`; regexp = RegExp.any |);
+    ] in
     let pads = (5pt, 5pt, 5pt, 5pt) in
     block-frame-breakable ctx pads decoset (fun ctx -> (
       let fontsize = get-font-size ctx in
@@ -114,12 +120,16 @@ end = struct
             | None    -> inline-fil
           in
           let ib-main =
-            let ss = string-explode s in
-            let ibs = ss |> List.map (fun s ->
-              (if string-same s #` `#
+            let (Some(tokens)) = Lexer.lex rules s in
+            let ibs = tokens |> List.map (fun tk ->
+              (if String.equal tk#kind `space`
               then inline-skip charwid
-              else read-inline ctx-code (embed-string s))) in
-            let ibs-breakable = intersperse (discretionary (0-100000) inline-nil inline-nil inline-nil) ibs
+              else if String.equal tk#kind `identifier`
+              then match get-color syntax tk#data with
+              | None -> read-inline ctx-code (embed-string tk#data)
+              | Some c -> read-inline (ctx-code |> set-text-color c) (embed-string tk#data)
+              else read-inline ctx-code (embed-string tk#data)))
+%             let ibs-breakable = List.intersperse (discretionary (0-100000) inline-nil inline-nil inline-nil) ibs
             in
               ibs |> List.fold-left (fun ib1 ib2 -> (ib1 ++ ib2)) inline-nil
           in 
@@ -135,22 +145,26 @@ end = struct
     ))
 
 
-  let-block ctx +code code =
-    scheme decoset-code code-text-color ctx code
+  let-block ctx +code ?:syntax-def code =
+    scheme decoset-code code-text-color ctx syntax-def code
 
 
-  let-inline ctx \d-code code =
+  let-inline ctx \d-code ?:syntax-def code =
     inline-fil ++ embed-block-breakable ctx
-      (read-block ctx '<+code(code);>)
+      (match syntax-def with
+      | None -> read-block ctx '<+code(code);>
+      | Some s -> read-block ctx '<+code?:(s)(code);>)
 
 
-  let-block ctx +console code =
-    scheme decoset-console Color.white ctx code
+  let-block ctx +console ?:syntax-def code =
+    scheme decoset-console Color.white ctx syntax-def code
 
 
-  let-inline ctx \console code =
+  let-inline ctx \console ?:syntax-def code =
     inline-fil ++ embed-block-breakable ctx
-      (read-block ctx '<+console(code);>)
+      (match syntax-def with
+      | None -> read-block ctx '<+console(code);>
+      | Some s -> read-block ctx '<+console?:(s)(code);>)
 
 
   let-inline ctx \code code =

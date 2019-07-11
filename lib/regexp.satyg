@@ -29,10 +29,8 @@ module RegExp : sig
   val eof : t
   val bol : t
   val eol : t
-  val none : t
+  val fail : t
   val satisfy : (Char.t -> bool) -> t
-
-  % extra combinators (TODO: add vm instructions for important ones)
   val oneof : string -> t
   val alpha : t
   val digit : t
@@ -64,6 +62,7 @@ end = struct
 %  | REF of int   % backreference
   | ANCHOR of anchor
   | PRED of Char.t -> bool
+  | REGEXP of regexp  % tests a character using built-in regexp; mainly for performance
 
   let run iseq ngroup s =
     let len = String.length s in
@@ -114,7 +113,8 @@ end = struct
               | NOWHERE -> false)
             &&& &(loop (pc + 1) sp))
         | PRED f ->
-          ~(&(sp < len) &&& &(f (Char.at sp s)) &&& &(loop (pc + 1) (sp + 1))) in
+          ~(&(sp < len) &&& &(f (Char.at sp s)) &&& &(loop (pc + 1) (sp + 1)))
+        | REGEXP re -> ~(&(sp < len) &&& &(string-match re (String.sub s sp 1)) &&& &(loop (pc + 1) (sp + 1))) in
       memoize2 main pc sp in
     let r = loop 0 0 in
     (r, trace)
@@ -136,6 +136,7 @@ end = struct
 %  | P-ref of int
   | P-anchor of anchor
   | P-satisfy of Char.t -> bool
+  | P-regexp of regexp
 
   type t = pattern
 
@@ -157,23 +158,19 @@ end = struct
   let eof = P-anchor (EOF)
   let bol = P-anchor (BOL)
   let eol = P-anchor (EOL)
-  let none = P-anchor (NOWHERE)
+  let fail = P-anchor (NOWHERE)
   let satisfy f = P-satisfy f
 
-  let oneof s =
+  let oneof s = % TODO: use regexp
     let s = String.to-list s in
     satisfy (fun c -> (Option2.is-some (List2.find (Char.equal c) s)))
-  let alpha =
-    oneof `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
-  let digit =
-    oneof `0123456789`
-  let space =
-    oneof (String.of-codepoints [9;10;11;12;13;32])
-  let spaces =
-    many1 space
+  let alpha = P-regexp (regexp-of-string `[a-zA-Z]`)
+  let digit = P-regexp (regexp-of-string `[0-9]`)
+  let space = P-regexp (regexp-of-string (`[` ^ String.of-codepoints [9;10;11;12;13;32] ^ `]`))  % see https://stackoverflow.com/questions/39813584/how-to-split-on-whitespaces-in-ocaml
+  let spaces = many1 space
 
   let between op cl p = seq op (seq p cl)
-  let choice ts = List.fold-left alt none ts
+  let choice ts = List.fold-left alt fail ts
   let sequence ts = List.fold-right seq empty ts
 
   let compile p =
@@ -254,7 +251,9 @@ end = struct
       | P-anchor a ->
         emit (ANCHOR a)
       | P-satisfy f ->
-        emit (PRED f) in
+        emit (PRED f)
+      | P-regexp re ->
+        emit (REGEXP re) in
       let () = loop p in
       (!acc, !cnt) in
     let (chunk, _) = codegen p in
@@ -299,7 +298,8 @@ end = struct
             | BOL -> `BOL`
             | EOL -> `EOL`
             | NOWHERE -> `NOWHERE`)
-          | PRED f -> `PRED <function>` in
+          | PRED f -> `PRED <function>`
+          | REGEXP re -> `REGEXP <re>` in
         let () = Debug.log (String.of-int i ^ `: `# ^ inst) in
         loop (i + 1) xs in
     loop 0 (Array.to-list iseq)
