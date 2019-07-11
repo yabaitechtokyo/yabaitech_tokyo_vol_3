@@ -22,9 +22,10 @@ module RegExp : sig
   val many1-ng : t -> t
   val opt-ng : t -> t
   val group : t -> t
-  val ref : int -> t
-  val head : t
-  val last : t
+%  val ref : int -> t
+  val bof : t
+  val eof : t
+  val none : t
   val satisfy : (string -> bool) -> t
 
   % extra combinators (TODO: add vm instructions for important ones)
@@ -33,6 +34,9 @@ module RegExp : sig
   val digit : t
   val space : t
   val spaces : t
+  val between : t -> t -> t -> t
+  val choice : t list -> t
+  val sequence : t list -> t
 
   val test : t -> string -> bool
   val exec : t -> string -> ((int * string) option) list
@@ -51,10 +55,11 @@ end = struct
   | ANY
   | STRING of string
   | SAVE of int
-  | REF of int   % backreference
+%  | REF of int   % backreference
   | BEGIN
   | END
   | PRED of string -> bool
+  | NONE
 
   let run iseq ngroup s =
     let len = String.length s in
@@ -87,19 +92,20 @@ end = struct
           if loop (pc + 1) sp then true else
           let () = trace |> Array.set i old in
           false
-        | REF i ->
-          (match trace |> Array.get (2 * i + 1) with
-          | None -> Error.error `unbound backreference`
-          | Some(j) -> let (Some st) = trace |> Array.get (2 * i) in
-            let c = String.sub s st (j - st) in
-            let l = String.length c in
-            if sp + l <= len then if String.equal c (String.sub s sp l) then loop (pc + 1) (sp + l) else false else false)
+        % | REF i ->
+        %   (match trace |> Array.get (2 * i + 1) with
+        %   | None -> Error.error `unbound backreference`
+        %   | Some(j) -> let (Some st) = trace |> Array.get (2 * i) in
+        %     let c = String.sub s st (j - st) in
+        %     let l = String.length c in
+        %     if sp + l <= len then if String.equal c (String.sub s sp l) then loop (pc + 1) (sp + l) else false else false)
         | BEGIN ->
           if sp == 0 then loop (pc + 1) sp else false
         | END ->
           if sp == String.length s then loop (pc + 1) sp else false
         | PRED f ->
-          if sp < len then if f (String.at s sp) then loop (pc + 1) (sp + 1) else false else false in
+          if sp < len then if f (String.at s sp) then loop (pc + 1) (sp + 1) else false else false
+        | NONE -> false in
       memoize2 main pc sp in
     let r = loop 0 0 in
     (r, trace)
@@ -118,10 +124,11 @@ end = struct
   | P-many1-ng of pattern
   | P-opt-ng of pattern
   | P-group of pattern
-  | P-ref of int
-  | P-head
-  | P-last
+%  | P-ref of int
+  | P-bof
+  | P-eof
   | P-satisfy of string -> bool
+  | P-none
 
   type t = pattern
 
@@ -138,10 +145,11 @@ end = struct
   let many1-ng p = P-many1-ng p
   let opt-ng p = P-opt-ng p
   let group p = P-group p
-  let ref i = P-ref i
-  let head = P-head
-  let last = P-last
+%  let ref i = P-ref i
+  let bof = P-bof
+  let eof = P-eof
   let satisfy f = P-satisfy f
+  let none = P-none
 
   let oneof s =
     let s = String.to-list s in
@@ -154,6 +162,10 @@ end = struct
     oneof (String.of-codepoints [9;10;11;12;13;32])
   let spaces =
     many1 space
+
+  let between op cl p = seq op (seq p cl)
+  let choice ts = List.fold-left alt none ts
+  let sequence ts = List.fold-right seq empty ts
 
   let compile p =
     let-mutable ngroup <- 0 in
@@ -228,14 +240,16 @@ end = struct
         let () = loop p in
         let () = emit (SAVE (2 * i + 1)) in
         ()
-      | P-ref i ->
-        emit (REF i)
-      | P-head ->
+%      | P-ref i ->
+%        emit (REF i)
+      | P-bof ->
         emit BEGIN
-      | P-last ->
+      | P-eof ->
         emit END
       | P-satisfy f ->
-        emit (PRED f) in
+        emit (PRED f)
+      | P-none ->
+        emit NONE in
       let () = loop p in
       (!acc, !cnt) in
     let (chunk, _) = codegen p in
@@ -272,7 +286,7 @@ end = struct
           | JMP i -> `JMP `# ^ (String.of-int i)
           | SPLIT (i,j) -> `SPLIT `# ^ (String.of-int i) ^ #` `# ^ (String.of-int j)
           | SAVE i -> `SAVE `# ^ (String.of-int i)
-          | REF i -> `REF `# ^ (String.of-int i)
+%          | REF i -> `REF `# ^ (String.of-int i)
           | BEGIN -> `BEGIN`
           | END -> `END`
           | PRED f -> `PRED <function>` in

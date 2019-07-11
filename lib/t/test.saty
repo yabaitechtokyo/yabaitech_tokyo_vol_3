@@ -42,18 +42,22 @@ let re1 = seq (group (alt (many1 (char `a`)) (group (char `c`)))) (group (many1 
 let (iseq1, _) = compile re1 in
 let () = print-iseq iseq1 in
 let ss = exec re1 `aabbb` |> print-result in
-let re2 = seq (group (alt (string `cat`) (string `dog`))) (ref 1) in
-let () = `dogdog` |> test re2 |> String.of-bool |> Debug.log in
-let () = `dogcat` |> test re2 |> String.of-bool |> Debug.log in
-let () = `catcat` |> test re2 |> String.of-bool |> Debug.log in
-let () = `aaadogdogbbb` |> test re2 |> String.of-bool |> Debug.log in
 let re3 = many (many (char `a`)) in
 let (iseq3, _) = compile (seq (many-ng any) (group re3)) in
 let () = print-iseq iseq3 in
 let () = `aaaaa` |> test re3 |> String.of-bool |> Debug.log in
-let re4 = seq (group (seq any (char `e`))) last in
+let re4 = seq (group (seq any (char `e`))) eof in
 let () = `the apple` |> exec re4 |> print-result in
 let () = exec spaces #` asdf`# |> print-result in
+% % backreference
+% let re2 = seq (group (alt (string `cat`) (string `dog`))) (ref 1) in
+% let () = `dogdog` |> test re2 |> String.of-bool |> Debug.log in
+% let () = `dogcat` |> test re2 |> String.of-bool |> Debug.log in
+% let () = `catcat` |> test re2 |> String.of-bool |> Debug.log in
+% let () = `aaadogdogbbb` |> test re2 |> String.of-bool |> Debug.log in
+% % aaaba vs (a*)a*b\1
+% let re5 = sequence [group (many (char `a`)); many (char `a`); char `b`; ref 1] in
+% let () = test re5 `aaaba` |> String.of-bool |> Debug.log in
 
 let rules = [
   (| kind = `identifier`; regexp = seq alpha (many (alt alpha (alt digit (char `-`)))) |);

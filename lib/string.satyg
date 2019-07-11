@@ -50,8 +50,5 @@ end = struct
     | _ -> go (i - 1) (sub s (i - 1) 1 :: acc)) in
     go (length s) []
 
-  let at s i =
-    let () = display-message s in
-    let () = display-message (of-int i) in
-    sub s i 1
+  let at s i = sub s i 1
 end
