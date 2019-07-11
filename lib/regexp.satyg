@@ -16,7 +16,7 @@ module RegExp : sig
   val any : t
   val empty : t
   val string : string -> t
-  val char : string -> t
+  val char : Char.t -> t
   val many : t -> t
   val many1 : t -> t
   val opt : t -> t
@@ -30,7 +30,7 @@ module RegExp : sig
   val bol : t
   val eol : t
   val none : t
-  val satisfy : (string -> bool) -> t
+  val satisfy : (Char.t -> bool) -> t
 
   % extra combinators (TODO: add vm instructions for important ones)
   val oneof : string -> t
@@ -55,7 +55,7 @@ end = struct
 
   type vm-inst =
   | MATCH
-  | CHAR of string
+  | CHAR of Char.t
   | JMP of int
   | SPLIT of int * int
   | ANY
@@ -63,7 +63,7 @@ end = struct
   | SAVE of int
 %  | REF of int   % backreference
   | ANCHOR of anchor
-  | PRED of string -> bool
+  | PRED of Char.t -> bool
 
   let run iseq ngroup s =
     let len = String.length s in
@@ -83,7 +83,7 @@ end = struct
       let main pc sp =
         match iseq |> Array.get pc with
         | MATCH -> true
-        | CHAR c -> ~(&(sp < len) &&& &(String.equal c (String.at s sp)) &&& &(loop (pc + 1) (sp + 1)))
+        | CHAR c -> ~(&(sp < len) &&& &(Char.equal c (Char.at sp s)) &&& &(loop (pc + 1) (sp + 1)))
         | JMP l -> loop (pc + l) sp
         | SPLIT (l1, l2) -> ~(&(loop (pc + l1) sp) ||| &(loop (pc + l2) sp))
         | ANY -> if sp < len then loop (pc + 1) (sp + 1) else false
@@ -109,12 +109,12 @@ end = struct
           ~(&(match a with
               | BOF -> sp == 0
               | EOF -> sp == String.length s
-              | BOL -> ~(&(sp == 0) ||| &(String.equal (String.at s (sp - 1)) Char.newline))
-              | EOL -> ~(&(sp == String.length s) ||| &(String.equal (String.at s sp) Char.newline))
+              | BOL -> ~(&(sp == 0) ||| &(Char.equal (Char.at (sp - 1) s) Char.newline))
+              | EOL -> ~(&(sp == String.length s) ||| &(Char.equal (Char.at sp s) Char.newline))
               | NOWHERE -> false)
             &&& &(loop (pc + 1) sp))
         | PRED f ->
-          ~(&(sp < len) &&& &(f (String.at s sp)) &&& &(loop (pc + 1) (sp + 1))) in
+          ~(&(sp < len) &&& &(f (Char.at sp s)) &&& &(loop (pc + 1) (sp + 1))) in
       memoize2 main pc sp in
     let r = loop 0 0 in
     (r, trace)
@@ -125,7 +125,7 @@ end = struct
   | P-any
   | P-empty
   | P-string of string
-  | P-char of string
+  | P-char of Char.t
   | P-many of pattern
   | P-many1 of pattern
   | P-opt of pattern
@@ -135,7 +135,7 @@ end = struct
   | P-group of pattern
 %  | P-ref of int
   | P-anchor of anchor
-  | P-satisfy of string -> bool
+  | P-satisfy of Char.t -> bool
 
   type t = pattern
 
@@ -162,7 +162,7 @@ end = struct
 
   let oneof s =
     let s = String.to-list s in
-    satisfy (fun c -> (Option2.is-some (List2.find (String.equal c) s)))
+    satisfy (fun c -> (Option2.is-some (List2.find (Char.equal c) s)))
   let alpha =
     oneof `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
   let digit =
@@ -287,7 +287,7 @@ end = struct
           | MATCH -> `MATCH`
           | ANY -> `ANY`
           | STRING s -> `STRING `# ^ s
-          | CHAR c -> `CHAR `# ^ c
+          | CHAR c -> `CHAR `# ^ String.of-char c
           | JMP i -> `JMP `# ^ (String.of-int i)
           | SPLIT (i,j) -> `SPLIT `# ^ (String.of-int i) ^ #` `# ^ (String.of-int j)
           | SAVE i -> `SAVE `# ^ (String.of-int i)

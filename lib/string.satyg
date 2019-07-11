@@ -1,4 +1,5 @@
 @require: list
+@import: char
 
 module String : sig
   val equal : string -> string -> bool
@@ -9,13 +10,13 @@ module String : sig
   val of-float : float -> string
   val of-empty : string
   val of-codepoints : int list -> string
+  val of-char : Char.t -> string
   val append : string -> string -> string
   val concat : string list -> string
   val empty : string -> bool
   val starts-with : string -> string -> bool
   val ends-with : string -> string -> bool
-  val to-list : string -> string list
-  val at : string -> int -> string
+  val to-list : string -> Char.t list
 end = struct
   let equal = string-same
   let length = string-length
@@ -25,6 +26,7 @@ end = struct
   let of-float = show-float
   let of-empty = ` `
   let of-codepoints = string-unexplode
+  let of-char = Char.to-string
   let append s1 s2 = s1 ^ s2
 
   let-rec concat xs = match xs with
@@ -47,8 +49,6 @@ end = struct
   let to-list s =
     let-rec go i acc = (match i with
     | 0 -> acc
-    | _ -> go (i - 1) (sub s (i - 1) 1 :: acc)) in
+    | _ -> go (i - 1) (Char.at (i - 1) s :: acc)) in
     go (length s) []
-
-  let at s i = sub s i 1
 end
