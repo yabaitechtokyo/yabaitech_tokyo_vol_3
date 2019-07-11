@@ -1,5 +1,6 @@
 % based on https://swtch.com/~rsc/regexp/regexp2.html
 
+@import: base
 @import: string
 @import: array
 @import: debug
@@ -23,7 +24,7 @@ module RegExp : sig
   val opt-ng : t -> t
   val group : t -> t
 %  val ref : int -> t
-  val bof : t
+  val bof : t  % beginning of file
   val eof : t
   val none : t
   val satisfy : (string -> bool) -> t
@@ -79,19 +80,21 @@ end = struct
       let main pc sp =
         match iseq |> Array.get pc with
         | MATCH -> true
-        | CHAR c -> if sp < len then if String.equal c (String.at s sp) then loop (pc + 1) (sp + 1) else false else false
+        | CHAR c -> ~(&(sp < len) &&& &(String.equal c (String.at s sp)) &&& &(loop (pc + 1) (sp + 1)))
         | JMP l -> loop (pc + l) sp
-        | SPLIT (l1, l2) -> if loop (pc + l1) sp then true else loop (pc + l2) sp
+        | SPLIT (l1, l2) -> ~(&(loop (pc + l1) sp) ||| &(loop (pc + l2) sp))
         | ANY -> if sp < len then loop (pc + 1) (sp + 1) else false
         | STRING c ->
           let l = String.length c in
-          if sp + l <= len then if String.equal c (String.sub s sp l) then loop (pc + 1) (sp + l) else false else false
+          ~(&(sp + l <= len) &&& &(String.equal c (String.sub s sp l)) &&& &(loop (pc + 1) (sp + l)))
         | SAVE i ->
           let old = trace |> Array.get i in
           let () = trace |> Array.set i (Some sp) in
           if loop (pc + 1) sp then true else
           let () = trace |> Array.set i old in
           false
+        % % The current implementation of REF instruction does not work well with memoize2.
+        % % I leave this for future refactoring.
         % | REF i ->
         %   (match trace |> Array.get (2 * i + 1) with
         %   | None -> Error.error `unbound backreference`

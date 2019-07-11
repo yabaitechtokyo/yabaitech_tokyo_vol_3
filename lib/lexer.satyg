@@ -2,6 +2,14 @@
 @import: string
 @require: list
 
+% % usage:
+% let rules = [
+%   (| kind = `identifier`; regexp = seq alpha (many (alt alpha (alt digit (char `-`)))) |);
+%   (| kind = `whitespace`; regexp = spaces |);
+% ] in
+% let (Some tokens) = Lexer.lex rules `abc defg   hijklMNL op123 `
+% tokens |> List.iter (fun tk -> (Debug.log (`(| kind = `# ^ tk#kind ^ `, data = "`# ^ tk#data ^ `" |)`)))
+
 module Lexer : sig
   val lex : ((| kind : string; regexp : RegExp.t |)) list -> string -> (((| kind : string; data : string |)) list) option
 end = struct
