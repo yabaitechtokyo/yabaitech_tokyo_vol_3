@@ -11,34 +11,46 @@
 
 module RegExp : sig
   type t
-  val alt : t -> t -> t
-  val seq : t -> t -> t
-  val any : t
+
+  % concatenation and alternation
   val empty : t
-  val string : string -> t
-  val char : Char.t -> t
+  val seq : t -> t -> t
+  val sequence : t list -> t
+  val fail : t
+  val alt : t -> t -> t
+  val choice : t list -> t
+
+  % quantifiers
   val many : t -> t
   val many1 : t -> t
   val opt : t -> t
-  val many-ng : t -> t
+  val many-ng : t -> t  % non-greedy Kleene star
   val many1-ng : t -> t
   val opt-ng : t -> t
+
+  % submatching
   val group : t -> t
-%  val ref : int -> t
+  %val ref : int -> t
+
+  % anchors
   val bof : t  % beginning of file
   val eof : t
-  val bol : t
+  val bol : t % beginning of line
   val eol : t
-  val fail : t
+
+  % char classes
+  val any : t
+  val char : Char.t -> t
   val satisfy : (Char.t -> bool) -> t
   val oneof : string -> t
   val alpha : t
   val digit : t
   val space : t
+
+  % compound patterns
+  val string : string -> t
   val spaces : t
   val between : t -> t -> t -> t
-  val choice : t list -> t
-  val sequence : t list -> t
 
   val test : t -> string -> bool
   val exec : t -> string -> ((int * string) option) list
@@ -66,8 +78,7 @@ end = struct
 
   let run iseq ngroup s =
     let len = String.length s in
-    let iseq-len = Array.length iseq in
-    let dp = Array.init iseq-len (fun _ -> Array.make (len + 1) None) in
+    let dp = Array.length iseq |> Array.init (fun _ -> Array.make (len + 1) None) in
     let memoize2 f i j =
       let dpi = dp |> Array.get i in
       match dpi |> Array.get j with

@@ -3,10 +3,11 @@
 @require: gr
 @require: vdecoset
 @require: list
-@import: string
-@import: regexp
-@import: lexer
-@import: debug
+@import: base/string
+@import: base/regexp
+@import: base/lexer
+@import: base/debug
+@import: base/inline
 
 type syntax-def = (|groups : ((|color : color; keywords : string list|)) list; ident-regexp : RegExp.t|)
 
@@ -121,17 +122,16 @@ end = struct
           in
           let ib-main =
             let (Some(tokens)) = Lexer.lex rules s in
-            let ibs = tokens |> List.map (fun tk ->
-              (if String.equal tk#kind `space`
-              then inline-skip charwid
-              else if String.equal tk#kind `identifier`
-              then match get-color syntax tk#data with
-              | None -> read-inline ctx-code (embed-string tk#data)
-              | Some c -> read-inline (ctx-code |> set-text-color c) (embed-string tk#data)
-              else read-inline ctx-code (embed-string tk#data)))
-%             let ibs-breakable = List.intersperse (discretionary (0-100000) inline-nil inline-nil inline-nil) ibs
-            in
-              ibs |> List.fold-left (fun ib1 ib2 -> (ib1 ++ ib2)) inline-nil
+            tokens 
+              |> List.map (fun tk ->
+                (if String.equal tk#kind `space`
+                then inline-skip charwid
+                else if String.equal tk#kind `identifier`
+                then match get-color syntax tk#data with
+                | None -> read-inline ctx-code (embed-string tk#data)
+                | Some c -> read-inline (ctx-code |> set-text-color c) (embed-string tk#data)
+                else read-inline ctx-code (embed-string tk#data)))
+              |> Inline.concat
           in 
           let ib =
             inline-skip (charwid *' (float i))
