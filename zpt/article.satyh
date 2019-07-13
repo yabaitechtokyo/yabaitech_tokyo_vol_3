@@ -1,7 +1,7 @@
 @require: math
 @import: ../book-class
-@import: ../lib/derive/derive
-@import: ../lib/derive/dsl
+@import: ../lib/typeset/derive
+@import: ../lib/typeset/derive-dsl
 
 module Zpt : sig
   val article : block-text
@@ -12,7 +12,7 @@ let-math \neg = math-char MathBin `¬`
 let bibliography = []
 
 let article =
-    open PoheDerive in
+    open Derive in
     '<
     +chapter ?:(`zpt-article`)
     (|
@@ -35,7 +35,7 @@ let article =
         +section {} <
             +math-list (${|
                 \proven!(
-                    open PoheDeriveDSL in
+                    open DeriveDSL in
                     derive(${\vdash \neg \paren{A \wedge \neg A}})
                     |> by({${\neg}-R})
                     |> from [
