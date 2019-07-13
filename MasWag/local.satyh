@@ -10,6 +10,16 @@ let-inline ctx \sample-command it =
 
 let-math \mathit m = ${\math-style!(MathItalic){#m}}
 
+%%% Word
+let-math \alphabet = ${\mathrm{\Sigma}}
+let-math \word = ${w}
+let-math \Word = ${\alphabet^\ast}
+
+%%% Autom
+let-math \A = ${\mathcal{A}}
+let-math \Lg = ${\mathcal{L}}
+let-math \Lgof a = ${\Lg\paren{#a}}
+
 %%% Math
 let-math \sequence x = ${\paren{#x}^\ast}
 let-math \powerset set = ${\app{\mathcal{P}}{#set}}
@@ -34,7 +44,6 @@ let-math \tsi i = ${\tau_{#i}}
 let-math \eventstyle a = ${\mathrm{#a}}
 let-math \word = ${w}
 let-math \wordWith = ${\word = \paren{\event_1,\tsi{1}},\paren{\event_2, \tsi{2}},\ldots,\paren{\event_n,\tsi{n}}}
-let-math \alphabet = ${\mathrm{\Sigma}}
 
 %%% Timed Automata
 let-math \clock = ${c}
