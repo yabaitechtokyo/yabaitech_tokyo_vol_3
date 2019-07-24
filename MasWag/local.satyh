@@ -14,11 +14,18 @@ let-math \mathit m = ${\math-style!(MathItalic){#m}}
 let-math \alphabet = ${\mathrm{\Sigma}}
 let-math \word = ${w}
 let-math \Word = ${\alphabet^\ast}
+let-math \wordInside = ${a_1a_2\cdots a_n}
+let-math \wordWithInside = ${\word = \wordInside}
 
 %%% Autom
 let-math \A = ${\mathcal{A}}
 let-math \Lg = ${\mathcal{L}}
 let-math \Lgof a = ${\Lg\paren{#a}}
+let-math \Loc ${Q}
+let-math \loc ${q}
+let-math \InitLoc ${Q_0}
+let-math \AccLoc ${Q_F}
+let-math \Transition ${\mathrm{\Delta}}
 
 %%% Math
 let-math \sequence x = ${\paren{#x}^\ast}
