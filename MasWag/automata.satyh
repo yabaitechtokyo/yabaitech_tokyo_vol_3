@@ -61,8 +61,11 @@ NFA${\A}が表現する言語を${\Lgof{\A}}と表記することとし、文字
   文字集合${\alphabet}上の非決定的有限オートマトン${\A}は5つ組${\paren{\alphabet,\Loc,\InitLoc,\AccLoc,\Transition}}である。但し${\alphabet}は有限の文字集合、${\Loc}は有限の状態集合、${\InitLoc \subseteq \Loc}は初期状態、${\AccLoc \subseteq \Loc}は受理状態の集合、${\Transition\subseteq \Loc \times\alphabet\times \Loc}は状態遷移関係である。
 }
 +p {
-  文字列 ${\wordWithInside \in \Word} に対して、ある状態列${\loc_0,\loc_1,\ldots,\loc_n}で、${\loc_0 \in \InitLoc}、${\paren{\loc_i,a_i,\loc_{i+1}} \in \Transition}、${q_n\in F}が成り立つものが存在するとき、${\A}は${\word}を\emph{受理する}という。また、${\A}が受理する文字列の集合を${\A}の\emph{受理言語}といい、${\Lg\paren{\A}}と表記する。また、NFA${\A}が言語${\Lg\paren{\A}}を\emph{認識する}、という。NFAによって受理される言語を\emph{正規言語} (regular language)という。また、${\InitLoc}が単集合で、各${\loc \in\Loc}、${a \in \alphabet}について${\paren{\loc,a,\loc'}}を充たす${\loc' \in \Loc}が一意に定まるとき、${\A}が\emph{決定的である}という。決定的である有限オートマトンを\emph{決定的有限オートマトン (deterministic finite automaton, DFA)}と言う。
+  文字列 ${\wordWithInside \in \Word} に対して、ある状態列${\loc_0,\loc_1,\ldots,\loc_n}で、${\loc_0 \in \InitLoc}、${\paren{\loc_i,a_i,\loc_{i + 1}} \in \Transition}、${q_n\in F}が成り立つものが存在するとき、${\A}は${\word}を\emph{受理する}という。
+また、${\A}が受理する文字列の集合を${\A}の\emph{受理言語}といい、${\Lgof{\A}}と表記する。
+また、NFA${\A}が言語${\Lgof{\A}}を\emph{認識する}、という。
+NFAによって受理される言語を\emph{正規言語} (regular language)という。
+また、${\InitLoc}が単集合で、各${\loc \in\Loc}、${a \in \alphabet}について${\paren{\loc,a,\loc'}}を充たす${\loc' \in \Loc}が一意に定まるとき、${\A}が\emph{決定的である}という。決定的である有限オートマトンを\emph{決定的有限オートマトン (deterministic finite automaton, DFA)}と言う。
   kokokara!!
 }
->
 >>

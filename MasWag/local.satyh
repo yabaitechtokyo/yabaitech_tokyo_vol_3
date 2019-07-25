@@ -21,11 +21,11 @@ let-math \wordWithInside = ${\word = \wordInside}
 let-math \A = ${\mathcal{A}}
 let-math \Lg = ${\mathcal{L}}
 let-math \Lgof a = ${\Lg\paren{#a}}
-let-math \Loc ${Q}
-let-math \loc ${q}
-let-math \InitLoc ${Q_0}
-let-math \AccLoc ${Q_F}
-let-math \Transition ${\mathrm{\Delta}}
+let-math \Loc = ${Q}
+let-math \loc = ${q}
+let-math \InitLoc = ${Q_0}
+let-math \AccLoc = ${Q_F}
+let-math \Transition = ${\mathrm{\Delta}}
 
 %%% Math
 let-math \sequence x = ${\paren{#x}^\ast}
