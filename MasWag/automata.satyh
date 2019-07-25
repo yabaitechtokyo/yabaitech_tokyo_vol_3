@@ -1,7 +1,8 @@
 @require: itemize
 @import: local
+@import: myhill-nerode
 
-let automata = '<+section{準備 ― 形式言語とオートマトン} <
+let automata = '<+section{準備} <
     +dialog(
         [(Some({魔王}), {駄目じゃないか!そんな変なもの食べちゃ!});
          (Some({猫}), {「俺に有限文字列を食えと言ったのはエミリーだ。});
@@ -24,6 +25,7 @@ ${\text!{BBKKBKK}}などは文字列となります。これらを結合した${
 ${\text!{KBFBBKKBKK}}も文字列です。また、長さ0の特別な文字列として${\epsilon}を用います。任意の文字列${w}について${\epsilon}は${w\cdot\epsilon=\epsilon\cdot w=w}の性質が成り立ちます。
 以後長さ${n}の文字列${a_1a_2\cdots a_n}の集合を${\alphabet^n}、有限長についての集合和を${\alphabet^\ast=\bigcup_{i=0}^{\infty}\alphabet^n}と書きます。また、文字の集合として以後主に${\alphabet = \set{\text!{K,B,F}}}を用います。
 }
+  +subsection{形式言語とオートマトン} <
 +p {
   文字列の集合を\emph{言語}と言います。例えば文字の集合${\alphabet}が${\alphabet=\set{0,1,2,3,4,5,6,7,8,9}}のときに${\alphabet^\ast}の部分集合である、3桁の電話番号の集合やフリーダイアルの電話番号の集合などは言語の例です。偶数の集合や回文となっている文字列の集合も言語の例です。
 }
@@ -65,7 +67,11 @@ NFA${\A}が表現する言語を${\Lgof{\A}}と表記することとし、文字
 また、${\A}が受理する文字列の集合を${\A}の\emph{受理言語}といい、${\Lgof{\A}}と表記する。
 また、NFA${\A}が言語${\Lgof{\A}}を\emph{認識する}、という。
 NFAによって受理される言語を\emph{正規言語} (regular language)という。
-また、${\InitLoc}が単集合で、各${\loc \in\Loc}、${a \in \alphabet}について${\paren{\loc,a,\loc'}}を充たす${\loc' \in \Loc}が一意に定まるとき、${\A}が\emph{決定的である}という。決定的である有限オートマトンを\emph{決定的有限オートマトン (deterministic finite automaton, DFA)}と言う。
-  kokokara!!
-}
+}>
+  +p {
+     NFA${\A = \paren{\alphabet,\Loc,\InitLoc,\AccLoc,\Transition}}について、${\InitLoc}が単集合で、各${\loc \in\Loc}、${a \in \alphabet}について${\paren{\loc,a,\loc'}}を充たす${\loc' \in \Loc}が一意に定まるとき、${\A}が\emph{決定的である}といいます。
+     決定的である有限オートマトンを\emph{決定的有限オートマトン (deterministic finite automaton, DFA)}と言います。
+     本章では省きますが、任意の非決定的有限オートマトンに${\A}について、決定的有限オートマトン ${\A'}で${\Lgof{\A} = \Lgof{\A'}}を充たすものが存在することが知られています。
+  }
+  #myhill-nerode;
 >>
