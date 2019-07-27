@@ -26,6 +26,24 @@ let bibliography = [
         url = `https://github.com/koba-e964/rust-schreier-sims`;
         year = 2019;
     |));
+    (`WikGroupTheory`, WebSite(|
+        author = {| |};
+        title = {群論};
+        url = `https://ja.wikipedia.org/wiki/%E7%BE%A4%E8%AB%96`;
+        year = 2019;
+    |));
+    (`WikBFS`, WebSite(|
+        author = {| |};
+        title = {幅優先探索};
+        url = `https://ja.wikipedia.org/wiki/%E5%B9%85%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2`;
+        year = 2019;
+    |));
+    (`WikDFS`, WebSite(|
+        author = {| |};
+        title = {深さ優先探索};
+        url = `https://ja.wikipedia.org/wiki/%E6%B7%B1%E3%81%95%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2`;
+        year = 2019;
+    |));
 ]
 
 let article = '<
@@ -55,6 +73,20 @@ let article = '<
         >
         +section {前提知識} <
              +p{
+             群論の初歩的な知識、およびグラフ理論の初歩的な知識を仮定する。
+             \listing{
+             * 群論: (例えば \cite[`WikGroupTheory`];)
+             * グラフ理論
+               ** 深さ優先探索 (例えば \cite[`WikDFS`];)
+               ** 幅優先探索 (例えば \cite[`WikBFS`];)
+             }%
+             }
+        >
+        +section {記法} <
+             +p{
+                  群の作用は右作用とする。つまり、${x} に対する ${g} の作用を ${x^g} と表記する。これは GAP における流儀と合わせている。
+                  よく使われる左作用の記法 (${g \cdot x}) と逆であることに注意されたい。
+作用は ${x^{g \cdot h} = \(x^g\)^h} を満たす必要がある。これも左作用の公理 (${\(g \cdot h\) \cdot x = g \cdot \(h \cdot x\)}) とは逆である。
              }
         >
     >
