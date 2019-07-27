@@ -4,7 +4,29 @@ module Koba : sig
   val article : block-text
 end = struct
 
-let bibliography = []
+let bibliography = [
+    (`Fuj2006`, Article(|
+        author = {| 藤本 光史 |};
+        title = {ルービックキューブとGap};
+        journal = {};
+        volume = None;
+        number = None;
+        pages = (1, 5);
+        year = 2006;
+    |));
+    (`GAPSystem`, WebSite(|
+        author = {| GAP Group |};
+        title = {GAP System for Computational Discrete Algebra};
+        url = `https://www.gap-system.org/`;
+        year = 2019;
+    |));
+    (`GAPRepositoryKoba`, WebSite(|
+        author = {| koba-e964 |};
+        title = {};
+        url = `https://github.com/koba-e964/rust-schreier-sims`;
+        year = 2019;
+    |));
+]
 
 let article = '<
     +chapter ?:(`koba-article`)
@@ -14,10 +36,27 @@ let article = '<
         author = {koba};
     |)
     <
-        +section {} <
-            +p{Hello, world!}
+        +section {はじめに} <
+            +p{
+            趣味で数学を勉強している kobae964 です。
+            置換群の位数を求めるための \emph{Schreier-Sims のアルゴリズム} \footnote{https://en.wikipedia.org/wiki/Schreier\%E2\%80\%93Sims_algorithm} というアルゴリズムを実装したので、それの解説を書いていきたいと思います。
+            }
+
+            +p{
+            GAP \cite[`GAPSystem`]; などの計算代数システムを使うと、色々な計算をたちどころに行うことができて非常に便利です。しかし、その内部でどのような処理が実行されているのかは、知らない方も多いのではないでしょうか?
+            置換群の位数の計算もその一つのように思えます。例えば ${3 \times 3 \times 3} ルービックキューブの可能な配置は有限群をなすので、その総数は、GAP を使用すれば簡単に計算できます。\cite[`Fuj2006`]; しかし、そのために内部でどのような処理を必要とするのかは決して自明ではありません。ルービックキューブの配置の総数は ${43252003274489856000 \simeq 4.3 \cdot 10^{19}}\footnote{${43252003274489856000 = 2^{11} \times 3^7 \times 12\! \times 8\! / 2}} であり、愚直に一つ一つの配置を見ていくやり方では決して全数検査を行うことはできません。
+            これの内部で実行されているのが Schreier-Sims のアルゴリズムです。${n} 点の置換群について、${n} についての多項式時間で位数を計算することができます。
+            }
+
+            +p{
+            この記事では、Schreier-Sims のアルゴリズムのアイディア、実装を追っていけたらと思います。今回はアルゴリズムの基本方針についてです。
+            なお、実装は GitHub のレポジトリ\cite[`GAPRepositoryKoba`]; に置いてあるので、興味のある方は読んでいただけたらと思います。
+            }
+        >
+        +section {前提知識} <
+             +p{
+             }
         >
     >
 >
-
 end
