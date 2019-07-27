@@ -3,4 +3,4 @@
 	url = https://gist.github.com/08bfc2e0d5a3e6b4e95ddd4998f5cf3b.git
 [submodule "lib"]
 	path = lib
-	url = git@github.com:nyuichi/satysfi-lib.git
+	url = https://github.com/nyuichi/satysfi-lib.git

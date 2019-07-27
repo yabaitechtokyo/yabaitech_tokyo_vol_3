@@ -1,3 +1,5 @@
+@require: color
+@import: ../lib/regexp
 @import: ../book-class
 @import: ../lib/typeset/code2
 
@@ -6,6 +8,20 @@ module Censored : sig
 end = struct
 
 let bibliography = []
+
+let python-rule = (|
+  groups = [
+    (|
+      color = RGB(0.8, 0.2, 0.);
+      keywords = [`import`; `from`];
+    |);
+    (|
+      color = RGB(0.5, 0., 0.7);
+      keywords = [`print`];
+    |);
+  ];
+  ident-regexp = RegExp.many1 RegExp.alpha;
+|)
 
 let article = '<
     +chapter ?:(`censored-article`)
@@ -24,14 +40,28 @@ let article = '<
     +p{前回のVol.2では、けものフレンズbotを動かすのに必要な前準備を行いました。
     AWS lambda上で動作するmecab-python3およびカスタムipadic-neologd辞書の作成が完了し、
     次のようなコードがlambda functionとして動作するようになりました。
-    \d-code(`
+  
+    \d-code?:(python-rule)( 
+    `
     import MeCab
     from unzip_neologd import unzip_neologd
     neologd_path = unzip_neologd()
     tagger = MeCab.Tagger(" -d " + neologd_path)
-    print(tagger.parse("2019年春アニメは進撃の巨人と鬼滅の刃が面白くてオススメです"))
+    print(tagger.parse("2019年のアニメは鬼滅の刃が面白くてオススメです"))
     `);
     }
+    >
+    +section{定期ツイート機能} <
+      
+    >
+    +section{リプライ機能} <
+      
+    >
+    +section{自動フォロー機能} <
+      
+    >
+    +section{API limit管理} <
+      
     >
     >
 >
