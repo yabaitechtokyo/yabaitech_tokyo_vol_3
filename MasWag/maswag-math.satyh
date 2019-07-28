@@ -3,10 +3,12 @@
 module MasWagMath : sig
   direct \cdot : [] math-cmd
   direct \triangle : [] math-cmd
-
+  direct \oapprox : [] math-cmd
 end = struct
   let bin = math-char MathBin
+  let ord = math-char MathOrd
 
   let-math \cdot = bin `⋅`
   let-math \triangle = bin `△`
+  let-math \oapprox = ord `≈`
 end

@@ -19,13 +19,16 @@ let-math \wordWithInside = ${\word = \wordInside}
 
 %%% Autom
 let-math \A = ${\mathcal{A}}
-let-math \Lg = ${\mathcal{L}}
+let-math \Lg = ${L}
 let-math \Lgof a = ${\Lg\paren{#a}}
 let-math \Loc = ${Q}
 let-math \loc = ${q}
 let-math \InitLoc = ${Q_0}
 let-math \AccLoc = ${Q_F}
 let-math \Transition = ${\mathrm{\Delta}}
+
+%%% Myhill-Nerode
+let-math \MNRel l = ${R_{#l}}
 
 %%% Math
 let-math \sequence x = ${\paren{#x}^\ast}
@@ -42,52 +45,7 @@ let-math \Rnn = ${\mathbb{R}_{\geq 0}}
 let-math \duration = ${t}
 let-math \models = ${\vDash}
 let-math \nmodels = ${\nvDash}
-
-%%% Timed Words
-let-math \event = ${\sigma}
-let-math \eventi i = ${\event_{#i}}
-let-math \ts = ${\tau}
-let-math \tsi i = ${\tau_{#i}}
-let-math \eventstyle a = ${\mathrm{#a}}
-let-math \word = ${w}
-let-math \wordWith = ${\word = \paren{\event_1,\tsi{1}},\paren{\event_2, \tsi{2}},\ldots,\paren{\event_n,\tsi{n}}}
-
-%%% Timed Automata
-let-math \clock = ${c}
-let-math \Clock = ${C}
-let-math \resets = ${R}
-let-math \guard = ${g}
-let-math \Guard = ${\app{\Phi}{\Clock}}
-let-math \Loc = ${Q}
-let-math \loc = ${q}
-let-math \InitLoc = ${Q_0}
-let-math \AccLoc = ${Q_F}
-let-math \Edge = ${\Delta}
-let-math \edge = ${\delta}
-let-math \edgeInside = ${\paren{\loc, \guard, \event, \resets,\loc'}}
-let-math \edgei i si = ${\paren{\loc_{#i}, \guard_{#si}, \event_{#si}, \resets_{#si},\loc_{#si}}}
-let-math \Autom = ${\mathcal{A}}
-let-math \AutomWith = ${\mathcal{A} = \paren{\alphabet,\Loc,\InitLoc,\AccLoc,\Clock,\Edge}}
-
-%%% TTS
-let-math \CVal = ${\paren{\Rnn}^\Clock}
-let-math \cval = ${\nu}
-let-math \TTS = ${\mathcal{S}}
-let-math \State = ${S}
-let-math \state = ${s}
-let-math \rstatei i = ${\paren{\loc_{#i},\cval_{#i}}}
-let-math \InitState = ${S_0}
-let-math \AccState = ${S_F}
-let-math \TransitionRel = ${to}
-let-math \Transition = let ord = math-char MathOrd in ord `→`
-let-math \reset cval resets = ${\angle-bracket{#cval}_{#resets}}
-let-math \initcval = ${\mathbb{0}_{\Clock}}
-let-math \path = ${\rho}
-let-math \Lg a = ${\app{\mathcal{L}}{#a}}
-
-let-math \Conf = ${\mathit-token!(`Conf`)}
-let-math \CurrConf = ${\mathit-token!(`CurrConf`)}
-let-math \NextConf = ${\mathit-token!(`NextConf`)}
+let-math \equivClass elem rel = ${\sqbracket{#elem}_{#rel}}
 
 let-inline ctx \simple-frame it =
   let pads = (2pt, 2pt, 2pt, 2pt) in
@@ -164,6 +122,20 @@ let-block ctx +problem title input output =
         +++ line-break false true (ctx |> set-paragraph-margin 0pt 0pt) inline-fil
     )
 
+let-block ctx +problem-nospace title input output =
+  let pads = (5pt, 5pt, 0pt, 0pt) in
+  let decoset = VDecoSet.simple-frame-stroke 1pt (Gray(0.75)) in
+    block-frame-breakable ctx pads decoset (fun ctx ->
+        block-skip 0pt
+        +++ (let ctx-title = ctx
+                     |> set-font HanIdeographic (`ipaexg`, 1.0, 0.)
+                     |> set-font Kana (`ipaexg`, 1.0, 0.) in 
+                line-break false false ctx-title (read-inline ctx-title {\simple-frame{#title;}}))
+        +++ (line-break false false ctx
+                ((read-inline ctx {\emph{入力}: #input;\emph{出力}: #output;}) ++ inline-fil))
+        +++ line-break false true (ctx |> set-paragraph-margin 0pt 0pt) inline-fil
+    )
+
 let-inline ctx \insert-image w path =
   let img = load-image path in
     use-image-by-width img w
@@ -205,6 +177,23 @@ let-block ctx +acknowledgement inner =
     let ib-inner = inline-skip len ++ read-inline ctx-title {謝辞} ++ inline-skip len ++ read-inline ctx inner ++ inline-fil in
       form-paragraph ctx ib-inner
 
+let-inline ctx \observationTable content = read-inline ctx {\tabular(fun t -> 
+             (let (cellf, multif, empty) = (t#c, t#m, t#e) in
+               List.map (fun row -> List.map cellf row) content))(fun xs ys -> (
+              match (ys, List.reverse ys) with
+              | (y0 :: y1 :: _, ylast :: _) ->
+                  ( match (xs, List.reverse xs) with
+                    | (x0 :: x1 :: _, xlast :: _) ->
+                        let grlstY =
+                          [y0; ylast] |> List.map (fun y ->
+                            stroke 1pt Color.black (Gr.line (x0, y) (xlast, y)))
+                        in
+                        (stroke 0.5pt Color.black (Gr.line (x1, y0) (x1, ylast)))
+                          :: (stroke 0.5pt Color.black (Gr.line (x0, y1) (xlast, y1))) :: grlstY
+                    | _ -> []
+                  )
+              | _ -> []
+          ));}
 % let-math \QED = math-char MathOrd `∎`
 
 % let-block ctx +proof-block ?:wordopt inner =
