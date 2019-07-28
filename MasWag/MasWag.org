@@ -92,6 +92,15 @@ See related works section of https://learnlib.de/wp-content/uploads/2013/05/ttt.
 
 * L* 
 
+突然、指名手配中の殺人鬼が現れた!
+殺人鬼「ぶっぽるぎゃるぴるぎゃっぽっぱぁぁぁぁぁーっ!
+殺人鬼は奇声を上げて…
+
+Angluin 1987年 L*を振り上げた!
+そして殺人鬼はジャンプして思いっきりそれを…
+
+振り下ろした!
+
 [[https://people.eecs.berkeley.edu/~dawnsong/teaching/s10/papers/angluin87.pdf][Paper]]
 
 ** Other (Related) Algorithms
@@ -251,6 +260,8 @@ AngluinのL*アルゴリズム等、オートマトンを学習するアルゴ�
 
 マキタ 26mm ハンマ・ドリルを振り上げた!
 そして殺人鬼はジャンプして思いっきりそれを…
+
+振り下ろした!
 
 ** 人格が
 

@@ -2,181 +2,60 @@
 @import: local
 
 let lstar = '<+section{L\*アルゴリズム} <
+            +dialog(
+                [(None,{突然、指名手配中の殺人鬼が現れた!});
+                 (Some({殺人鬼}), {「ぶっぽるぎゃるぴるぎゃっぽっぱぁぁぁぁぁーっ!});
+                 (None,{殺人鬼は奇声を上げて…});
+                 (None,{　});
+                 (None,{　          });
+                 (None,{　          });
+                 (None,{Angluin 1987年 L\*を振り上げた!});
+                 (None,{そして殺人鬼はジャンプして思いっきりそれを…});
+                 (None,{　});
+                 (None,{　          });
+                 (None,{　          });
+                 (None,{振り下ろした!});]);
 +p {
-  前節で定義した正規言語をDFAの形式で人間が書くことも当然できますが、これ以降本章では未知の正規言語を学習するという問題を主に考えます。機械学習の教師付き二値分類問題では「正例と負例からなる訓練用データを与えて、訓練用以外のデータについても高い確率で正しく分類する」という問題設定が良く用いられますが、ここでは\emph{exact learning}と呼ばれる学習を考えます。Exact learningでは、未知の正規言語を近似する正規言語を学習するのではなく、未知の正規言語と完全に等しい正規言語を表現するDFAを学習します。ここで、任意の文字列の有限集合は正規言語であるので、有限個の訓練用データを与えても本当に学習したい正規言語に辿り着くのは難しそうです。本節では (というよりexact learningの文脈ではしばしば) 、訓練用データの代わりに次の二つの質問を神託に聞くことを通して学習を行なう、という設定を考えます。現実的にこんなことがわかる神託をどうやって用意するのか、という問題はここでは考えません。
+  前節説明したIDアルゴリズムは正規言語${\Lg}を、live-completeな文字列集合${P}と所属性神託を用いて学習します。
+  IDアルゴリズムは${P}がlive-completeであることを要請しますが、
+  一方でIDアルゴリズムは${P}が大きくなると観察表が大きくなり必要な所属性神託の回数が増大するので、${P}を必要以上に大きくするのは良くありません。
+  本節ではlive-completeな文字列集合${P}を実行時に生成するL\*アルゴリズム\cite([`journals/iandc/Angluin87`]);を説明します。
+  L\*アルゴリズムは次の二つの質問を神託に聞くことを通して学習を行ないます。今回も現実的にこんなことがわかる神託をどうやって用意するのか、という問題はここでは考えません。
 }
 +p{
 \listing{
-* 所属性質問 (membership query): 文字列 ${w \in \alphabet^\ast} を神託に与えて、${w} が学習したい言語 ${L\subseteq \alphabet^\ast} に含まれているか (${w \in L})を問う質問。
-* 等価性質問 (equivalence query): 正規言語 ${L' \subseteq \alphabet^\ast} を神託に与えて、${L'} が学習したい言語 ${L} と等しいかどうかを問う質問。${L'\neq L}である場合には反例 ${w\in \alphabet^\ast}、つまり ${w\in L \triangle L'} を充たす最短の文字列 ${w} が返る。ここで${\triangle}は集合の対称差の記号である。
+* 所属性質問 (membership query): 文字列 ${\word \in \Word} を神託に与えて、${\word} が学習したい言語 ${\Lg\subseteq \Word} に含まれているか (${\word \in \Lg})を問う質問。
+* 等価性質問 (equivalence query): DFA ${\A} を神託に与えて、${\Lgof{\A}} が学習したい言語 ${\Lg} と等しいかどうかを問う質問。${\Lgof{\A}\neq \Lg}である場合には反例 ${\word\in \Word}、つまり ${\word\in \Lgof{\A} \triangle \Lg} を充たす最短の文字列 ${\word} が返る。ここで${\triangle}は集合の対称差の記号である。
 }
 }
 +p {
-
-  \figure ?:(`fig:evenDFA`){a, bの個数が共に偶数の文字列の言語を認識するDFAの例。}<
-     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/evenDFA.pdf`)(1);}
-  >
-  本節では例として ${L = \setsep{ a \in \set{\text!{a,b}}}{\text!{a, bの個数が共に偶数}}} を用います。例えば\ref-figure(`fig:evenDFA`);のDFAがこの言語を認識します。
-}
-+subsection{観察表} <
-+p {
-  L\* アルゴリズムでは \emph{観察表} (observation table) と呼ばれる表${T}に、各質問の結果を随時記入していくことで学習を進めていきます。観察表は\ref-figure(`fig:observationTable`);にある様に行、列が共に${\alphabet}上の文字列で添字付けされている表です。観察表の各セルには所属性質問の結果が記入されます。各セル${T\[w,w'\]}には文字列${w\cdot w'}の所属性質問の結果が記入されます。また、観察表には水平線より上側と下側の区別があります。
-水平線より上側の行の添字集合を${P\subseteq \alphabet^\ast},下側の添字集合を${P'\subseteq\alphabet^\ast},また、列の添字集合を${S\subseteq\alphabet^\ast}と呼びます。
-また、観察表が以下の条件を充たすとき、その観察表を\emph{閉じている}と言います。
-}
-+p{
+   本節も例として、 \ref-figure(`fig:mustHaveKBF`);のDFAが認識する${\Lg = \setsep{ a \in \set{\text!{K,B,F}}}{\text!{KBF を部分文字列として含む}}} を用います。
+観察表が以下の条件を充たすとき、その観察表を\emph{閉じている (closed)}と言います。
 \listing{
 * 各${w'\in P'}について、${T\[w,\text!{-}\]=T\[w',\text!{-}\]}を充たす${w\in P}が存在する
 * 各${w'\in P}、${a\in\alphabet}について、${w\cdot a\in P\cup P'}が成り立つ
 }
-  \figure ?:(`fig:observationTable`){観察表の例。${P=\set{\epsilon,\text!{a,b}},P'=\set{\text!{aa,ab,ba,bb}},S=\set{\epsilon,\text!{a}}}}<
-+centering{
-% \tabular(fun cellf multif empty -> [
-% [
-% cellf {} ;
-% cellf {${\epsilon}} ;
-% cellf {a} ;
-% ];
-% [
-% cellf {${\epsilon}};
-% cellf {T};
-% cellf {F};
-% ];
-% [
-% cellf {a};
-% cellf {F};
-% cellf {T};
-% ];
-% [
-% cellf {b};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {—————};
-% cellf {—————};
-% cellf {—};
-% ];
-% [
-% cellf {aa};
-% cellf {T};
-% cellf {F};
-% ];
-% [
-% cellf {ab};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {ba};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {bb};
-% cellf {T};
-% cellf {F};
-% ];
-%           ])(fun xs ys -> (
-%               match (ys, List.reverse ys) with
-%               | (y0 :: y1 :: _, ylast :: _) ->
-%                   ( match (xs, List.reverse xs) with
-%                     | (x0 :: x1 :: _, xlast :: _) ->
-%                         let grlstY =
-%                           [y0; ylast] |> List.map (fun y ->
-%                             stroke 1pt Color.black (Gr.line (x0, y) (xlast, y)))
-%                         in
-%                         (stroke 0.5pt Color.black (Gr.line (x1, y0) (x1, ylast)))
-%                           :: (stroke 0.5pt Color.black (Gr.line (x0, y1) (xlast, y1))) :: grlstY
-
-%                     | _ -> []
-%                   )
-%               | _ -> []
-%           ));
-  
 }
-  >
-}
->
 +subsection{L\* アルゴリズム} <
 +p {
-  \figure ?:(`fig:initObservationTable`){一番始めの観察表}<
-+centering{
-% \tabular(fun cellf multif empty -> [
-% [
-% cellf {} ;
-% cellf {${\epsilon}} ;
-% ];
-% [
-% cellf {${\epsilon}};
-% cellf {};
-% ];
-%           ])(fun xs ys -> (
-%               match (ys, List.reverse ys) with
-%               | (y0 :: y1 :: _, ylast :: _) ->
-%                   ( match (xs, List.reverse xs) with
-%                     | (x0 :: x1 :: _, xlast :: _) ->
-%                         let grlstY =
-%                           [y0; ylast] |> List.map (fun y ->
-%                             stroke 1pt Color.black (Gr.line (x0, y) (xlast, y)))
-%                         in
-%                         (stroke 0.5pt Color.black (Gr.line (x1, y0) (x1, ylast)))
-%                           :: (stroke 0.5pt Color.black (Gr.line (x0, y1) (xlast, y1))) :: grlstY
-
-%                     | _ -> []
-%                   )
-%               | _ -> []
-%           ));
-  
-}
+  \figure ?:(`fig:LStarObservationTable1`){一番始めの観察表(左)と所属性神託を使って内容を埋めた観察表(右)}<
+  +centering{\observationTable(
+    [[{} ;{${\epsilon}} ;];
+     [{${\epsilon}};];
+     [{—————};{—————};];]);
+\observationTable(
+    [[{} ;{${\epsilon}} ;];
+     [{${\epsilon}};{-};];
+     [{—————};{—————};];
+     [{K};{-};];
+     [{B};{-};];
+     [{F};{-};];]);
+ }
 >
-
-  L\*アルゴリズムではまず始めに\ref-figure(`fig:initObservationTable`);の観察表から始めます。最初に空欄になっているセル${T\[\epsilon, \epsilon\]}を所属性質問を用いて埋め、同時に${P'}にa,bを追加し、同様に埋めます (\ref-figure(`fig:observationTable1`);) 。
-
-  \figure ?:(`fig:observationTable1`){${\epsilon}、a、bについて埋めた観察表}<
-+centering{
-% \tabular(fun cellf multif empty -> [
-% [
-% cellf {} ;
-% cellf {${\epsilon}} ;
-% ];
-% [
-% cellf {${\epsilon}};
-% cellf {T};
-% ];
-% [
-% cellf {—————};
-% cellf {—————};
-% ];
-% [
-% cellf {a};
-% cellf {F};
-% ];
-% [
-% cellf {b};
-% cellf {F};
-% ];
-%           ])(fun xs ys -> (
-%               match (ys, List.reverse ys) with
-%               | (y0 :: y1 :: _, ylast :: _) ->
-%                   ( match (xs, List.reverse xs) with
-%                     | (x0 :: x1 :: _, xlast :: _) ->
-%                         let grlstY =
-%                           [y0; ylast] |> List.map (fun y ->
-%                             stroke 1pt Color.black (Gr.line (x0, y) (xlast, y)))
-%                         in
-%                         (stroke 0.5pt Color.black (Gr.line (x1, y0) (x1, ylast)))
-%                           :: (stroke 0.5pt Color.black (Gr.line (x0, y1) (xlast, y1))) :: grlstY
-
-%                     | _ -> []
-%                   )
-%               | _ -> []
-%           ));
-  
-}
->
+  L\*アルゴリズムではまず始めに\ref-figure(`fig:LStarObservationTable1`);左の観察表から始めます。最初に空欄になっているセル${T\[\epsilon, \epsilon\]}を所属性質問を用いて埋め、同時に${P'}にK,B,Fを追加し、同様に埋めます (\ref-figure(`fig:LStarObservationTable1`);右) 。
 }
 +p {
+   kokokara!!
   ここで\ref-figure(`fig:observationTable1`);の観察表が閉じているかを判定します。今回は任意の${w\in P}について、行aの行ベクトル${T\[\text!{a,-}\]}が行${w}の行ベクトル${T\[w,\text!{-}\]}と一致しないので閉じていません。そこで閉じていない原因の行aを${P}に追加します。このとき各${\setsep{\text!{a} \cdot a}{a \in \alphabet^\ast}}を添字とする列が${P}と${P'}のどちらにもに存在しない場合、その存在しない添字を${P'}に追加します (\ref-figure(`fig:observationTable2`);) 。
 }
 +p {
