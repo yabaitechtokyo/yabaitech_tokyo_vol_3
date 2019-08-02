@@ -55,251 +55,81 @@ let lstar = '<+section{L\*アルゴリズム} <
   L\*アルゴリズムではまず始めに\ref-figure(`fig:LStarObservationTable1`);左の観察表から始めます。最初に空欄になっているセル${T\[\epsilon, \epsilon\]}を所属性質問を用いて埋め、同時に${P'}にK,B,Fを追加し、同様に埋めます (\ref-figure(`fig:LStarObservationTable1`);右) 。
 }
 +p {
-   kokokara!!
-  ここで\ref-figure(`fig:observationTable1`);の観察表が閉じているかを判定します。今回は任意の${w\in P}について、行aの行ベクトル${T\[\text!{a,-}\]}が行${w}の行ベクトル${T\[w,\text!{-}\]}と一致しないので閉じていません。そこで閉じていない原因の行aを${P}に追加します。このとき各${\setsep{\text!{a} \cdot a}{a \in \alphabet^\ast}}を添字とする列が${P}と${P'}のどちらにもに存在しない場合、その存在しない添字を${P'}に追加します (\ref-figure(`fig:observationTable2`);) 。
-}
-+p {
-\figure ?:(`fig:observationTable2`){${\epsilon}、a、bについて埋めた後、閉じるまで操作を続けた観察表}<
-+centering{
-% \tabular(fun cellf multif empty -> [
-% [
-% cellf {} ;
-% cellf {${\epsilon}} ;
-% ];
-% [
-% cellf {${\epsilon}};
-% cellf {T};
-% ];
-% [
-% cellf {a};
-% cellf {F};
-% ];
-% [
-% cellf {—————};
-% cellf {—————};
-% ];
-% [
-% cellf {b};
-% cellf {F};
-% ];
-% [
-% cellf {aa};
-% cellf {T};
-% ];
-% [
-% cellf {ab};
-% cellf {F};
-% ];
-%           ])(fun xs ys -> (
-%               match (ys, List.reverse ys) with
-%               | (y0 :: y1 :: _, ylast :: _) ->
-%                   ( match (xs, List.reverse xs) with
-%                     | (x0 :: x1 :: _, xlast :: _) ->
-%                         let grlstY =
-%                           [y0; ylast] |> List.map (fun y ->
-%                             stroke 1pt Color.black (Gr.line (x0, y) (xlast, y)))
-%                         in
-%                         (stroke 0.5pt Color.black (Gr.line (x1, y0) (x1, ylast)))
-%                           :: (stroke 0.5pt Color.black (Gr.line (x0, y1) (xlast, y1))) :: grlstY
-
-%                     | _ -> []
-%                   )
-%               | _ -> []
-%           ));
-  
-}
->
-}
-+p {
-  今回は観察表が閉じました。観察表が閉じている場合、次のルールに従って観察表からDFAを生成することができます。
-}
-+p{
-\listing{
-* 各${w\in P}に対して、DFAの状態${q_w}を生成する
-* DFAの初期状態は${q_{\epsilon}}とする
-* DFAの受理状態は${T\[w,\epsilon\] = \mathrm{T}}となる状態${q_w}とする
-* DFAの遷移関数${\mathrm{\Delta}\paren{q_w,a}}は、${w\cdot a\in P}の場合${\mathrm{\Delta}\paren{q_w,a}=q_{w\cdot a}}とし、そうでない場合${T\[w\cdot a,\text!{-}\] = T\[w',\text!{-}\]}を充たす${w'\in P}について、${\mathrm{\Delta}\paren{q_w,a}=q_{w'}}とする。
-}
-}
-+p {
-
-  \figure ?:(`fig:evenDFAStep1`){\ref-figure(`fig:observationTable2`);の観察表に対応するDFA${\mathcal{A}_1}}<
-     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/evenDFAStep1.pdf`)(1);}
+  ここで\ref-figure(`fig:LStarObservationTable1`);右の観察表が閉じているかを判定します。
+  今回は任意の${w\in P'}について、${T\[w,\text!{-}\]=T\[\epsilon,\text!{-}\]}が成り立ちますし、各${a\in\alphabet}について、${a\in P'}もが成り立つので観察表は閉じています。
+  観察表が閉じている場合、IDアルゴリズムのときと同様に観察表からDFAを生成します。
+  \figure ?:(`fig:KBFStep1`){\ref-figure(`fig:LStarObservationTable1`);右の観察表に対応するDFA${\A_1}}<
+     +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/KBFStep1.pdf`)(1);}
   >
-  例えば\ref-figure(`fig:observationTable2`);の観察表からは\ref-figure(`fig:evenDFAStep1`);のDFA、${\mathcal{A}_1}が生成されます。
+  \ref-figure(`fig:LStarObservationTable1`);右の観察表からは\ref-figure(`fig:KBFStep1`);のDFA、${\A_1}が生成されます。
 }
 +p {
-  \figure ?:(`fig:observationTable3`){操作を更に続けた観察表}<
+  \figure ?:(`fig:LStarObservationTable2`){KB、KBFを${P'}に追加した観察表}<
 +centering{
-% \tabular(fun cellf multif empty -> [
-% [
-% cellf {} ;
-% cellf {${\epsilon}} ;
-% cellf {a} ;
-% ];
-% [
-% cellf {${\epsilon}};
-% cellf {T};
-% cellf {F};
-% ];
-% [
-% cellf {a};
-% cellf {F};
-% cellf {T};
-% ];
-% [
-% cellf {b};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {————};
-% cellf {————};
-% cellf {—};
-% ];
-% [
-% cellf {aa};
-% cellf {T};
-% cellf {F};
-% ];
-% [
-% cellf {ab};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {ba};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {bb};
-% cellf {T};
-% cellf {F};
-% ];
-%           ])(fun xs ys -> (
-%               match (ys, List.reverse ys) with
-%               | (y0 :: y1 :: _, ylast :: _) ->
-%                   ( match (xs, List.reverse xs) with
-%                     | (x0 :: x1 :: _, xlast :: _) ->
-%                         let grlstY =
-%                           [y0; ylast] |> List.map (fun y ->
-%                             stroke 1pt Color.black (Gr.line (x0, y) (xlast, y)))
-%                         in
-%                         (stroke 0.5pt Color.black (Gr.line (x1, y0) (x1, ylast)))
-%                           :: (stroke 0.5pt Color.black (Gr.line (x0, y1) (xlast, y1))) :: grlstY
-
-%                     | _ -> []
-%                   )
-%               | _ -> []
-%           ));
-  
-}
-+centering{
-% \tabular(fun cellf multif empty -> [
-% [
-% cellf {} ;
-% cellf {${\epsilon}} ;
-% cellf {a} ;
-% cellf {b} ;
-% ];
-% [
-% cellf {${\epsilon}};
-% cellf {T};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {a};
-% cellf {F};
-% cellf {T};
-% cellf {F};
-% ];
-% [
-% cellf {b};
-% cellf {F};
-% cellf {F};
-% cellf {T};
-% ];
-% [
-% cellf {ab};
-% cellf {F};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {————};
-% cellf {————};
-% cellf {—};
-% cellf {—};
-% ];
-% [
-% cellf {aa};
-% cellf {T};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {ba};
-% cellf {F};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {bb};
-% cellf {T};
-% cellf {F};
-% cellf {F};
-% ];
-% [
-% cellf {aba};
-% cellf {F};
-% cellf {F};
-% cellf {T};
-% ];
-% [
-% cellf {abb};
-% cellf {F};
-% cellf {T};
-% cellf {F};
-% ];
-%           ])(fun xs ys -> (
-%               match (ys, List.reverse ys) with
-%               | (y0 :: y1 :: _, ylast :: _) ->
-%                   ( match (xs, List.reverse xs) with
-%                     | (x0 :: x1 :: _, xlast :: _) ->
-%                         let grlstY =
-%                           [y0; ylast] |> List.map (fun y ->
-%                             stroke 1pt Color.black (Gr.line (x0, y) (xlast, y)))
-%                         in
-%                         (stroke 0.5pt Color.black (Gr.line (x1, y0) (x1, ylast)))
-%                           :: (stroke 0.5pt Color.black (Gr.line (x0, y1) (xlast, y1))) :: grlstY
-
-%                     | _ -> []
-%                   )
-%               | _ -> []
-%           ));
-  
+  \observationTable(
+    [[{} ;{${\epsilon}} ;];
+     [{${\epsilon}};{-};];
+     [{—————};{—————};];
+     [{K};{-};];
+     [{B};{-};];
+     [{F};{-};];
+     [{KB};{-};];
+     [{KBF};{+};];]);
 }
 >
-  DFAを一つ生成することができたので等価性質問によってこのDFA学習したい正規言語を認識するかどうかを調べてみます。
-今回、DFA${\mathcal{A}_1}は言語${L}を認識しないので、最短の反例 ba が返ります。
-次に反例 baがどの位置から\ref-figure(`fig:observationTable2`);の観察表と食い違ったかを見てみます。
-今回は${T\[\text!{b,-}\]= T\[\text!{a,-}\]}で、実際${b\nin L}と${a\nin L}が成り立ちますが、${ba\nin L}、${aa \in L}となるので末尾のaで観察表と食い違いました。
-これはつまり現在の状態の受理・非受理のみではなく、現在の状態からaを読んだときの受理・非受理も考慮する必要があるということになります。
-これを表わすために${S}の列にaを加え、先と同様に観察表が閉じるまで所属性質問を繰り返します (\ref-figure(`fig:observationTable3`);) 。
+DFA${\A_1}を生成することができたので等価性質問によって、DFA${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
+今回、DFA${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBF が返ります。
+ここで、${P'}にKBFのprefixで${P}にも${P'}にも含まれていないものを追加します。
+KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P'}にKBとKBFを追加し、観察表を埋めます。 (\ref-figure(`fig:LStarObservationTable2`);)
 }
 %      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
 +p {  
-  \ref-figure(`fig:observationTable3`);の下側の観察表から生成されるDFAについて等価性質問を問い合わせると学習したい言語と一致するので、今回の学習はここで終了となります。
-ここまでの流れだけを見ると今回たまたま上手く行っただけで、この学習が有限回で停止しない場合もあるのではないかと疑問に思うと思われますが、実は常に有限回 (より正確には多項式回)で停止しますし、更にはこの方法で生成されるDFAは与えられた言語を認識するDFAのなかで状態数が最小となることもわかります。
-これらの点について次に説明していきます。
+  \figure ?:(`fig:LStarObservationTable3`){\ref-figure(`fig:LStarObservationTable2`);の観察表を閉じさせた観察表 (左)、及び更に一貫させるまで${S}に文字列を追加した観察表 (右)}<
++centering{
+  \observationTable(
+    [[{} ;{${\epsilon}} ;];
+     [{${\epsilon}};{-};];
+     [{KBF};{+};];
+     [{—————};{—————};];
+     [{K};{-};];
+     [{B};{-};];
+     [{F};{-};];
+     [{KB};{-};];
+     [{KBFK};{+};];
+     [{KBFB};{+};];
+     [{KBFF};{+};];]);
+  \observationTable(
+    [[{} ;{${\epsilon}} ;{F};{BF};];
+     [{${\epsilon}};{-};{-};{-};];
+     [{K};{-};{-};{+};];
+     [{KB};{-};{+};{-};];
+     [{KBF};{+};{+};{+};];
+     [{—————};{—————};{—————};{—————};];
+     [{B};{-};{-};{-};];
+     [{F};{-};{-};{-};];
+     [{KK};{-};{-};{+};];
+     [{KF};{-};{-};{-};];
+     [{KBK};{-};{-};{+};];
+     [{KBB};{-};{-};{-};];
+     [{KBFK};{+};{+};{+};];
+     [{KBFB};{+};{+};{+};];
+     [{KBFF};{+};{+};{+};];]);
+}
+>
+  \ref-figure(`fig:LStarObservationTable2`);の観察表は閉じていないので、\ref-figure(`fig:LStarObservationTable2`);の観察表が閉じるまで${P}及び${P'}に文字列を追加し、観察表を埋めます。 (\ref-figure(`fig:LStarObservationTable3`);左)
+  具体的にはまず、${T\[\text!{KBF},\text!{-}\]}が${T\[\epsilon,\text!{-}\]}と一致しないのでKBFを${P'}から取り除き${P}に追加します。
+  次に、${\text!{KBF} \in P}ですがKBFK、KBFB、KBFFが${P}にも${P'}にも含まれていないので、これらを${P'}に追加します。
 }
 +p {
-  \figure ?:(`fig:evenDFAStep2`){\ref-figure(`fig:observationTable3`);の観察表に対応するDFA${\mathcal{A}_2}及び${\mathcal{A}_3}}<
-     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/evenDFAStep2.pdf`)(1);}
-     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/evenDFA.pdf`)(1);}
+   次に\ref-figure(`fig:LStarObservationTable3`);左の観察表が一貫するまで${S}に文字列を追加し、さらに観察表が閉じるまで${P}、${P'}に文字列を追加する、という操作を繰り返します (\ref-figure(`fig:LStarObservationTable3`);右)。
+   観察表を一貫させる操作はIDアルゴリズムのものと同じです。
+}
++p {
+  \figure ?:(`fig:evenDFAStep2`){\ref-figure(`fig:LStarObservationTable3`);左の観察表に対応するDFA${\A_2}}<
+     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/mustHaveKBF.pdf`)(1);}
   >
+  最後に\ref-figure(`fig:LStarObservationTable3`);左の観察表に対応するDFA${\A_2}を生成し、等価性質問によって${\Lgof{\A_2}}と学習したい正規言語が一致するかどうかを調べます。
+  今回は${\Lgof{\A_2}}が学習したい正規言語と一致するので、L\*アルゴリズムはここで終了となります。
 }
 >
 +subsection{停止性} <

@@ -59,7 +59,7 @@ let id = '<
 \listing{
 * 各${w,w'\in P}について、${T\[w,\text!{-}\]=T\[w',\text!{-}\]}を充たすとき、任意の${a \in \alphabet}について、${T\[w \cdot a,\text!{-}\]=T\[w' \cdot a,\text!{-}\]}が成り立つ
 }
-下側の添字集合${P'}は${P'=\setsep{\word \cdot a}{\word \in P,a \in \alphabet, \word \cdot a \nin P}}を充たします。
+IDアルゴリズムにおいて、下側の添字集合${P'}は${P'=\setsep{\word \cdot a}{\word \in P,a \in \alphabet, \word \cdot a \nin P}}とします。
   \figure ?:(`fig:observationTable`){観察表の例。${P=\set{\epsilon,\text!{K,KB,KBF}}},${P'=\set{\text!{B,F,KK,KF,KBK,KBB,KBFK,KBFB,KBFF}}},${S=\set{\epsilon,\text!{F,BF}}}}<
 +centering {
 \observationTable(
