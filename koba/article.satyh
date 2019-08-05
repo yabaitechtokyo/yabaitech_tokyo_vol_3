@@ -1,4 +1,6 @@
+@import: ../lib/regexp
 @import: ../book-class
+@import: ../lib/typeset/code2
 
 module Koba : sig
   val article : block-text
@@ -43,6 +45,12 @@ let bibliography = [
         title = {深さ優先探索};
         url = `https://ja.wikipedia.org/wiki/%E6%B7%B1%E3%81%95%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2`;
         year = 2019;
+    |));
+    (`HoltSlide`, WebSite(|
+        author = {| Holt, Derek |};
+        title = {a};
+        url = `https://blogs.cs.st-andrews.ac.uk/codima/files/2015/11/CoDiMa2015_Holt.pdf`;
+        year = 2015;
     |));
 ]
 
@@ -118,6 +126,55 @@ let article = '<
                 ${\mathrm{Orb}_G\(x\)} はグラフ理論的なアルゴリズム(深さ優先探索)で効率的に計算できるため、
                 安定化群の大きささえわかれば ${\abs{G}} がわかる。
 
+            }
+        >
+        +section {安定化群を用いた減少列の構成} <
+            +p{
+                軌道安定化群定理を用いて次々に安定化群を作っていくことを考える。
+                ${H_0 = G} として、
+                \eqn(${H_1 = \mathrm{Stab}_{H_0}\(u_0\), H_2 = \mathrm{Stab}_{H_1}\(u_1\), \ldots, H_k = \mathrm{Stab}_{H_{k-1}}\(u_{k-1}\) = \set{e}});
+                として、${G = H_0 \supseteq H_1 \supseteq H_2 \cdots \supseteq H_k = \set{e}} という部分群の列を構成したとする。
+                このとき \eqn(${\abs{G} = \(H_0 : H_1\) \(H_1 : H_2\) \cdots \(H_{k - 1} : H_k\)}); が成り立つ。各 ${\(H_i : H_{i+1}\) = \abs{\mathrm{Orb}_{H_i}\(u_i\)}} が計算できれば ${\abs{G}} も計算できる。
+                このようにして順番に全ての点を固定して、各時点での軌道の大きさを求め、それら全てを掛け合わせることで ${\abs{G}} を計算する、というのが Schreier-Sims のアルゴリズムによる位数計算の基本的なアイディアである。
+
+                以上の議論において、各ステップで計算すべきものは二つある。
+                \listing{
+                    * ${G} の生成元が与えられたとき、${\mathrm{Orb}_G\(x\)}
+                    * ${G} の生成元が与えられたとき、 ${\mathrm{Stab}_G\(x\)} の生成元
+                }
+                ${\mathrm{Orb}_G\(x\)} は ${G} の作用によって到達可能な点全体の集合であるため、幅優先探索か深さ優先探索で計算できる。
+                ${\mathrm{Stab}_G\(x\)} の生成元は難しいが以下のアイディアによって計算できる。
+                \listing{
+                    * ${\mathrm{Orb}_G\(x\)} の計算中にグラフの探索によって ${x^p = x^q} である ${p, q \in G} が見つかったとする。この時、${x^{p^{-1} \cdot q} = x} であるため、${p^{-1} \cdot q \in \mathrm{Stab}_G\(x\)} である。
+                    * 逆に、${\mathrm{Stab}_G\(x\)} の元はすべてこのような元の積で表せる。 (Schreier's Theorem, \cite[`HoltSlide`]; の p.8)
+                }
+
+                これを認めれば ${\mathrm{Stab}_G\(x\)} の生成元も計算できる。
+
+                実装には幅優先探索を用いた。以下に擬似コード (\cite[`HoltSlide`]; の p.6) を与える。
+                実装本体は GitHub レポジトリ \footnote{https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad18676db142436eee22955e0908749c049/src/main.rs\#L76-L110} にある。
+
+                \d-code(
+                `
+                function orbit_stabilizer(n: 要素数, gen: G の生成元のリスト, v: 固定する点) -> (軌道, 安定化群の生成元) {
+                    que: キュー
+                    stabilizer_gen: 安定化群の生成元のリスト
+                    (u, e) を que に積む
+                    stabilizer_gen <- []
+                    for (y, g) in que {
+                        if y に訪れたことがある {
+                            p(u) = y という情報が記録されていれば、 p^{-1} * g は y を固定する。
+                            gen.push(p^{-1} * g);
+                            continue;
+                        }
+                        y に訪れたことにし、g(u) = y という情報を記録する
+                        for x in gen {
+                            (x(y), g * x) を que に積む
+                        }
+                    }
+                    return (orb, stabilizer_gen)
+                }
+                `);
             }
         >
     >
