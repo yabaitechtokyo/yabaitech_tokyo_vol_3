@@ -48,7 +48,7 @@ let bibliography = [
     |));
     (`HoltSlide`, WebSite(|
         author = {| Holt, Derek |};
-        title = {a};
+        title = {The Schreier-Sims algorithm for finite permutation groups};
         url = `https://blogs.cs.st-andrews.ac.uk/codima/files/2015/11/CoDiMa2015_Holt.pdf`;
         year = 2015;
     |));
@@ -175,6 +175,42 @@ let article = '<
                     return (orb, stabilizer_gen)
                 }
                 `);
+            }
+        >
+        +section{Schreier-Simsのアルゴリズム (愚直)} <
+            +p{
+                0 から ${n - 1} までの点を順番に固定して、徐々に群を小さくするというのが基本方針である。
+                上の数式でいうと ${u_0 = 0, u_1 = 1, \ldots, u_{n - 1} = n - 1} である。
+
+                \d-code(
+                `
+                function schreier_sims(n: 点数, x: 生成元の集合) -> 位数 {
+                    gen := x;
+                    ord := 1;
+                    for i in 0..n {
+                        (orb, stab) := calc_orbit_stabilizer(n, i, x);
+                        ord *= |orb|;
+                        gen = stab;
+                    }
+                    return ord;
+                }
+                `);
+
+                ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad18676db142436eee22955e0908749c049/src/main.rs
+                これの計算量はどうなるだろうか? 各ステップで、生成元の個数は最悪の場合 (軌道の大きさ) 倍になる。
+                ${i} を固定するときの軌道の大きさは最大で ${n - i} であるため、これらの積は最悪 ${\app{O}{n\!}} 程度である。
+                当初の目標は ${n = 48} の場合に群の位数を求めることだったため、これでは到底間に合わない。
+
+                多項式時間バージョンの Schreier-Sims のアルゴリズムはより賢い工夫をしている。それの解説は次節以降に譲る。
+
+            }
+        >
+        +section{謝辞} <
+            +p {
+                この記事は以下を参考にして書かれました。
+                \listing{
+                    * \cite[`HoltSlide`];: このスライドを主に利用して実装しました。
+                }
             }
         >
     >
