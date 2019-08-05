@@ -10,3 +10,7 @@ ARTICLES := censored/article.satyh\
 
 main.pdf: book-class.satyh $(ARTICLES) main.saty
 	satysfi -b main.saty -C .satysfi -o main.pdf
+
+.PHONY: clean
+clean:
+	$(RM) main.pdf main.satysfi-aux
