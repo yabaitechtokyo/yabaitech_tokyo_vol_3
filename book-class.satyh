@@ -703,7 +703,12 @@ end = struct
                   ctx-doc |> set-latin-font font-latin-bold
                 in
                 let it-num = embed-string (get-cross-reference-number `chapter:` label) in
-                let it-page = embed-string (arabic ((Int.of-string (get-cross-reference-page `chapter:` label)) - 2)) in
+                let it-page =
+                  let page-num = get-cross-reference-page `chapter:` label in
+                  if String.equal page-num `?` then
+                    embed-string `?`
+                  else
+                    embed-string (arabic (Int.of-string page-num - 2)) in
                 let ib-title =
                     read-inline ctx {#title;} ++
                     (match subtitle with
