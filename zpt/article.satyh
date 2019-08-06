@@ -25,7 +25,17 @@ let bibliography = [
         title = {Logic: A Very Short Introduction};
         publisher = {Oxford University Press};
         year = 2017
-    |))]
+    |));
+    (`Belnap77`, Article(|
+        author = {| Belnap N.D|};
+        title = {A Useful Four-Valued Logic};
+        journal = {Modern Uses of Multiple-Valued Logic};
+        volume = Some(2);
+        number = None;
+        pages = (5, 37);
+        year = 1977;
+    |))
+    ]
 
 let article =
     open Derive in
@@ -67,7 +77,11 @@ let article =
             >
         >
         +section {First Degree Entailment} <
-            
+            +p{このような真矛盾主義主義という考え方があって、それを形式的な論理体系に落としこみたいというのはごく自然な考えですよね。ここでは\dfn{First Degree Entailment}(FDE)\cite[`Belnap77`];という論理体系を紹介します。}
+            +p{まず記号の定義をしていきましょう。FDEの命題${A, B, \ldots}は\dfn{原子命題}p、\dfn{否定}${\neg A}、\dfn{連言}${A \wedge B}、\dfn{選言}${A \vee B}から成ります。気持ちの説明をすると原子命題は何らかの知識の対象(「猫はかわいい」とか「パリはアメリカの首都だ」とか)を抽象化したもので${p, q, \ldots}と書き表します。否定${\neg A}は「Aではない」、連言${A \wedge B}は「AかつBである」、選言${A \vee B}は「AまたはBである」という意味に解釈できます。
+            }
+            +p{古典論理だと命題は真であるか偽であるかのどちらかです。FDEはこれを拡張してある命題が「真であるかどうか」と「偽であるかどうか」を独立した性質として解釈します。FDEにおける命題の解釈${\rho}は命題と真偽値の二項関係です。${A \rho 1}は「Aは真である」、${A \rho 0}は「Aは偽である」という意味になります。${A \rho 1}かつ${A \rho 0}になるような状況、あるいは${A \rho 1}でも${A \rho 0}でもない状況がありうることに注意してください。}
+            +p{\todo{原子命題の付値から命題の解を得る方法について書く}}
         >
         +section {} <
             +math-list (${|
