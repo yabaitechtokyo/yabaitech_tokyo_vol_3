@@ -28,6 +28,21 @@ let bibliography = [
         url = `https://github.com/koba-e964/rust-schreier-sims`;
         year = 2019;
     |));
+    (`MO1995`, Article(|
+        author = {| Murray, Scott H and O'Brien, Eamonn A |};
+        title = {Selecting base points for the Schreier-Sims algorithm for matrix groups};
+        journal = {Journal of Symbolic Computation};
+        volume = Some(19);
+        number = Some({6});
+        pages = (577, 584);
+        year = 1995;
+    |));
+    (`MurEssay`, WebSite(|
+        author = {| Murray, Scott H |};
+        title = {The Schreier-Sims algorithm};
+        url = `http://www.maths.usyd.edu.au/u/murray/research/essay.pdf`;
+        year = 2003;
+    |));
     (`WikGroupTheory`, WebSite(|
         author = {| |};
         title = {群論};
@@ -203,6 +218,11 @@ let article = '<
 
                 多項式時間バージョンの Schreier-Sims のアルゴリズムはより賢い工夫をしている。それの解説は次節以降に譲る。
 
+            }
+        >
+        +section{Schreier-Sims のアルゴリズム (多項式)} <
+            +p{
+                前節のアルゴリズムを高速化し、計算量が多項式に収まるようにする。この改善は Sims による。\cite[`MO1995`];
             }
         >
         +section{謝辞} <
