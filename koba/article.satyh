@@ -1,73 +1,11 @@
 @import: ../lib/regexp
 @import: ../book-class
 @import: ../lib/typeset/code2
+@import: ./bibliography
 
 module Koba : sig
   val article : block-text
 end = struct
-
-let bibliography = [
-    (`Fuj2006`, Article(|
-        author = {| 藤本 光史 |};
-        title = {ルービックキューブとGap};
-        journal = {};
-        volume = None;
-        number = None;
-        pages = (1, 5);
-        year = 2006;
-    |));
-    (`GAPSystem`, WebSite(|
-        author = {| GAP Group |};
-        title = {GAP System for Computational Discrete Algebra};
-        url = `https://www.gap-system.org/`;
-        year = 2019;
-    |));
-    (`GAPRepositoryKoba`, WebSite(|
-        author = {| koba-e964 |};
-        title = {};
-        url = `https://github.com/koba-e964/rust-schreier-sims`;
-        year = 2019;
-    |));
-    (`MO1995`, Article(|
-        author = {| Murray, Scott H and O'Brien, Eamonn A |};
-        title = {Selecting base points for the Schreier-Sims algorithm for matrix groups};
-        journal = {Journal of Symbolic Computation};
-        volume = Some(19);
-        number = Some({6});
-        pages = (577, 584);
-        year = 1995;
-    |));
-    (`MurEssay`, WebSite(|
-        author = {| Murray, Scott H |};
-        title = {The Schreier-Sims algorithm};
-        url = `http://www.maths.usyd.edu.au/u/murray/research/essay.pdf`;
-        year = 2003;
-    |));
-    (`WikGroupTheory`, WebSite(|
-        author = {| |};
-        title = {群論};
-        url = `https://ja.wikipedia.org/wiki/%E7%BE%A4%E8%AB%96`;
-        year = 2019;
-    |));
-    (`WikBFS`, WebSite(|
-        author = {| |};
-        title = {幅優先探索};
-        url = `https://ja.wikipedia.org/wiki/%E5%B9%85%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2`;
-        year = 2019;
-    |));
-    (`WikDFS`, WebSite(|
-        author = {| |};
-        title = {深さ優先探索};
-        url = `https://ja.wikipedia.org/wiki/%E6%B7%B1%E3%81%95%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2`;
-        year = 2019;
-    |));
-    (`HoltSlide`, WebSite(|
-        author = {| Holt, Derek |};
-        title = {The Schreier-Sims algorithm for finite permutation groups};
-        url = `https://blogs.cs.st-andrews.ac.uk/codima/files/2015/11/CoDiMa2015_Holt.pdf`;
-        year = 2015;
-    |));
-]
 
 let article = '<
     +chapter ?:(`koba-article`)
