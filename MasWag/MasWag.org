@@ -151,7 +151,9 @@ Angluin 1987年 L*を振り上げた!
 
 - https://www.ijcai.org/Proceedings/09/Papers/170.pdf
 
-* Applications
+
+
+* COMMENT Applications
 
 ** Model Checking (BBC)
 
@@ -161,7 +163,7 @@ Angluin 1987年 L*を振り上げた!
 
 - https://link.springer.com/chapter/10.1007/3-540-45923-5_6
 
-* Implementations
+* COMMENT Implementations
 
 ** LearnLib
 

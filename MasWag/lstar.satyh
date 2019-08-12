@@ -1,7 +1,7 @@
 @require: itemize
 @import: local
 
-let lstar = '<+section{L\*アルゴリズム} <
+let lstar = '<+section?:(`sec:lstar`){L\*アルゴリズム} <
             +dialog(
                 [(None,{突然、指名手配中の殺人鬼が現れた!});
                  (Some({殺人鬼}), {「ぶっぽるぎゃるぴるぎゃっぽっぱぁぁぁぁぁーっ!});
@@ -16,7 +16,7 @@ let lstar = '<+section{L\*アルゴリズム} <
                  (None,{　          });
                  (None,{振り下ろした!});]);
 +p {
-  前節説明したIDアルゴリズムは正規言語${\Lg}を、live-completeな文字列集合${P}と所属性神託を用いて学習します。
+  前節で説明したIDアルゴリズムは正規言語${\Lg}を、live-completeな文字列集合${P}と所属性神託を用いて学習します。
   IDアルゴリズムは${P}がlive-completeであることを要請しますが、
   一方でIDアルゴリズムは${P}が大きくなると観察表が大きくなり必要な所属性神託の回数が増大するので、${P}を必要以上に大きくするのは良くありません。
   本節ではlive-completeな文字列集合${P}を実行時に生成するL\*アルゴリズム\cite([`journals/iandc/Angluin87`]);を説明します。

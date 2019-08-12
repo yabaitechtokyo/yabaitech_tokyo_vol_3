@@ -2,7 +2,7 @@
 @import: local
 @import: myhill-nerode
 
-let automata = '<+section{準備} <
+let automata = '<+section?:(`sec:automata`){準備} <
     +dialog(
         [(Some({魔王}), {駄目じゃないか!そんな変なもの食べちゃ!});
          (Some({猫}), {「俺に有限文字列を食えと言ったのはエミリーだ。});

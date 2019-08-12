@@ -50,4 +50,62 @@ Learning Regular Sets from Queries and Counterexamples
 <publisher>サイエンス社</publisher>
 <year>2003</year>
 </book>
+<inproceedings key="conf/cai/BalleM15" mdate="2017-05-24">
+<author>Borja Balle</author>
+<author>Mehryar Mohri</author>
+<title>Learning Weighted Automata.</title>
+<pages>1-21</pages>
+<year>2015</year>
+<booktitle>CAI</booktitle>
+<ee>https://doi.org/10.1007/978-3-319-23021-4_1</ee>
+<crossref>conf/cai/2015</crossref>
+<url>db/conf/cai/cai2015.html#BalleM15</url>
+</inproceedings>
+<inproceedings key="conf/tacas/DrewsD17" mdate="2017-05-24">
+<author>Samuel Drews</author>
+<author>Loris D'Antoni</author>
+<title>Learning Symbolic Automata.</title>
+<pages>173-189</pages>
+<year>2017</year>
+<booktitle>TACAS (1)</booktitle>
+<ee>https://doi.org/10.1007/978-3-662-54577-5_10</ee>
+<crossref>conf/tacas/2017-1</crossref>
+<url>db/conf/tacas/tacas2017-1.html#DrewsD17</url>
+</inproceedings>
+<inproceedings key="conf/cav/IsbernerHS15" mdate="2017-06-01">
+<author orcid="0000-0002-7704-5173">Malte Isberner</author>
+<author>Falk Howar</author>
+<author>Bernhard Steffen</author>
+<title>
+The Open-Source LearnLib - A Framework for Active Automata Learning.
+</title>
+<pages>487-495</pages>
+<year>2015</year>
+<booktitle>CAV (1)</booktitle>
+<ee>https://doi.org/10.1007/978-3-319-21690-4_32</ee>
+<crossref>conf/cav/2015-1</crossref>
+<url>db/conf/cav/cav2015-1.html#IsbernerHS15</url>
+</inproceedings>
+<inproceedings key="conf/cav/BolligKKLNP10" mdate="2018-11-14">
+<author>Benedikt Bollig</author>
+<author orcid="0000-0002-6143-1926">Joost-Pieter Katoen</author>
+<author>Carsten Kern</author>
+<author>Martin Leucker</author>
+<author>Daniel Neider</author>
+<author>David R. Piegdon</author>
+<title>libalf: The Automata Learning Framework.</title>
+<pages>360-364</pages>
+<year>2010</year>
+<booktitle>CAV</booktitle>
+<ee type="oa">https://doi.org/10.1007/978-3-642-14295-6_32</ee>
+<ee>https://www.wikidata.org/entity/Q57801500</ee>
+<crossref>conf/cav/2010</crossref>
+<url>db/conf/cav/cav2010.html#BolligKKLNP10</url>
+</inproceedings>
+<www>
+  <author>Ali Khalili</author>
+  <title>AIDE (Automata-Identification Engine) - CodePlex Archive</title>
+  <year>2015</year>
+  <url>https://archive.codeplex.com/?p=aide</url>
+</www>
 </dblp>

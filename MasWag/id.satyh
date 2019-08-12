@@ -2,7 +2,7 @@
 @import: local
 
 let id = '<
-        +section {IDアルゴリズム} <
+        +section?:(`sec:id`) {IDアルゴリズム} <
             +dialog(
                 [(Some({絵美理}),{「Angluin の Automata Inferenceは嫌いですか…？});
                  (Some({遼}), {「ソンナコトナイ!});
