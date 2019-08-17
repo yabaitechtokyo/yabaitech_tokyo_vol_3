@@ -22,8 +22,172 @@ let nlstar = '<
                一方でNFAを用いることで等価な正規言語を表現するオートマトンの状態数を指数的に小さくすることがあることが知られています。
                本節ではL\*アルゴリズムと同様に所属性質問と等価性質問を用いて、正規言語${\Lg}を表現するNFAを学習する、NL\*アルゴリズムを紹介します。
             }
+   +subsection?:(`sec:RFSA`){Residual Finite-State Automata} <
             +p {
-               IDアルゴリズムやL\*アルゴリズムで用いた観察表は、Myhill-Nerode同値関係よりも粗いか同等な同値関係を表現するので、
+               IDアルゴリズムやL\*アルゴリズムで観察表からDFAを生成できたカラクリは、観察表が一貫していて閉じているとき、
+               観察表はMyhill-Nerode同値関係よりも粗いか同等な同値関係を表現するので、これを用いてDFAを生成することができる、というものでした。
+               同様に観察表を用いてNFAを学習しようとすると、同様の方法でNFAを生成する必要がありますが、このままの「一貫」や「閉」の定義のままでは
+               最終的にMyhill-Nerode同値関係が学習されてしまい、結局状態数を減らすことができません。
+               NL\*アルゴリズムではIDアルゴリズムやL\*アルゴリズムで用いた「一貫」や「閉」の代わりに\emph{RFSA一貫(RFSA-Consistency)}と\emph{RFSA閉(RFSA-Closedness)}を用い、
+               観察表からはDFAの代わりに\emph{residual finite-state automaton (RFSA)}と呼ばれるNFAのサブクラスを生成します。
+               RFSAはDFAを含む様なNFAのサブクラスで、RFSAが表わす言語をDFAを用いて表わすと指数的に多くの状態数が必要となる場合があることが知られています。
+               また、RFSAにはDFAでの最小DFAと同じ様に、canonicalなものが存在します。
+            }
+            +definition ?:({residual言語}) ?:(`def:residual-language`) {
+              言語${\Lg \subseteq \Word}及び${\word \in \Word}について、${\word^{-1}\Lg = \setsep{\word' \in \Word}{\word \word' \in \Lg}}と定義する。
+              言語${\Lg'}と言語${\Lg}について文字列 ${\word \in \Word}で${\Lg' = \word^{-1}\Lg}を充たすものが存在するとき、${\Lg'}が${\Lg}の\emph{residual言語}であるいう。
+              言語${\Lg}のresidual言語の集合を${\Res{\Lg}}と表記する。
+            }
+            +definition ?:({residual finite-state automata (RFSA)}) ?:(`def:RFSA`) {
+              NFA ${\A=\paren{\alphabet,\Loc,\InitLoc,\AccLoc,\Transition}}及び${\loc \in \Loc}について、
+              ${\A_{\loc}=\paren{\alphabet,\Loc,\set{\loc},\AccLoc,\Transition}}及び${\Lg_{\loc} = \Lgof{\A_{\loc}}}と表記する。
+              NFA ${\A=\paren{\alphabet,\Loc,\InitLoc,\AccLoc,\Transition}}及び任意の${\loc \in \Loc}について、
+              ${\Lg_{\loc} \in \Res{\Lgof{\A}}}を充たすとき、${\A}が\emph{residual finite-state automaton}であるという。
+            }
+            +p {
+              ${P,P',S}を観察表${T}の添字集合とする。
+              観察表${T}の行${T\[w,\text!{-}\]}と${T\[w',\text!{-}\]}について、
+              任意の${u \in S}について${T\[w,u\] \Rightarrow T\[w',u\]}が成り立つとき、
+              ${T\[w,\text!{-}\] \sqsubseteq T\[w',\text!{-}\]}と表記する。
+              観察表${T}の行の添字${w,w',w'' \in P \cup P'}について、
+              任意の${u \in S}について
+              \eqn(${T\[w,u\] = \text!{+} \iff T\[w',u\] = \text!{+ または} T\[w'',u\] = \text!{+}});
+              が成り立つとき、
+              ${T\[w,\text!{-}\] = T\[w',\text!{-}\] \sqcup T\[w'',\text!{-}\]}と表記する。
+              ${w \in P \cup P'}について、${w_1,w_2,\cdots,w_n \in \paren{P \cup P'}\setminus \set{w}}で
+              \eqn(${T\[w,\text!{-}\] = \bigsqcup_{i \in \set{1,2,\cdots,n}} T\[w_i,\text!{-}\]});
+              を充たすものが存在しないとき、行${T\[w,\text!{-}\]}を\emph{素}であるという。
+              観察表${T}の素な添字集合を${\Primes{T} \subseteq P \cup P'}と表記する。
+            }
+            +definition ?:({RFSA一貫}) ?:(`def:RFSA-consistency`) {
+              ${P,P',S}を観察表${T}の添字集合とする。
+              任意の${w,w'\in P}、${a\in\alphabet}について、
+              ${T\[w,\text!{-}\] \sqsubseteq T\[w',\text!{-}\]}ならば
+              ${T\[w a,\text!{-}\] \sqsubseteq T\[w' a,\text!{-}\]}が成り立つとき、
+              観察表${T}が\emph{RFSA一貫}であるという。
+            }
+            +definition ?:({RFSA閉}) ?:(`def:RFSA-closed`) {
+              ${P,P',S}を観察表${T}の添字集合とする。
+              任意の${w\in P'}について、
+              ${T\[w,\text!{-}\] = \bigsqcup \setsep{T\[w',\text!{-}\]}{w' \in \Primes{T} \cap P,T\[w',\text!{-}\] \sqsubseteq T\[w,\text!{-}\]}}
+              が成り立ち、
+              任意の${w\in P}及び${a \in \alphabet}について、${w a \in P \cup P'}が成り立つとき、
+              観察表${T}が\emph{RFSA閉}であるという。
             }
         >
+   +subsection?:(`subsec:NLstar`){NL\*アルゴリズム} <
+   +p {
+     \figure ?:(`fig:mustFinishKBFM1`){本章で学習するNFA。DFAに変換すると状態数が増加する。}<
+          +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/mustFinishKBFM1.pdf`)(1);}
+      >
+   本節では例として、\ref-figure(`fig:mustFinishKBFM1`);のNFAが認識する言語${\Lg}を用いてNL\*アルゴリズムの動作を見ていきます。
+   }
++p {
+  \figure ?:(`fig:NLStarObservationTable1`){一番始めの観察表(左)と所属性神託を使って内容を埋めた観察表(右)}<
+  +centering{\observationTable(
+    [[{} ;{${\epsilon}} ;];
+     [{${\epsilon}};];
+     [{—————};{—————};];]);
+\observationTable(
+    [[{} ;{${\epsilon}} ;];
+     [{${\epsilon}};{-};];
+     [{—————};{—————};];
+     [{K};{-};];
+     [{B};{-};];
+     [{F};{-};];]);
+ }
+>
+  NL\*アルゴリズムでも、L\*アルゴリズムと同様にまず始めに\ref-figure(`fig:NLStarObservationTable1`);左の観察表から始めます。最初に空欄になっているセル${T\[\epsilon, \epsilon\]}を所属性質問を用いて埋め、同時に${P'}にK,B,Fを追加し、同様に埋めます (\ref-figure(`fig:NLStarObservationTable1`);右) 。
+}
++p {
+  ここで\ref-figure(`fig:NLStarObservationTable1`);右の観察表がRFSA閉であるかを判定します。
+  今回は任意の${w\in P'}について、${T\[w,\text!{-}\]=T\[\epsilon,\text!{-}\]}が成り立ちますし、各${a\in\alphabet}について、${a\in P'}もが成り立つので観察表は閉じています。
+  }
+  +p {
+  観察表がRFSA閉である場合、観察表からRFSAを生成します。
+  観察表からRFSAを生成する方法は以下の様に、IDアルゴリズムでDFAを生成した方法と似ています。
+  kokokara!!
+  \listing{
+* 各${\equivClass{\word}{\oapprox_{T}}\in P/\oapprox_{T}}に対して、DFAの状態${\loc_\word}を生成する
+* DFAの初期状態は${\loc_{\equivClass{\epsilon}{\oapprox_{T}}}}とする
+* DFAの受理状態は${T\[\word,\epsilon\] = \text!{+}}となる状態${\loc_\word}とする
+* DFAの遷移関数${\mathrm{\Delta}\paren{\loc_\word,a}}は、${\word\cdot a\in P}の場合${\mathrm{\Delta}\paren{\loc_\word,a}=\loc_{\word\cdot a}}とし、そうでない場合${\word\cdot a \approx_{T} \word'}を充たす${\word'\in P}について、${\mathrm{\Delta}\paren{q_w,a}=q_{w''}}とする
+}
+        kokokara!!
+IDアルゴリズムのときと同様に
+  \figure ?:(`fig:KBFStep1`){\ref-figure(`fig:NLStarObservationTable1`);右の観察表に対応するDFA${\A_1}}<
+     +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/KBFStep1.pdf`)(1);}
+  >
+  \ref-figure(`fig:NLStarObservationTable1`);右の観察表からは\ref-figure(`fig:KBFStep1`);のDFA、${\A_1}が生成されます。
+}
++p {
+  \figure ?:(`fig:NLStarObservationTable2`){KB、KBFを${P'}に追加した観察表}<
++centering{
+  \observationTable(
+    [[{} ;{${\epsilon}} ;];
+     [{${\epsilon}};{-};];
+     [{—————};{—————};];
+     [{K};{-};];
+     [{B};{-};];
+     [{F};{-};];
+     [{KB};{-};];
+     [{KBF};{+};];]);
+}
+>
+DFA${\A_1}を生成することができたので等価性質問によって、DFA${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
+今回、DFA${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBF が返ります。
+ここで、${P'}にKBFのprefixで${P}にも${P'}にも含まれていないものを追加します。
+KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P'}にKBとKBFを追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable2`);)
+}
+%      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
++p {  
+  \figure ?:(`fig:NLStarObservationTable3`){\ref-figure(`fig:NLStarObservationTable2`);の観察表を閉じさせた観察表 (左)、及び更に一貫させるまで${S}に文字列を追加した観察表 (右)}<
++centering{
+  \observationTable(
+    [[{} ;{${\epsilon}} ;];
+     [{${\epsilon}};{-};];
+     [{KBF};{+};];
+     [{—————};{—————};];
+     [{K};{-};];
+     [{B};{-};];
+     [{F};{-};];
+     [{KB};{-};];
+     [{KBFK};{+};];
+     [{KBFB};{+};];
+     [{KBFF};{+};];]);
+  \observationTable(
+    [[{} ;{${\epsilon}} ;{F};{BF};];
+     [{${\epsilon}};{-};{-};{-};];
+     [{K};{-};{-};{+};];
+     [{KB};{-};{+};{-};];
+     [{KBF};{+};{+};{+};];
+     [{—————};{—————};{—————};{—————};];
+     [{B};{-};{-};{-};];
+     [{F};{-};{-};{-};];
+     [{KK};{-};{-};{+};];
+     [{KF};{-};{-};{-};];
+     [{KBK};{-};{-};{+};];
+     [{KBB};{-};{-};{-};];
+     [{KBFK};{+};{+};{+};];
+     [{KBFB};{+};{+};{+};];
+     [{KBFF};{+};{+};{+};];]);
+}
+>
+  \ref-figure(`fig:NLStarObservationTable2`);の観察表は閉じていないので、\ref-figure(`fig:NLStarObservationTable2`);の観察表が閉じるまで${P}及び${P'}に文字列を追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable3`);左)
+  具体的にはまず、${T\[\text!{KBF},\text!{-}\]}が${T\[\epsilon,\text!{-}\]}と一致しないのでKBFを${P'}から取り除き${P}に追加します。
+  次に、${\text!{KBF} \in P}ですがKBFK、KBFB、KBFFが${P}にも${P'}にも含まれていないので、これらを${P'}に追加します。
+}
++p {
+   次に\ref-figure(`fig:NLStarObservationTable3`);左の観察表が一貫するまで${S}に文字列を追加し、さらに観察表が閉じるまで${P}、${P'}に文字列を追加する、という操作を繰り返します (\ref-figure(`fig:NLStarObservationTable3`);右)。
+   観察表を一貫させる操作はIDアルゴリズムのものと同じです。
+}
++p {
+  \figure ?:(`fig:evenDFAStep2`){\ref-figure(`fig:NLStarObservationTable3`);左の観察表に対応するDFA${\A_2}}<
+     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/mustHaveKBF.pdf`)(1);}
+  >
+  最後に\ref-figure(`fig:NLStarObservationTable3`);左の観察表に対応するDFA${\A_2}を生成し、等価性質問によって${\Lgof{\A_2}}と学習したい正規言語が一致するかどうかを調べます。
+  今回は${\Lgof{\A_2}}が学習したい正規言語と一致するので、L\*アルゴリズムはここで終了となります。
+}
+  >
+  >
 >

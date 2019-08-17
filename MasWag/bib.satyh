@@ -2,18 +2,15 @@
 
 let maswag-bibliography = [
   
-
-  (`journals/iandc/Angluin81`, Article(|
-    author = {|Dana Angluin|};
-    title = {A Note on the Number of Queries Needed to Identify Regular Languages};
-    journal = {Information and Control};
-    volume = Some(51);
-    number = Some({1});
-    pages = (76,87);
-    year = 1981;
+  
+  (`HopcroftMU2003`, Book(|
+    author = {|J. ホップクロフト, R. モトワニ, J. ウルマン|};
+    title = {オートマトン言語理論計算論 I};
+    publisher = {サイエンス社};
+    year = 2003;
   |));
 
-
+  
   (`journals/iandc/Angluin87`, Article(|
     author = {|Dana Angluin|};
     title = {Learning Regular Sets from Queries and Counterexamples};
@@ -24,7 +21,18 @@ let maswag-bibliography = [
     year = 1987;
   |));
 
+  
+  (`journals/iandc/Angluin81`, Article(|
+    author = {|Dana Angluin|};
+    title = {A Note on the Number of Queries Needed to Identify Regular Languages};
+    journal = {Information and Control};
+    volume = Some(51);
+    number = Some({1});
+    pages = (76,87);
+    year = 1981;
+  |));
 
+  
   (`conf/ijcai/BolligHKL09`, InProceedings(|
     author = {|Benedikt Bollig, Peter Habermehl, Carsten Kern, Martin Leucker|};
     title = {Angluin-Style Learning of NFA.};
@@ -36,12 +44,119 @@ let maswag-bibliography = [
     year = 2009;
   |));
 
+  
+  (`journals/sigact/Cadilhac12`, Article(|
+    author = {|Michal Cadilhac|};
+    title = {Review of handbook of weighted automata, edited by Manfred Droste, Werner Kuich and Heiko Vogler.};
+    journal = {SIGACT News};
+    volume = Some(43);
+    number = Some({3});
+    pages = (32,37);
+    year = 2012;
+  |));
 
-  (`HopcroftMU2003`, Book(|
-    author = {|J. ホップクロフト, R. モトワニ, J. ウルマン|};
-    title = {オートマトン言語理論計算論 I};
-    publisher = {サイエンス社};
-    year = 2003;
+  
+  (`conf/cai/BalleM15`, InProceedings(|
+    author = {|Borja Balle, Mehryar Mohri|};
+    title = {Learning Weighted Automata.};
+    booktitle = {CAI};
+    series = None; 
+    volume = None; 
+    number = None; 
+    pages = (1,21);
+    year = 2015;
+  |));
+
+  
+  (`conf/cav/DAntoniV17`, InProceedings(|
+    author = {|Loris D'Antoni, Margus Veanes|};
+    title = {The Power of Symbolic Automata and Transducers.};
+    booktitle = {CAV (1)};
+    series = None; 
+    volume = None; 
+    number = None; 
+    pages = (47,67);
+    year = 2017;
+  |));
+
+  
+  (`conf/tacas/DrewsD17`, InProceedings(|
+    author = {|Samuel Drews, Loris D'Antoni|};
+    title = {Learning Symbolic Automata.};
+    booktitle = {TACAS (1)};
+    series = None; 
+    volume = None; 
+    number = None; 
+    pages = (173,189);
+    year = 2017;
+  |));
+
+  
+  (`journals/jlp/CasselHJMS15`, Article(|
+    author = {|Sofia Cassel, Falk Howar, Bengt Jonsson, Maik Merten, Bernhard Steffen|};
+    title = {A succinct canonical register automaton model.};
+    journal = {J. Log. Algebr. Meth. Program.};
+    volume = Some(84);
+    number = Some({1});
+    pages = (54,66);
+    year = 2015;
+  |));
+
+  
+  (`conf/sefm/CasselHJS14`, InProceedings(|
+    author = {|Sofia Cassel, Falk Howar, Bengt Jonsson, Bernhard Steffen|};
+    title = {Learning Extended Finite State Machines.};
+    booktitle = {SEFM};
+    series = None; 
+    volume = None; 
+    number = None; 
+    pages = (250,264);
+    year = 2014;
+  |));
+
+  
+  
+  (`conf/cav/IsbernerHS15`, InProceedings(|
+    author = {|Malte Isberner, Falk Howar, Bernhard Steffen|};
+    title = {The Open-Source LearnLib - A Framework for Active Automata Learning.};
+    booktitle = {CAV (1)};
+    series = None; 
+    volume = None; 
+    number = None; 
+    pages = (487,495);
+    year = 2015;
+  |));
+
+  
+  (`conf/cav/BolligKKLNP10`, InProceedings(|
+    author = {|Benedikt Bollig, Joost-Pieter Katoen, Carsten Kern, Martin Leucker, Daniel Neider, David R. Piegdon|};
+    title = {libalf: The Automata Learning Framework.};
+    booktitle = {CAV};
+    series = None; 
+    volume = None; 
+    number = None; 
+    pages = (360,364);
+    year = 2010;
+  |));
+
+  
+  (`AIDE`, WebSite(|
+    author = {|Ali Khalili|};
+    title = {AIDE (Automata-Identification Engine) - CodePlex Archive};
+    url = `https://archive.codeplex.com/?p=aide`;
+    year = 2015;
+  |));
+
+  
+  (`conf/dagstuhl/Meinke16`, InProceedings(|
+    author = {|Karl Meinke|};
+    title = {Learning-Based Testing: Recent Progress and Future Prospects.};
+    booktitle = {Machine Learning for Dynamic Software Analysis};
+    series = None; 
+    volume = None; 
+    number = None; 
+    pages = (53,73);
+    year = 2018;
   |));
 
 

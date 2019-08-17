@@ -2,6 +2,7 @@
 #	make -C ..
 
 pdf: standalone_main.pdf
+	cp $< ~/Google\ Drive/ヤバイテック\ トーキョー/
 
 bib.satyh: bib.xml ../dblp2satysfi/dblp2satysfi.xsl Makefile
 	xsltproc ../dblp2satysfi/dblp2satysfi.xsl $< | nkf --numchar-input -w | sed '2s/bibliography/maswag-bibliography/' | awk 'BEGIN{print "@import: local"}1' > $@

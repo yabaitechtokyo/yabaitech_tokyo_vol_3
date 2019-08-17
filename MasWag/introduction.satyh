@@ -33,12 +33,29 @@ let introduction = '<
                 (None,{見開いた!});
                 (Some({女の子}),{「AI は AI でも Automata Inference の方だがなぁぁーっ!});]);
                 +p {
-                  本章では正規言語を、神託を用いて正確に学習する手法 (automata learning, automata inference)のアルゴリズムについて説明します。
+                  本章では正規言語\cite([`HopcroftMU2003`]);を、神託を用いて正確に学習する手法 (automata learning, automata inference)のアルゴリズムについて説明します。
                   本章において、形式言語理論についての知識は仮定しませんが、素朴集合論や基本的なグラフ理論の知識や記号などは適宜使用します。
                   Automata learningではdetermistic Finite Automaton(決定的有限オートマトン、DFA)を学習するL\*アルゴリズム\cite([`journals/iandc/Angluin87`]);が良く知られています。
                   L\*アルゴリズムはある文字列 ${\word \in \Word} が学習したい言語 ${\Lg\subseteq \Word} に含まれているか (${\word \in \Lg})を質問する\emph{所属性質問} (membership query)と、学習した言語${\Lg'\subseteq \Word}が学習したい言語${\Lg\subseteq \Word}と等しいかどうかを質問する\emph{等価性質問} (equivalence query)の二種類の質問を繰り返すことで効率良く、学習したい言語を最小の状態数を持つオートマトンで学習します。
-                  本章ではL\*アルゴリズムに加えて、等価性質問を用いないIDアルゴリズム\cite([`journals/iandc/Angluin81`]);と、DFAの代わりにnon-deterministic finite automaton(非決定的有限オートマトン、NFA)を学習するNL\*アルゴリズムも説明します。
-                }                 
+                  本章ではL\*アルゴリズムに加えて、等価性質問を用いないIDアルゴリズム\cite([`journals/iandc/Angluin81`]);と、DFAの代わりにnon-deterministic finite automaton(非決定的有限オートマトン、NFA)を学習するNL\*アルゴリズム\cite([`conf/ijcai/BolligHKL09`]);も説明します。
+                }
+        +subsection{本章で扱わない項目} <
+          +p {
+          本章ではDFA及びNFAを学習する手法について説明しますが、それ以外の様々な種類のオートマトンに対しても、学習アルゴリズムが研究されています。
+          例えば
+          重み付き有限オーマトン (weighted finite automaton, WFA)\cite([`journals/sigact/Cadilhac12`]);についてはBalle & Mohriによる手法\cite([`conf/cai/BalleM15`]);、
+          シンボリックオートマトン (Symbolic automaton)\cite([`conf/cav/DAntoniV17`]);についてはDrews等による手法\cite([`conf/tacas/DrewsD17`]);、
+          レジスタオートマトン (Register automaton)\cite([`journals/jlp/CasselHJMS15`]);についてはCassel等による手法\cite([`conf/sefm/CasselHJS14`]);
+          などが知られています。
+          オートマトン学習の実装としては、
+          LearnLib\cite([`conf/cav/IsbernerHS15`]);、
+          libalf\cite([`conf/cav/BolligKKLNP10`]);、
+          AIDE\cite([`AIDE`]);
+          などが知られていますが、2019年夏現在ではLearnLibが最も良くメンテナンスされているようです。
+          オートマトン学習の応用として、例えばモデル検査と組み合わせたBlack-box checking(Learning-based testingとも)\cite([`conf/dagstuhl/Meinke16`]);などが注目されています。
+          }
+        >
+        +subsection{本章の構成} <
                 +p {
                   本章の構成は以下のようになります。まず\ref-section(`sec:automata`);で形式言語やオートマトンの必要な定義を与えます。
                   本節では必要最低限の内容のみを扱います。より詳細は\cite([`HopcroftMU2003`]);などを参照してください。
@@ -46,9 +63,6 @@ let introduction = '<
                   \ref-section(`sec:lstar`);ではAngluinのL\*アルゴリズムについての紹介を行います。
                   \ref-section(`sec:nlstar`);DFAの代わりにNFAを学習するNL\*アルゴリズムについての説明を行います。
                   }
-        +subsection{関連する項目} <
-          +p {
-          }
         >
 +subsection{記法} <
 +p {

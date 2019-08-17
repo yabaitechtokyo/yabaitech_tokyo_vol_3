@@ -29,7 +29,6 @@ let lstar = '<+section?:(`sec:lstar`){L\*アルゴリズム} <
 }
 }
 +p {
-   本節も例として、 \ref-figure(`fig:mustHaveKBF`);のDFAが認識する${\Lg = \setsep{ a \in \set{\text!{K,B,F}}}{\text!{KBF を部分文字列として含む}}} を用います。
 観察表が以下の条件を充たすとき、その観察表を\emph{閉じている (closed)}と言います。
 \listing{
 * 各${w'\in P'}について、${T\[w,\text!{-}\]=T\[w',\text!{-}\]}を充たす${w\in P}が存在する
@@ -37,6 +36,9 @@ let lstar = '<+section?:(`sec:lstar`){L\*アルゴリズム} <
 }
 }
 +subsection{L\* アルゴリズム} <
++p {
+   本節も例として、 \ref-figure(`fig:mustHaveKBF`);のNFAが認識する${\Lg = \setsep{ a \in \set{\text!{K,B,F}}}{\text!{KBF を部分文字列として含む}}} を用います。
+}
 +p {
   \figure ?:(`fig:LStarObservationTable1`){一番始めの観察表(左)と所属性神託を使って内容を埋めた観察表(右)}<
   +centering{\observationTable(

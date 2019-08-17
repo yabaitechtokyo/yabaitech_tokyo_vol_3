@@ -1,111 +1,179 @@
 <dblp>
-<article key="journals/iandc/Angluin81" mdate="2019-06-02">
-<title>
-A Note on the Number of Queries Needed to Identify Regular Languages
-</title>
-<author>Dana Angluin</author>
-<pages>76-87</pages>
-<journal>Information and Control</journal>
-<month>October</month>
-<year>1981</year>
-<volume>51</volume>
-<number>1</number>
-<url>db/journals/iandc/iandc51.html#Angluin81</url>
-<ee>https://doi.org/10.1016/S0019-9958(81)90090-5</ee>
-<ee>https://www.wikidata.org/entity/Q59595144</ee>
-</article>
-<article key="journals/iandc/Angluin87" mdate="2018-11-14">
-<author>Dana Angluin</author>
-<title>
-Learning Regular Sets from Queries and Counterexamples
-</title>
-<pages>87-106</pages>
-<journal>Inf. Comput.</journal>
-<month>November</month>
-<year>1987</year>
-<volume>75</volume>
-<number>2</number>
-<url>db/journals/iandc/iandc75.html#Angluin87</url>
-<ee>https://doi.org/10.1016/0890-5401(87)90052-6</ee>
-<ee>https://www.wikidata.org/entity/Q56620637</ee>
-</article>
-<inproceedings key="conf/ijcai/BolligHKL09" mdate="2016-07-20">
-<author>Benedikt Bollig</author>
-<author>Peter Habermehl</author>
-<author>Carsten Kern</author>
-<author>Martin Leucker</author>
-<title>Angluin-Style Learning of NFA.</title>
-<pages>1004-1009</pages>
-<year>2009</year>
-<booktitle>IJCAI</booktitle>
-<ee>http://ijcai.org/Proceedings/09/Papers/170.pdf</ee>
-<crossref>conf/ijcai/2009</crossref>
-<url>db/conf/ijcai/ijcai2009.html#BolligHKL09</url>
-</inproceedings>
-<book key="HopcroftMU2003">
-<author>J. ホップクロフト</author>
-<author>R. モトワニ</author>
-<author>J. ウルマン</author>
-<title>オートマトン言語理論計算論 I</title>
-<publisher>サイエンス社</publisher>
-<year>2003</year>
-</book>
-<inproceedings key="conf/cai/BalleM15" mdate="2017-05-24">
-<author>Borja Balle</author>
-<author>Mehryar Mohri</author>
-<title>Learning Weighted Automata.</title>
-<pages>1-21</pages>
-<year>2015</year>
-<booktitle>CAI</booktitle>
-<ee>https://doi.org/10.1007/978-3-319-23021-4_1</ee>
-<crossref>conf/cai/2015</crossref>
-<url>db/conf/cai/cai2015.html#BalleM15</url>
-</inproceedings>
-<inproceedings key="conf/tacas/DrewsD17" mdate="2017-05-24">
-<author>Samuel Drews</author>
-<author>Loris D'Antoni</author>
-<title>Learning Symbolic Automata.</title>
-<pages>173-189</pages>
-<year>2017</year>
-<booktitle>TACAS (1)</booktitle>
-<ee>https://doi.org/10.1007/978-3-662-54577-5_10</ee>
-<crossref>conf/tacas/2017-1</crossref>
-<url>db/conf/tacas/tacas2017-1.html#DrewsD17</url>
-</inproceedings>
-<inproceedings key="conf/cav/IsbernerHS15" mdate="2017-06-01">
-<author orcid="0000-0002-7704-5173">Malte Isberner</author>
-<author>Falk Howar</author>
-<author>Bernhard Steffen</author>
-<title>
-The Open-Source LearnLib - A Framework for Active Automata Learning.
-</title>
-<pages>487-495</pages>
-<year>2015</year>
-<booktitle>CAV (1)</booktitle>
-<ee>https://doi.org/10.1007/978-3-319-21690-4_32</ee>
-<crossref>conf/cav/2015-1</crossref>
-<url>db/conf/cav/cav2015-1.html#IsbernerHS15</url>
-</inproceedings>
-<inproceedings key="conf/cav/BolligKKLNP10" mdate="2018-11-14">
-<author>Benedikt Bollig</author>
-<author orcid="0000-0002-6143-1926">Joost-Pieter Katoen</author>
-<author>Carsten Kern</author>
-<author>Martin Leucker</author>
-<author>Daniel Neider</author>
-<author>David R. Piegdon</author>
-<title>libalf: The Automata Learning Framework.</title>
-<pages>360-364</pages>
-<year>2010</year>
-<booktitle>CAV</booktitle>
-<ee type="oa">https://doi.org/10.1007/978-3-642-14295-6_32</ee>
-<ee>https://www.wikidata.org/entity/Q57801500</ee>
-<crossref>conf/cav/2010</crossref>
-<url>db/conf/cav/cav2010.html#BolligKKLNP10</url>
-</inproceedings>
-<www>
-  <author>Ali Khalili</author>
-  <title>AIDE (Automata-Identification Engine) - CodePlex Archive</title>
-  <year>2015</year>
-  <url>https://archive.codeplex.com/?p=aide</url>
-</www>
+  <book key="HopcroftMU2003">
+    <author>J. ホップクロフト</author>
+    <author>R. モトワニ</author>
+    <author>J. ウルマン</author>
+    <title>オートマトン言語理論計算論 I</title>
+    <publisher>サイエンス社</publisher>
+    <year>2003</year>
+  </book>
+  <article key="journals/iandc/Angluin87" mdate="2018-11-14">
+    <!-- L* -->
+    <author>Dana Angluin</author>
+    <title>
+      Learning Regular Sets from Queries and Counterexamples
+    </title>
+    <pages>87-106</pages>
+    <journal>Inf. Comput.</journal>
+    <month>November</month>
+    <year>1987</year>
+    <volume>75</volume>
+    <number>2</number>
+    <url>db/journals/iandc/iandc75.html#Angluin87</url>
+    <ee>https://doi.org/10.1016/0890-5401(87)90052-6</ee>
+    <ee>https://www.wikidata.org/entity/Q56620637</ee>
+  </article>
+  <article key="journals/iandc/Angluin81" mdate="2019-06-02">
+    <!-- ID -->
+    <title>
+      A Note on the Number of Queries Needed to Identify Regular Languages
+    </title>
+    <author>Dana Angluin</author>
+    <pages>76-87</pages>
+    <journal>Information and Control</journal>
+    <month>October</month>
+    <year>1981</year>
+    <volume>51</volume>
+    <number>1</number>
+    <url>db/journals/iandc/iandc51.html#Angluin81</url>
+    <ee>https://doi.org/10.1016/S0019-9958(81)90090-5</ee>
+    <ee>https://www.wikidata.org/entity/Q59595144</ee>
+  </article>
+  <inproceedings key="conf/ijcai/BolligHKL09" mdate="2016-07-20">
+    <!-- NL* -->
+    <author>Benedikt Bollig</author>
+    <author>Peter Habermehl</author>
+    <author>Carsten Kern</author>
+    <author>Martin Leucker</author>
+    <title>Angluin-Style Learning of NFA.</title>
+    <pages>1004-1009</pages>
+    <year>2009</year>
+    <booktitle>IJCAI</booktitle>
+    <ee>http://ijcai.org/Proceedings/09/Papers/170.pdf</ee>
+    <crossref>conf/ijcai/2009</crossref>
+    <url>db/conf/ijcai/ijcai2009.html#BolligHKL09</url>
+  </inproceedings>
+  <article key="journals/sigact/Cadilhac12" mdate="2018-11-06">
+    <author>Michaël Cadilhac</author>
+    <title>
+      Review of handbook of weighted automata, edited by Manfred Droste, Werner Kuich and Heiko Vogler.
+    </title>
+    <pages>32-37</pages>
+    <year>2012</year>
+    <volume>43</volume>
+    <journal>SIGACT News</journal>
+    <number>3</number>
+    <ee>https://doi.org/10.1145/2421096.2421103</ee>
+    <url>db/journals/sigact/sigact43.html#Cadilhac12</url>
+  </article>
+  <inproceedings key="conf/cai/BalleM15" mdate="2017-05-24">
+    <author>Borja Balle</author>
+    <author>Mehryar Mohri</author>
+    <title>Learning Weighted Automata.</title>
+    <pages>1-21</pages>
+    <year>2015</year>
+    <booktitle>CAI</booktitle>
+    <ee>https://doi.org/10.1007/978-3-319-23021-4_1</ee>
+    <crossref>conf/cai/2015</crossref>
+    <url>db/conf/cai/cai2015.html#BalleM15</url>
+  </inproceedings>
+  <inproceedings key="conf/cav/DAntoniV17" mdate="2017-07-14">
+    <author>Loris D'Antoni</author>
+    <author>Margus Veanes</author>
+    <title>The Power of Symbolic Automata and Transducers.</title>
+    <pages>47-67</pages>
+    <year>2017</year>
+    <booktitle>CAV (1)</booktitle>
+    <ee>https://doi.org/10.1007/978-3-319-63387-9_3</ee>
+    <crossref>conf/cav/2017-1</crossref>
+    <url>db/conf/cav/cav2017-1.html#DAntoniV17</url>
+  </inproceedings>
+  <inproceedings key="conf/tacas/DrewsD17" mdate="2017-05-24">
+    <author>Samuel Drews</author>
+    <author>Loris D'Antoni</author>
+    <title>Learning Symbolic Automata.</title>
+    <pages>173-189</pages>
+    <year>2017</year>
+    <booktitle>TACAS (1)</booktitle>
+    <ee>https://doi.org/10.1007/978-3-662-54577-5_10</ee>
+    <crossref>conf/tacas/2017-1</crossref>
+    <url>db/conf/tacas/tacas2017-1.html#DrewsD17</url>
+  </inproceedings>
+  <article key="journals/jlp/CasselHJMS15" mdate="2017-05-28">
+    <author>Sofia Cassel</author>
+    <author>Falk Howar</author>
+    <author>Bengt Jonsson</author>
+    <author>Maik Merten</author>
+    <author>Bernhard Steffen</author>
+    <title>A succinct canonical register automaton model.</title>
+    <pages>54-66</pages>
+    <year>2015</year>
+    <volume>84</volume>
+    <journal>J. Log. Algebr. Meth. Program.</journal>
+    <number>1</number>
+    <ee>https://doi.org/10.1016/j.jlamp.2014.07.004</ee>
+    <url>db/journals/jlp/jlp84.html#CasselHJMS15</url>
+  </article>
+  <inproceedings key="conf/sefm/CasselHJS14" mdate="2017-05-21">
+    <author>Sofia Cassel</author>
+    <author>Falk Howar</author>
+    <author>Bengt Jonsson</author>
+    <author>Bernhard Steffen</author>
+    <title>Learning Extended Finite State Machines.</title>
+    <pages>250-264</pages>
+    <year>2014</year>
+    <booktitle>SEFM</booktitle>
+    <ee>https://doi.org/10.1007/978-3-319-10431-7_18</ee>
+    <crossref>conf/sefm/2014</crossref>
+    <url>db/conf/sefm/sefm2014.html#CasselHJS14</url>
+  </inproceedings>
+  <!-- automata learning implemenetaions -->
+  <inproceedings key="conf/cav/IsbernerHS15" mdate="2017-06-01">
+    <author orcid="0000-0002-7704-5173">Malte Isberner</author>
+    <author>Falk Howar</author>
+    <author>Bernhard Steffen</author>
+    <title>
+      The Open-Source LearnLib - A Framework for Active Automata Learning.
+    </title>
+    <pages>487-495</pages>
+    <year>2015</year>
+    <booktitle>CAV (1)</booktitle>
+    <ee>https://doi.org/10.1007/978-3-319-21690-4_32</ee>
+    <crossref>conf/cav/2015-1</crossref>
+    <url>db/conf/cav/cav2015-1.html#IsbernerHS15</url>
+  </inproceedings>
+  <inproceedings key="conf/cav/BolligKKLNP10" mdate="2018-11-14">
+    <author>Benedikt Bollig</author>
+    <author orcid="0000-0002-6143-1926">Joost-Pieter Katoen</author>
+    <author>Carsten Kern</author>
+    <author>Martin Leucker</author>
+    <author>Daniel Neider</author>
+    <author>David R. Piegdon</author>
+    <title>libalf: The Automata Learning Framework.</title>
+    <pages>360-364</pages>
+    <year>2010</year>
+    <booktitle>CAV</booktitle>
+    <ee type="oa">https://doi.org/10.1007/978-3-642-14295-6_32</ee>
+    <ee>https://www.wikidata.org/entity/Q57801500</ee>
+    <crossref>conf/cav/2010</crossref>
+    <url>db/conf/cav/cav2010.html#BolligKKLNP10</url>
+  </inproceedings>
+  <www key="AIDE">
+    <author>Ali Khalili</author>
+    <title>AIDE (Automata-Identification Engine) - CodePlex Archive</title>
+    <year>2015</year>
+    <url>https://archive.codeplex.com/?p=aide</url>
+  </www>
+  <inproceedings key="conf/dagstuhl/Meinke16" mdate="2018-09-25">
+    <author>Karl Meinke</author>
+    <title>
+      Learning-Based Testing: Recent Progress and Future Prospects.
+    </title>
+    <pages>53-73</pages>
+    <year>2018</year>
+    <booktitle>Machine Learning for Dynamic Software Analysis</booktitle>
+    <ee>https://doi.org/10.1007/978-3-319-96562-8_2</ee>
+    <crossref>conf/dagstuhl/2016ml</crossref>
+    <url>db/conf/dagstuhl/ml2016.html#Meinke16</url>
+  </inproceedings>
 </dblp>

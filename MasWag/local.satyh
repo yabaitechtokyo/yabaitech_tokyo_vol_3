@@ -30,7 +30,27 @@ let-math \Transition = ${\mathrm{\Delta}}
 %%% Myhill-Nerode
 let-math \MNRel l = ${R_{#l}}
 
+%%% Residual
+let-math \Res l = ${\app{\mathrm{Res}}{#l}}
+let-math \Primes table = ${\app{\mathrm{Primes}}{#table}}
+
 %%% Math
+  let vop-scheme charf s =
+    let mop = charf MathOp s in
+      math-pull-in-scripts MathOp MathOp
+        (fun moptS moptT -> (
+          let m =
+            match moptS with
+            | None     -> mop
+            | Some(mS) -> math-lower mop mS
+          in
+            match moptT with
+            | None     -> m
+            | Some(mT) -> math-upper m mT
+        ))
+
+let bigop = vop-scheme math-big-char
+let-math \bigsqcup = bigop `⊔`
 let-math \sequence x = ${\paren{#x}^\ast}
 let-math \powerset set = ${\app{\mathcal{P}}{#set}}
 let-math \bowtie = ${\Join}
