@@ -13,6 +13,10 @@ let-math \and = text-in-math MathRel (fun ctx -> inline-skip 5pt ++ read-inline 
 let-math \or = text-in-math MathRel (fun ctx -> inline-skip 5pt ++ read-inline ctx {or} ++ inline-skip 5pt)
 let-math \tilde = math-char MathBin `∼`
 
+let-math \entails-c ant suc = ${#ant \vdash #suc}
+let-math \entails-fde ant-true ant-false suc-true suc-false =
+    ${#ant-true : #ant-false \vdash #suc-true : #suc-false }
+
 let-inline ctx \todo inner =
   let ctx-todo = ctx |> set-text-color Color.red in
   read-inline ctx-todo {[TODO: #inner;]}
@@ -39,7 +43,16 @@ let bibliography = [
         number = None;
         pages = (5, 37);
         year = 1977;
-    |))
+    |));
+    (`Bochman98`, Article(|
+        author = {| Alexander Bochman|};
+        title = {Biconsequence Relations: A Four-Valued Formalism of Reasoning with Inconsistency and Incompleteness};
+        journal = {Notre Dame Journal of Formal Logic};
+        volume = Some(39);
+        number = Some({1});
+        pages = (47, 73);
+        year = 1998;
+    |));
     ]
 
 let article =
@@ -81,8 +94,11 @@ let article =
                 +p{解答の一つとしては「自己言及のパラドックスは文として成り立っていない」というものが考えられます。例えば集合論におけるラッセルのパラドックスも自己言及のパラドックスの一種ですが、その解答としての公理的集合論はこのようなパラドックスをそもそも記述できないようにすることで矛盾を回避していると言えます。}
                 +p{真矛盾主義は嘘つきのパラドックスを含む自己言及のパラドックスに対しもう一つの解答を提供します。すなわち「(1)は真でありかつ偽である」という解釈です。(1)が真かつ偽であるとすれば、(1)は真なので「(1)は偽」となりますが実際に(1)は偽でもあります。一方(1)は偽なので「(1)は偽」に一致して(1)は真となりますが、(1)は真かつ偽なので問題ありません。屁理屈に聞こえるかもしれませんが、しかし辻褄は合っています。このように真矛盾主義は嘘つきのパラドックスを文として認めた上で、意味論の側で解答を与えているわけです。}
             >
+            +subsection {古代インド哲学} <
+
+            >
         >
-        +section {First Degree Entailment} <
+        +section {First Degree Entailmentの意味論} <
             +p{このような真矛盾主義主義という考え方があって、それを形式的な論理体系に落としこみたいというのはごく自然な考えですよね。ここでは\dfn{First Degree Entailment}(FDE)\cite[`Belnap77`];という論理体系を紹介します。}
             +p{まず記号の定義をしていきましょう。FDEの命題${A, B, \ldots}は\dfn{原子命題}p、\dfn{否定}${\neg A}、\dfn{連言}${A \wedge B}、\dfn{選言}${A \vee B}から成ります。気持ちの説明をすると原子命題は何らかの知識の対象(「猫はかわいい」とか「パリはアメリカの首都だ」とか)を抽象化したもので${p, q, \ldots}と書き表します。否定${\neg A}は「Aではない」、連言${A \wedge B}は「AかつBである」、選言${A \vee B}は「AまたはBである」という意味に解釈できます。
             }
@@ -109,6 +125,13 @@ let article =
             この定義はそれぞれの命題が真のみか偽のみである場合には古典論理と同じふるまいをします。しかしそうでない状況の場合には面白い結果が得られます。}
             +p{例として排中律${A \vee \neg A}がどのように解釈されうるかを考えてみましょう。${A \tilde 0}でも${A \tilde 1}でもない時、${\neg}の定義より${\neg A \tilde 0}でも${\neg A \tilde 1}でもありません。次に${\vee}の定義より${A \vee \neg A \tilde 0}でも${A \vee \neg A \tilde 1}でもないことが言えます。逆に${A \tilde 0}かつ${A \tilde 1}であるような状況を考えると、${\neg}の定義より${\neg A \tilde 0}かつ${\neg A \tilde 1}で、さらに${\vee}の定義より${A \vee \neg A \tilde 0}かつ${A \vee \neg A \tilde 1}であることが導けます。これはFDEにおいて排中律が「真でない」あるいは「偽である」状況がありうることを意味しています。同様のことが無矛盾則${\neg A \wedge \neg A}でも成り立ちます。}
             +p{\todo{4値論理にもできるよみたいな話をしてもいいのかもしれない}}
+        >
+        +section{Biconsequence Relationによる推論規則} <
+            +p{先程の話はFDEの意味論の側の話でした。FDEを論理体系として成立させるためには意味論に対応する推論体系も必要です。BelnapによるFDEの元論文\cite[`Belnap77`];でもそういった推論規則を提示していますが、この記事ではBochmanによるBiconsequence Relationを用いた推論体系\cite[`Bochman98`];を紹介します。}
+            +p{Biconsequence Relationは基本的には古典論理のシーケント計算を拡張したものと考えて差し支えなさそうです\footnote{もう少し捕捉するとシーケント計算を一般化したScott consequence relationを更に拡張したものらしいです}。古典論理のシーケント計算では、
+            \math-list(${| \entails-c{A_1\cdots A_n}{B_1\cdots B_m} |});
+            というシーケントは「${A_1\cdots A_n}が全て真であれば${B_1\cdots B_m}の少なくとも1つが真である」ことを主張します。
+            \math-list(${| \entails-fde{A_1\cdots A_n}{B_1\cdots B_m}{C_1\cdots C_l}{D_1\cdots D_i} |});}
         >
         +section {} <
             +math-list (${|
