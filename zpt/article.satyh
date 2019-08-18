@@ -13,6 +13,8 @@ let-math \and = text-in-math MathRel (fun ctx -> inline-skip 5pt ++ read-inline 
 let-math \or = text-in-math MathRel (fun ctx -> inline-skip 5pt ++ read-inline ctx {or} ++ inline-skip 5pt)
 let-math \tilde = math-char MathBin `∼`
 
+let-math \seq obj n = ${#obj_{1}, \cdots, #obj_{#n}}
+
 let-math \entails-c ant suc = ${#ant \vdash #suc}
 let-math \entails-fde ant-true ant-false suc-true suc-false =
     ${#ant-true : #ant-false \vdash #suc-true : #suc-false }
@@ -129,9 +131,11 @@ let article =
         +section{Biconsequence Relationによる推論規則} <
             +p{先程の話はFDEの意味論の側の話でした。FDEを論理体系として成立させるためには意味論に対応する推論体系も必要です。BelnapによるFDEの元論文\cite[`Belnap77`];でもそういった推論規則を提示していますが、この記事ではBochmanによるBiconsequence Relationを用いた推論体系\cite[`Bochman98`];を紹介します。}
             +p{Biconsequence Relationは基本的には古典論理のシーケント計算を拡張したものと考えて差し支えなさそうです\footnote{もう少し捕捉するとシーケント計算を一般化したScott consequence relationを更に拡張したものらしいです}。古典論理のシーケント計算では、
-            \math-list(${| \entails-c{A_1\cdots A_n}{B_1\cdots B_m} |});
-            というシーケントは「${A_1\cdots A_n}が全て真であれば${B_1\cdots B_m}の少なくとも1つが真である」ことを主張します。
-            \math-list(${| \entails-fde{A_1\cdots A_n}{B_1\cdots B_m}{C_1\cdots C_l}{D_1\cdots D_i} |});}
+            \math-list(${| \entails-c{\seq{A}{n}}{\seq{B}{m}} |});
+            というシーケントは「${\seq{A}{n}}が全て真であれば${\seq{B}{m}}の少なくとも1つが真である」ことを主張するのでした。Biconsequent Relationでは以下のようにシーケントを表記します。
+            \math-list(${| \entails-fde{\seq{A}{n}}{\seq{B}{m}}{\seq{C}{l}}{\seq{D}{k}} |});
+            このシーケントは「${\seq{A}{n}}の全てが真で、かつ${\seq{B}{m}}の全てが偽である時に、${\seq{C}{l}}の少なくとも1つが真であるか、あるいは${\seq{D}{k}}の少なくとも一つは偽である」ことを主張します。
+            }
         >
         +section {} <
             +math-list (${|
