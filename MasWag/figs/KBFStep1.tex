@@ -4,7 +4,7 @@
 \usetikzlibrary{automata,positioning}
 \begin{document}
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
- \node[state,initial,accepting] (s_0) {$\varepsilon$};
+ \node[state,initial] (s_0) {$\varepsilon$};
  \path[->] 
  (s_0) edge [loop right] node {K,B,F} (s_0);
 \end{tikzpicture} 
