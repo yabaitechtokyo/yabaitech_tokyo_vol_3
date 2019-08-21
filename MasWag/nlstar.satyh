@@ -106,88 +106,132 @@ let nlstar = '<
   +p {
   観察表がRFSA閉である場合、観察表からRFSAを生成します。
   観察表からRFSAを生成する方法は以下の様に、IDアルゴリズムでDFAを生成した方法と似ています。
-  kokokara!!
   \listing{
-* 各${\equivClass{\word}{\oapprox_{T}}\in P/\oapprox_{T}}に対して、DFAの状態${\loc_\word}を生成する
-* DFAの初期状態は${\loc_{\equivClass{\epsilon}{\oapprox_{T}}}}とする
-* DFAの受理状態は${T\[\word,\epsilon\] = \text!{+}}となる状態${\loc_\word}とする
-* DFAの遷移関数${\mathrm{\Delta}\paren{\loc_\word,a}}は、${\word\cdot a\in P}の場合${\mathrm{\Delta}\paren{\loc_\word,a}=\loc_{\word\cdot a}}とし、そうでない場合${\word\cdot a \approx_{T} \word'}を充たす${\word'\in P}について、${\mathrm{\Delta}\paren{q_w,a}=q_{w''}}とする
+* 各${\word \in P \cap \Primes{T}}に対して、RFSAの状態${\loc_\word}を生成する
+* RFSAの初期状態は${\InitLoc = \setsep{\loc_\word}{\loc_\word \in \Loc, T\[\word,\text!{-}\] \sqsubseteq T\[\epsilon,\text!{-}\]}}とする。
+* RFSAの受理状態は${\AccLoc = \setsep{\loc_\word}{\loc_\word \in \Loc, T\[\word,\epsilon\] = \text!{+}}}とする。
+* RFSAの遷移関係${\Transition \subseteq \Loc \times \alphabet \times \Loc}は、${\Transition = \setsep{\paren{\loc_{\word},a,\loc_{\word'}}}{T\[\word',\text!{-}\] \sqsubseteq T\[\word a,\text!{-}\]}}とする。
 }
-        kokokara!!
 IDアルゴリズムのときと同様に
-  \figure ?:(`fig:KBFStep1`){\ref-figure(`fig:NLStarObservationTable1`);右の観察表に対応するDFA${\A_1}}<
+  \figure ?:(`fig:mustFinishKBFM1Step1`){\ref-figure(`fig:NLStarObservationTable1`);右の観察表に対応するRFSA${\A_1}}<
+     % +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/mustFinishKBFM1Step1.pdf`)(1);}
      +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/KBFStep1.pdf`)(1);}
   >
-  \ref-figure(`fig:NLStarObservationTable1`);右の観察表からは\ref-figure(`fig:KBFStep1`);のDFA、${\A_1}が生成されます。
+  \ref-figure(`fig:NLStarObservationTable1`);右の観察表からは\ref-figure(`fig:mustFinishKBFM1Step1`);のRFSA、${\A_1}が生成されます。
 }
 +p {
-  \figure ?:(`fig:NLStarObservationTable2`){KB、KBFを${P'}に追加した観察表}<
+  \figure ?:(`fig:NLStarObservationTable2`){K、KB、KBF、KBFKを${S}に追加した観察表}<
 +centering{
   \observationTable(
-    [[{} ;{${\epsilon}} ;];
-     [{${\epsilon}};{-};];
-     [{—————};{—————};];
-     [{K};{-};];
-     [{B};{-};];
-     [{F};{-};];
-     [{KB};{-};];
-     [{KBF};{+};];]);
+    [[{} ;{${\epsilon}} ;{K};{KB};{KBF};{KBFK};];
+     [{${\epsilon}};{-};{-};{-};{-};{+};];
+     [{—————};{—————};{—————};{—————};{—————};{—————};];
+     [{K};{-};{-};{-};{+};{+};];
+     [{B};{-};{-};{-};{-};{+};];
+     [{F};{-};{-};{-};{-};{+};]]);
 }
 >
-DFA${\A_1}を生成することができたので等価性質問によって、DFA${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
-今回、DFA${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBF が返ります。
-ここで、${P'}にKBFのprefixで${P}にも${P'}にも含まれていないものを追加します。
-KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P'}にKBとKBFを追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable2`);)
+RFSA${\A_1}を生成することができたので等価性質問によって、RFSA${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
+今回、RFSA${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBFK が返ります。
+ここで、${S}にKBFKのsuffixで${S}に含まれていないものを追加します。
+KBFKのprefixは${\epsilon}、K、KB、KBF、KBFKなので、今回は${S}にK、KB、KBF、KBFKを追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable2`);)
 }
 %      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
-+p {  
-  \figure ?:(`fig:NLStarObservationTable3`){\ref-figure(`fig:NLStarObservationTable2`);の観察表を閉じさせた観察表 (左)、及び更に一貫させるまで${S}に文字列を追加した観察表 (右)}<
++p{
+\figure ?:(`fig:NLStarObservationTable3`){Kを${P}に、KK、KB、KFを${P'}に追加した観察表}<
 +centering{
   \observationTable(
-    [[{} ;{${\epsilon}} ;];
-     [{${\epsilon}};{-};];
-     [{KBF};{+};];
-     [{—————};{—————};];
-     [{K};{-};];
-     [{B};{-};];
-     [{F};{-};];
-     [{KB};{-};];
-     [{KBFK};{+};];
-     [{KBFB};{+};];
-     [{KBFF};{+};];]);
-  \observationTable(
-    [[{} ;{${\epsilon}} ;{F};{BF};];
-     [{${\epsilon}};{-};{-};{-};];
-     [{K};{-};{-};{+};];
-     [{KB};{-};{+};{-};];
-     [{KBF};{+};{+};{+};];
-     [{—————};{—————};{—————};{—————};];
-     [{B};{-};{-};{-};];
-     [{F};{-};{-};{-};];
-     [{KK};{-};{-};{+};];
-     [{KF};{-};{-};{-};];
-     [{KBK};{-};{-};{+};];
-     [{KBB};{-};{-};{-};];
-     [{KBFK};{+};{+};{+};];
-     [{KBFB};{+};{+};{+};];
-     [{KBFF};{+};{+};{+};];]);
+    [[{} ;{${\epsilon}} ;{K};{KB};{KBF};{KBFK};];
+     [{${\epsilon}};{-};{-};{-};{-};{+};];
+     [{K};{-};{-};{-};{+};{+};];
+     [{—————};{—————};{—————};{—————};{—————};{—————};];
+     [{B};{-};{-};{-};{-};{+};];
+     [{F};{-};{-};{-};{-};{+};];
+     [{KK};{-};{-};{-};{+};{+};];
+     [{KB};{-};{-};{+};{-};{+};];
+     [{KF};{-};{-};{-};{-};{+};]]);
 }
 >
-  \ref-figure(`fig:NLStarObservationTable2`);の観察表は閉じていないので、\ref-figure(`fig:NLStarObservationTable2`);の観察表が閉じるまで${P}及び${P'}に文字列を追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable3`);左)
-  具体的にはまず、${T\[\text!{KBF},\text!{-}\]}が${T\[\epsilon,\text!{-}\]}と一致しないのでKBFを${P'}から取り除き${P}に追加します。
-  次に、${\text!{KBF} \in P}ですがKBFK、KBFB、KBFFが${P}にも${P'}にも含まれていないので、これらを${P'}に追加します。
+}
++p{
+  \figure ?:(`fig:NLStarObservationTable4`){KBを${P}に、KBK、KBB、KBFを${P'}に追加した観察表}<
++centering{
+  \observationTable(
+    [[{} ;{${\epsilon}} ;{K};{KB};{KBF};{KBFK};];
+     [{${\epsilon}};{-};{-};{-};{-};{+};];
+     [{K};{-};{-};{-};{+};{+};];
+     [{KB};{-};{-};{+};{-};{+};];
+     [{—————};{—————};{—————};{—————};{—————};{—————};];
+     [{B};{-};{-};{-};{-};{+};];
+     [{F};{-};{-};{-};{-};{+};];
+     [{KK};{-};{-};{-};{+};{+};];
+     [{KF};{-};{-};{-};{-};{+};];
+     [{KBK};{-};{-};{+};{+};{+};];
+     [{KBB};{-};{-};{-};{-};{+};];
+     [{KBF};{-};{+};{-};{-};{+};]]);
+}
+>
+} +p{
+  \figure ?:(`fig:NLStarObservationTable5`){KBFを${P}に、KBFK、KBFB、KBFFを${P'}に追加した観察表}<
++centering{
+  \observationTable(
+    [[{} ;{${\epsilon}} ;{K};{KB};{KBF};{KBFK};];
+     [{${\epsilon}};{-};{-};{-};{-};{+};];
+     [{K};{-};{-};{-};{+};{+};];
+     [{KB};{-};{-};{+};{-};{+};];
+     [{KBF};{-};{+};{-};{-};{+};];
+     [{—————};{—————};{—————};{—————};{—————};{—————};];
+     [{B};{-};{-};{-};{-};{+};];
+     [{F};{-};{-};{-};{-};{+};];
+     [{KK};{-};{-};{-};{+};{+};];
+     [{KF};{-};{-};{-};{-};{+};];
+     [{KBK};{-};{-};{+};{+};{+};];
+     [{KBB};{-};{-};{-};{-};{+};];
+     [{KBFK};{+};{-};{-};{+};{+};];
+     [{KBFB};{+};{-};{-};{-};{+};];
+     [{KBFF};{+};{-};{-};{-};{+};]]);
+}
+>} +p {
+  \figure ?:(`fig:NLStarObservationTable6`){KBFBを${P}に、KBFBK、KBFBB、KBFBFを${P'}に追加した観察表。この観察表はRSFA閉である}<
++centering{
+  \observationTable(
+    [[{} ;{${\epsilon}} ;{K};{KB};{KBF};{KBFK};];
+     [{${\epsilon}};{-};{-};{-};{-};{+};];
+     [{K};{-};{-};{-};{+};{+};];
+     [{KB};{-};{-};{+};{-};{+};];
+     [{KBF};{-};{+};{-};{-};{+};];
+     [{KBFB};{+};{-};{-};{-};{+};];
+     [{—————};{—————};{—————};{—————};{—————};{—————};];
+     [{B};{-};{-};{-};{-};{+};];
+     [{F};{-};{-};{-};{-};{+};];
+     [{KK};{-};{-};{-};{+};{+};];
+     [{KF};{-};{-};{-};{-};{+};];
+     [{KBK};{-};{-};{+};{+};{+};];
+     [{KBB};{-};{-};{-};{-};{+};];
+     [{KBFK};{+};{-};{-};{+};{+};];
+     [{KBFF};{+};{-};{-};{-};{+};];
+     [{KBFBK};{-};{-};{-};{+};{+};];
+     [{KBFBB};{-};{-};{-};{-};{+};];
+     [{KBFBF};{-};{-};{-};{-};{+};]]);
+}
+>
+  \ref-figure(`fig:NLStarObservationTable2`);の観察表は閉じていないので、\ref-figure(`fig:NLStarObservationTable2`);の観察表が閉じるまで${P}及び${P'}に文字列を追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable3`);\ref-figure(`fig:NLStarObservationTable4`);\ref-figure(`fig:NLStarObservationTable5`);\ref-figure(`fig:NLStarObservationTable6`);)
 }
 +p {
-   次に\ref-figure(`fig:NLStarObservationTable3`);左の観察表が一貫するまで${S}に文字列を追加し、さらに観察表が閉じるまで${P}、${P'}に文字列を追加する、という操作を繰り返します (\ref-figure(`fig:NLStarObservationTable3`);右)。
-   観察表を一貫させる操作はIDアルゴリズムのものと同じです。
-}
-+p {
-  \figure ?:(`fig:evenDFAStep2`){\ref-figure(`fig:NLStarObservationTable3`);左の観察表に対応するDFA${\A_2}}<
-     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/mustHaveKBF.pdf`)(1);}
+  \figure ?:(`fig:mustFinishKBFM1Step2`){\ref-figure(`fig:NLStarObservationTable6`);の観察表に対応するRFSA${\A_2}}<
+     +image-frame{\insert-pdf-image(12cm)(path-to-root ^ `figs/mustFinishKBFM1Step2.pdf`)(1);}
   >
-  最後に\ref-figure(`fig:NLStarObservationTable3`);左の観察表に対応するDFA${\A_2}を生成し、等価性質問によって${\Lgof{\A_2}}と学習したい正規言語が一致するかどうかを調べます。
-  今回は${\Lgof{\A_2}}が学習したい正規言語と一致するので、L\*アルゴリズムはここで終了となります。
+  最後に\ref-figure(`fig:NLStarObservationTable6`);の観察表に対応するRFSA${\A_2}を生成し、等価性質問によって${\Lgof{\A_2}}と学習したい正規言語が一致するかどうかを調べます。
+  今回は${\Lgof{\A_2}}が学習したい正規言語と一致するので、NL\*アルゴリズムはここで終了となります。
 }
++p{
+  ${\A_2}は\ref-figure(`fig:mustFinishKBFM1`);のNFAとは違ったNFAですが、認識する言語は等しいです。さらに、遷移関係の個数は多いですが、状態数は\ref-figure(`fig:mustFinishKBFM1`);のNFAと同じで、同じ言語を認識する最小DFAより小さいです。
+}
+  >
+  +subsection{停止性} <
+  +p{
+  kokokara!!
+  }
   >
   >
 >

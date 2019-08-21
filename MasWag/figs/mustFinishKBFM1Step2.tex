@@ -1,0 +1,26 @@
+\documentclass{standalone}
+\usepackage{amssymb,amsmath}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
+\begin{document}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+ \node[state,initial] (s_0) {$\varepsilon$};
+ \node[state] (s_K)[right=of s_0] {K};
+ \node[state] (s_KB)[right=of s_K] {KB};
+ \node[state] (s_KBF)[right=of s_KB] {KBF};
+ \node[state,accepting] (end)[right=of s_KBF] {KBFB};
+ \path[->] 
+ (s_0) edge [loop above] node {B,F} (s_0)
+ (s_0) edge [bend left,above] node {K} (s_K)
+ (s_K) edge [bend left,below] node {F} (s_0)
+ (s_K) edge [loop above] node {K} (s_K)
+ (s_K) edge [bend left,above] node {B} (s_KB)
+ (s_KB) edge [bend left,above] node {K} (s_K)
+ (s_KB) edge [bend right=70,above] node {B} (s_0)
+ (s_KB) edge [bend right=0,above] node {F} (s_KBF)
+ (s_KBF) edge [bend left=60,above] node {K} (s_K)
+ (s_KBF) edge [above] node {K,B,F} (end)
+ (end) edge [bend left=60,above] node {K} (s_K)
+ (end) edge [bend left=70,above] node {B,F} (s_0);
+\end{tikzpicture} 
+ \end{document}
