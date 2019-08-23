@@ -11,12 +11,13 @@ let-math \neg = math-char MathPrefix `¬`
 let-math \iff = text-in-math MathRel (fun ctx -> inline-skip 5pt ++ read-inline ctx {iff} ++ inline-skip 5pt)
 let-math \and = text-in-math MathRel (fun ctx -> inline-skip 5pt ++ read-inline ctx {and} ++ inline-skip 5pt)
 let-math \or = text-in-math MathRel (fun ctx -> inline-skip 5pt ++ read-inline ctx {or} ++ inline-skip 5pt)
+let-math \void = text-in-math MathOrd (fun ctx -> inline-nil)
 let-math \tilde = math-char MathBin `∼`
 
-let-math \seq obj n = ${#obj_{1}, \cdots, #obj_{#n}}
+let-math \oarr obj = math-upper obj ${\rightarrow}
 
-let-math \entails-c ant suc = ${#ant \vdash #suc}
-let-math \entails-fde ant-true ant-false suc-true suc-false =
+let-math \seq ant suc = ${#ant \vdash #suc}
+let-math \biseq ant-true ant-false suc-true suc-false =
     ${#ant-true : #ant-false \vdash #suc-true : #suc-false }
 
 let-inline ctx \todo inner =
@@ -128,31 +129,189 @@ let article =
             +p{例として排中律${A \vee \neg A}がどのように解釈されうるかを考えてみましょう。${A \tilde 0}でも${A \tilde 1}でもない時、${\neg}の定義より${\neg A \tilde 0}でも${\neg A \tilde 1}でもありません。次に${\vee}の定義より${A \vee \neg A \tilde 0}でも${A \vee \neg A \tilde 1}でもないことが言えます。逆に${A \tilde 0}かつ${A \tilde 1}であるような状況を考えると、${\neg}の定義より${\neg A \tilde 0}かつ${\neg A \tilde 1}で、さらに${\vee}の定義より${A \vee \neg A \tilde 0}かつ${A \vee \neg A \tilde 1}であることが導けます。これはFDEにおいて排中律が「真でない」あるいは「偽である」状況がありうることを意味しています。同様のことが無矛盾則${\neg A \wedge \neg A}でも成り立ちます。}
             +p{\todo{4値論理にもできるよみたいな話をしてもいいのかもしれない}}
         >
-        +section{Biconsequence Relationによる推論規則} <
-            +p{先程の話はFDEの意味論の側の話でした。FDEを論理体系として成立させるためには意味論に対応する推論体系も必要です。BelnapによるFDEの元論文\cite[`Belnap77`];でもそういった推論規則を提示していますが、この記事ではBochmanによるBiconsequence Relationを用いた推論体系\cite[`Bochman98`];を紹介します。}
-            +p{Biconsequence Relationは基本的には古典論理のシーケント計算を拡張したものと考えて差し支えなさそうです\footnote{もう少し捕捉するとシーケント計算を一般化したScott consequence relationを更に拡張したものらしいです}。古典論理のシーケント計算では、
-            \math-list(${| \entails-c{\seq{A}{n}}{\seq{B}{m}} |});
-            というシーケントは「${\seq{A}{n}}が全て真であれば${\seq{B}{m}}の少なくとも1つが真である」ことを主張するのでした。Biconsequent Relationでは以下のようにシーケントを表記します。
-            \math-list(${| \entails-fde{\seq{A}{n}}{\seq{B}{m}}{\seq{C}{l}}{\seq{D}{k}} |});
-            このシーケントは「${\seq{A}{n}}の全てが真で、かつ${\seq{B}{m}}の全てが偽である時に、${\seq{C}{l}}の少なくとも1つが真であるか、あるいは${\seq{D}{k}}の少なくとも一つは偽である」ことを主張します。
-            }
-        >
-        +section {} <
-            +math-list (${|
-                \proven!(
-                    open DeriveDSL in
-                    derive(${\vdash \neg \paren{A \wedge \neg A}})
-                    |> by({${\neg}-R})
-                    |> from [
-                        derive(${A \wedge \neg A \vdash })
-                        |> by({${\neg}-L})
+        +section{双シーケント計算による推論体系} <
+            +p{先程の話はFDEの意味論の側の話でしが、FDEを論理体系として成立させるためにはその意味論に対応する推論体系も必要です。BelnapによるFDEの元論文\cite[`Belnap77`];でもそういった推論規則を提示していますが、この記事ではBochmanによるBiconsequence Relationを用いた推論体系\cite[`Bochman98`];を紹介します。}
+
+            +subsection{双シーケント計} <
+                +p{\todo{Bochman's biconsequence reltaionは多値論理を扱うフレームワーク的なものでオーバーキルなのでFDEに関する部分だけを抜き出した双シーケント計算の体系を紹介することにする}Biconsequence Relationは基本的には古典論理のシーケント計算を拡張したものと考えて差し支えなさそうです\footnote{もう少し捕捉すると古典論理のシーケント計算を一般化したものらしいScott consequence relationを更に拡張したもののようです}。命題の有限集合を${a, b, \ldots}と表記することにしましょう。古典論理のシーケント計算では、
+                \math-list(${| \seq{a}{b} |});
+                というシーケントは「${a}の命題が全て真であれば${b}の命題うち少なくとも1つが真である」ことを主張するのでした。Biconsequent Relationでは以下のようにシーケント\footnote{元論文ではbisequentと呼んでいますがこの記事では単にシーケントと呼ぶことにします。}を表記します。
+                \math-list(${| \biseq{a}{b}{c}{d} |});
+                このシーケントは「${a}の全てが真で、かつ${b}の全てが偽である時に、${c}の少なくとも1つが真であるか、あるいは${d}の少なくとも一つは偽である」ことを主張します。真と偽が別々の性質になったのでシーケントが倍になったわけです。これは形式的には以下のように定義で表わされます。
+                    \definition  ?:({妥当なシーケント}) {
+                        あるシーケント${\biseq{a}{b}{c}{d}}がFDEの解釈${\tilde}に対して\dfn{妥当}であるとは、全ての${A \in a}について${A \tilde 1}かつ全ての${B \in b}について${B \tilde 0}である場合に、${C \tilde 1}であるような${C \in c}があるかあるいは${D \tilde 0}であるような${D \in d}があることである。
+                    }
+                }
+                +p{biconsequent relationにおける構造規則も古典論理のシーケント計算の拡張となっています。具体的には以下のような構造規則があります。}
+                +math(${
+                        \proven!(
+                            open DeriveDSL in
+                            derive(${\biseq{a'}{b'}{c'}{d'}})
+                            |> by ({(Monotonicity)})
+                            |> from [
+                                assume(${\biseq{a}{b}{c}{d}});
+                                assume(${a \subseteq a', b \subseteq b', c \subseteq c', d \subseteq d'})
+                            ]
+                        )
+                });
+                +math(${
+                    \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{A}{\void}{A}{\void}})
+                        |> by ({(Positive Reflexivity)})
+                    )
+                });
+                +math(${
+                    \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{\void}{A}{\void}{A}})
+                        |> by ({(Negative Reflexivity)})
+                    )
+                });
+                +math(${
+                    \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c}{d}})
+                        |> by ({(Positive Cut)})
                         |> from [
-                            derive(${A \vdash A})
-                            |> by({Id})
+                            assume(${\biseq{a}{b}{A, c}{d}});
+                            assume(${\biseq{A, a}{b}{c}{d}});
                         ]
-                    ]
-                )
-            |});
+                    )
+                });
+                +math(${
+                    \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c}{d}})
+                        |> by ({(Negative Cut)})
+                        |> from [
+                            assume(${\biseq{a}{b}{c}{A, d}});
+                            assume(${\biseq{a}{A, b}{c}{d}});
+                        ]
+                    )
+                });
+                +p{Monotonicityは弱化の規則ですね。交換と縮約の規則はありませんが、これは${a, b, \ldots}が有限の集合であるという条件に内包されています。また真の命題と偽の命題それぞれについてReflexivityとCutがあります。}   
+            >
+            +subsection {FDEの推論規則} <
+                +p{次に論理結合子に関するルールを見ていきましょう。古典論理のシーケント計算ではそれぞれの論理結合子について右規則と左規則がありますが、例によってFDEの双シーケント計算ではそれぞれが真と偽の場合に分裂します。}
+                +p{
+                    ${\vee}に関する規則
+                    \math-list(${
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a, A \vee B}{b}{c}{d}})
+                        |> by({(${\vee}PL)})
+                        |> from [
+                            assume(${\biseq{a, A}{b}{c}{d}});
+                            assume(${\biseq{a, B}{b}{c}{d}})
+                        ]
+                    )
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c, A \vee B}{d}})
+                        |> by({(${\vee}PR)})
+                        |> from [
+                            assume(${\biseq{a}{b}{c, A, B}{d}})
+                        ]
+                    )
+                    |});
+                    \math-list(${
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b, A \vee B}{c}{d}})
+                        |> by({(${\vee}NL)})
+                        |> from [
+                            assume(${\biseq{a}{b, A, B}{c}{d}})
+                        ]
+                    )
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c}{d, A \vee B}})
+                        |> by({(${\vee}NR)})
+                        |> from [
+                            assume(${\biseq{a}{b}{c}{d, A}});
+                            assume(${\biseq{a}{b}{c}{d, B}})
+                        ]
+                    )
+                    |});
+                }
+                +p{
+                    ${\wedge}に関する規則
+                    \math-list(${
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a, A \wedge B}{b}{c}{d}})
+                        |> by({(${\wedge}PL)})
+                        |> from [
+                            assume(${\biseq{a, A, B}{b}{c}{d}})
+                        ]
+                    )
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c, A \wedge B}{d}})
+                        |> by({(${\wedge}PR)})
+                        |> from [
+                            assume(${\biseq{a}{b}{c, A}{d}});
+                            assume(${\biseq{a}{b}{c, B}{d}})
+                        ]
+                    )
+                    |});
+                    \math-list(${
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b, A \wedge B}{c}{d}})
+                        |> by({(${\wedge}NL)})
+                        |> from [
+                            assume(${\biseq{a}{b, A}{c}{d}});
+                            assume(${\biseq{a}{b, B}{c}{d}})
+                        ]
+                    )
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c}{d, A \wedge B}})
+                        |> by({(${\wedge}NR)})
+                        |> from [
+                            assume(${\biseq{a}{b}{c}{d, A, B}});
+                        ]
+                    )
+                    |});
+                }
+                +p{
+                   ${\neg} に関する規則
+                   \math-list(${
+                   | \proven!(
+                       open DeriveDSL in
+                       derive(${\biseq{a,\neg A}{b}{c}{d}})
+                       |> by ({(${\neg}PL)})
+                       |> from [
+                           assume(${\biseq{a}{b, A}{c}{d}})
+                       ])
+                   | \proven!(
+                       open DeriveDSL in
+                       derive(${\biseq{a}{b}{c, \neg A}{d}})
+                       |> by ({(${\neg}PR)})
+                       |> from [
+                           assume(${\biseq{a}{b}{c}{d, A}})
+                       ])
+                   |});
+                   \math-list(${
+                   | \proven!(
+                       open DeriveDSL in
+                       derive(${\biseq{a}{b,\neg A}{c}{d}})
+                       |> by ({(${\neg}NL)})
+                       |> from [
+                           assume(${\biseq{a, A}{b}{c}{d}})
+                       ])
+                   | \proven!(
+                       open DeriveDSL in
+                       derive(${\biseq{a}{b}{c}{d, \neg A}})
+                       |> by ({(${\neg}NR)})
+                       |> from [
+                           assume(${\biseq{a, A}{b}{c, A}{d}})
+                       ])
+                   |});
+                }
+            >
         >
     >
 >
