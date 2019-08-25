@@ -12,8 +12,8 @@ let article = '<
     +chapter ?:(`koba-article`)
     (|
         bibliography = bibliography;
-        title = {pohe};
-        author = {koba};
+        title = {Schreier-SimsのアルゴリズムをRustで実装した};
+        author = {koba-e964};
     |)
     <
         +section {はじめに} <
