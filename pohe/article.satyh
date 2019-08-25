@@ -1,23 +1,181 @@
 @import: ../book-class
+@import: ../lib/typeset/code2
 
 module Pohe : sig
   val article : block-text
 end = struct
 
-let bibliography = []
+let bibliography = [
+    (`l4`, Article(|
+        author = {| Jochen Liedtke |};
+        title = {Improving IPC by kernel design};
+        journal = {14th ACM Symposium on Operating System Principles};
+        volume = None;
+        number = None;
+        pages = (175, 188);
+        year = 1993;
+    |));
+    (`l4_wikipedia`, WebSite(|
+        author = {| ウィキペディアの執筆者 |};
+        title = {L4マイクロカーネルファミリー};
+        url = `https://ja.wikipedia.org/wiki/L4マイクロカーネルファミリー`;
+        year = 2019;
+    |));
+    (`philipps`, WebSite(|
+        author = {| Philipp Oppermann |};
+        title = {Writing an OS in Rust };
+        url = `https://os.phil-opp.com`;
+        year = 2019;
+    |));
+]
 
 let article = '<
     +chapter ?:(`pohe-article`)
     (|
         bibliography = bibliography;
-        title = {pohe};
+        title = {Writing a (micro)kernel in Rust in 12 days - 2.5th day -};
         author = {nullpo-head};
     |)
     <
-        +section {} <
-            +p{Hello, world!}
-        >
-    >
->
++section {前回までのあらすじ} <
+
++p{
+
+久しぶり！今回のYabaiTech Tokyoでも、前号の続きとしてRustでのマイクロカーネル開発をやっていこう。
+この連載は、私がRustでマイクロカーネルを開発する開発のログを、皆さんと共有するためのものだ。
+その過程で、Rustによるカーネル開発の最高な点や厄介な点を、皆さんにご紹介していきたい。
+そして、全ての開発が終わった暁には、たった12日間でRustでカーネルを実装するための、ちょうどいいチュートリアルができあがっている（はず）だろう。
+前号では、12日間のうちの最初の一日目として、マイクロカーネルの歴史とL4カーネルについて説明し、
+L4Ka::Pistachioカーネルをコンパイルして起動させてみたのだった。
+さらに、二日目では、Phillipp氏の"Writing an OS in Rust"\cite[`philipps`];に従って、
+Rustで小さなカーネル（と呼ぶことにしたベアメタルプログラム)を実装して、Qemuで動かした。
+このときPhilipp氏の\code(`bootloader`); crateを用いてブートを実現したのだが、
+これが後々マイクロカーネルを作るにあたって不都合になってしまう。
+そこで、Multiboot規格に沿ったブート方式にカーネルを書き直す必要があった。
+しかし、その部分で前回の連載は終了となってしまったのだった。なので今回は、この"2.5th day"を完成させていく記事になる。
+
+}
++p{
+
+2.5日目に早速進む前に、少しマイクロカーネルの歴史とL4カーネルについて振り返ってみよう。
+Machに代表されるような伝統的なマイクロカーネルは、IPCのパフォーマンスに悪さに悩まされていた。
+マイクロカーネルでは、システムコールがサーバー間の複数のIPCで実装され、そしてIPCはコンテキストスイッチを伴う。
+一方、モノリシックカーネルのシステムコールは通常1回のコンテキストスイッチで済むから、
+比較するとマイクロカーネルではシステムコールのコストが割高になってしまう。
+そこで、Jochen Liedtke先生が最初に実装したL4マイクロカーネルファミリーは、
+「極小性」をキーコンセプトとしてカーネルを再設計しなおし、パフォーマンスの高速化を図った。
+IPCの機構はMachに比べて極端に単純になり、IPCのメッセージサイズはCPUのキャッシュに乗るよう再設計された。
+プロセスのスケジューリングも単純化され、IPCを高速化するいくつかの工夫も導入された。
+さらに初期のカーネルにいたってはすべてアセンブリで書いてしまうという執念の入りようで、ありうる極小のマイクロカーネルを完成させた。
+その結果として、L4のIPCはMachに比べて20倍も高速化したのだった。\cite[`l4`];\cite[`l4_wikipedia`];
+
+}
++p{
+
+そして、L4の極小性は短期間でカーネルを自作してみるのにぴったりな性質だ！
+今回実装ターゲットにしたL4 X.2 Standardでは、定義されているシステムコールが12個しかない。
+この連載が、12日でカーネルを作る、と言い張っているのは、APIが12個しかない、というこの事実をあてにしているからだ。
+いま"Standard"と書いたように、L4ファミリーにはL4カーネルが実装しているべきシステムコールやそのABI、割り込みハンドリングの規約などを定めた標準仕様が存在する。
+これはちょうど、普段慣れ親しんでいるPOSIX規約のカーネル版、とでもいえるものだ。
+これに準拠したカーネルを作れば、少ない修正でL4カーネル用のユーザーランドを動かせるようになるというわけ。
+1日目でビルドしてみたPistachioカーネルは、このL4 X.2 Standardに準拠したL4カーネルだった。
+
+具体的には、12個のシステムコールのリストは次の通り。
+
+\enumerate {
+    * \code(`KERNELINTERFACE`);
+    * \code(`EXCHANGEREGISTERS`);
+    * \code(`THREADCONTROL`);
+    * \code(`SYSTEMCLOCK`);
+    * \code(`THREADSWITCH`);
+    * \code(`SCHEDULE`);
+    * \code(`IPC`);
+    * \code(`LIPC`);
+    * \code(`UNMAP`);
+    * \code(`SPACECONTROL`);
+    * \code(`PROCESSORCONTROL`);
+    * \code(`MEMORYCONTROL`);
+}
+冗談抜きでこれで全部だ。実にシンプルで小さい。
+このシステムコールさえ実装すれば、おおよそPistachioと互換のカーネルができあがることになる。
+そしてそれこそがこの連載の最終ゴールだ！
+
+}
+
+>  % section
+
++section {2.5th Day: Minimal Kernel in Rust with Multiboot2} <
+
++subsection{前回まで} <
+
++p{
+
+それでは2.5日目を始めよう。前号ではPhilipps'
+\footnote{
+  Philipp氏の"Writing an OS in Rust"のことを、この連載では"Philipp's"と呼んでいる
+}
+にしたがって、どこまでカーネルを実装していたのだろう？
+GitHub上のコードで言えば、このコミットのものまでであった。(\code(`https://github.com/nullpo-head/Rusty-L4/commit/72f400d7029a0431f87af27f64fb40abb3ff68ee`);)
+これは、Philipp'sの"VGA Text Mode"
+\footnote{
+  https://os.phil-opp.com/vga-text-mode
+}
+の章を終えたときの実装に相当する。これをビルドして、Qemuを使って出力されたバイナリファイルを起動すると、\ref-figure(`fig:println`);が表示される。
+
+\figure ?:(`fig:println`)
+  {前号での最終画面}
+  <+image-frame{\insert-image(14cm)(`pohe/figures/println.JPG`);}>
+
+このときは、VGAのメモリ領域に書き込んでメッセージを表示するようなFree StandingなELFファイルをRustで書いた。
+そして、そのELFのブートはPhilipp氏の\code(`bootloader`); crateと\code(`bootimage`); crateにお任せしたのだった。
+それにより、私は自分自身でブートローダーを書くことなく、Rustプログラムを書くだけでx86_64アーキテクチャのブートから、
+Rustランタイムの初期化まで簡単に達成できたのだった。
+
+}
+
+>  % subsection
+
++subsection{Booting with Multiboot2} <
+
++p{
+
+さて、では、その続きに進むとしよう！
+今回やることは、\code(`bootloader`);を使うことをやめて、Multibootを使ったブートへと実装を変えることだ。
+なぜそんなことをする必要があるのだろう？その理由は2つある。
+
+}
++p{
+
+一つ目は、現状の\code(`bootloader`); crateが、マイクロカーネル構成と少し相性が悪いこと。
+マイクロカーネルは、ブートローダーに複数のELFファイルをマップしてもらえた方が実装がシンプルで済む。
+マイクロカーネルは、複数のユーザーランドで動くサーバー群があって初めてオペレーティングシステムとして動作するわけだけど、
+マイクロカーネルのカーネル部分は非常にシンプルなため、ファイルシステムをパースしてELFファイルをロードするような能力はない。
+だから、このままでは、マイクロカーネルはそもそもサーバー群をメモリに展開することができない。
+このような問題を解決するのが、まさにMultibootのBoot Modules機能だ。
+MultibootのBoot Modulesをサポートするブートローダーは、複数のELFファイルをブートイメージから取り出して、メモリ上に展開しておいてくれる。
+そして、カーネルを起動する際に、マップされたELFの情報を所定の方法でカーネルに渡してくれる。
+逆に\code(`bootloader`); crateにはまだブートモジュールの機能はないため、少し工夫をしないとマイクロカーネルを起動することができないのだ。
+
+}
++p{
+
+二つ目の理由は、L4Ka::Pistachioの資産をスムーズに流用するためだ。
+Pistachioカーネルは、ちょうどいま説明した理由でMultibootを使ってブートするようになっている。
+基本的に私は、
+1. まずPistachioで動くサーバーを実装してPistachioで動作を確認 
+2. その後そのサーバーが自分で実装したカーネルでも動作するようシステムコールを作りこむ
+、という順番で実装を進めていく予定だ。
+だから、Multibootで自分のカーネルもブートするようにしておけば、Pistachioと自分のカーネルの差し替えがスムーズになるので、テストに都合がいい。
+この2つの理由から、Multibootへと移行していこうと思う。
+
+}
+
+>  % subsection
+
+>  % section
+
+> % chapter
+
+>  % article
 
 end
