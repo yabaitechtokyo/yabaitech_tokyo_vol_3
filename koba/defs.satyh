@@ -1,0 +1,5 @@
+@import: ../book-class
+
+%let-math \gen l = ${{#l}}
+let-math \Res l = ${\app{\mathrm{Res}}{#l}}
+let-math \gen l = ${<#l>}

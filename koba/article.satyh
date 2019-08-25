@@ -2,6 +2,7 @@
 @import: ../book-class
 @import: ../lib/typeset/code2
 @import: ./bibliography
+@import: ./defs
 
 module Koba : sig
   val article : block-text
@@ -105,7 +106,7 @@ let article = '<
                 これを認めれば ${\mathrm{Stab}_G\(x\)} の生成元も計算できる。
 
                 実装には幅優先探索を用いた。以下に擬似コード (\cite[`HoltSlide`]; の p.6) を与える。
-                実装本体は GitHub レポジトリ \footnote{https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad18676db142436eee22955e0908749c049/src/main.rs\#L76-L110} にある。
+                実装本体は GitHub レポジトリ \footnote{https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs\#L76-L110} にある。
 
                 \d-code(
                 `
@@ -149,7 +150,7 @@ let article = '<
                 }
                 `);
 
-                ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad18676db142436eee22955e0908749c049/src/main.rs
+                ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs
                 これの計算量はどうなるだろうか? 各ステップで、生成元の個数は最悪の場合 (軌道の大きさ) 倍になる。
                 ${i} を固定するときの軌道の大きさは最大で ${n - i} であるため、これらの積は最悪 ${\app{O}{n\!}} 程度である。
                 当初の目標は ${n = 48} の場合に群の位数を求めることだったため、これでは到底間に合わない。
@@ -164,10 +165,19 @@ let article = '<
                 そもそも問題は、固定化群の生成元が多くなりすぎることだったので、そうならないような工夫をすればよい。
             }
             +definition ?:({BSGS}) ?:(`def:BSGS`) {
-                BSGS の定義 (TODO)
+                正確な定義は \cite[`HoltSlide`]; に譲るとして、感覚的な概念を説明する。
+                Base and strong generating set (BSGS) とは、以下の列2個のペア ${\beta, S} である。
+                \listing {
+                    * ${\beta_i} (${1 \leq i \leq l}): 頂点の列。${S} を "だんだん固定" していく列。
+                    * ${S_i} (${1 \leq i \leq l}): 生成元の集合の列。${S_1 \supseteq S_2 \supseteq \cdots S_l} を満たす必要がある。
+                    また、${\gen{S_i} = \mathrm{Stab}_{\beta_1, \ldots, \beta_{i}}\(G\)} を満たさなければならない。
+                }
             }
             +p{
-                アルゴリズムは、与えられた生成元の集合を、BSGS になるまで大きくしていく、というアイディアに基づいている。
+                上で固定化部分群をとったときは生成元が膨らんでいったが、BSGS についていえば生成元はだんだん小さくなっていく。
+                (というよりも、だんだん小さくなるように余計な元を足しておくのである。)
+                一般の生成元が BSGS であるわけはないため、BSGS を得るためのアルゴリズムが必要である。
+                修正された Schreier-Sims のアルゴリズムは、与えられた生成元の集合を、BSGS になるまで大きくしていく、というアイディアに基づいている。
                 擬似コードは以下である。
                 \d-code(
                 `
@@ -260,6 +270,7 @@ let article = '<
                     }
                 `);
                 実装は schreier::incrementally_build_bsgs に与えた。
+                https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L59-L116
             }
         >
         +section{謝辞} <
