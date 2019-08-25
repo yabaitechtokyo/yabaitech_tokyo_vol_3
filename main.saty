@@ -33,11 +33,11 @@ document (|
   publisher = `有限会社 ねこのしっぽ`
   |) '<
     #Censored.article;
-    #Gfn.article;
-    #IrnBru.article;
+%    #Gfn.article;
+%    #IrnBru.article;
     #Koba.article;
     #MasWag.article;
-    #Phi.article;
+%    #Phi.article;
     #Pohe.article;
     #Wasabiz.article;
     #Zpt.article;

@@ -1,4 +1,6 @@
 @require: color
+@require: itemize
+@require: stdjabook
 @import: ../lib/regexp
 @import: ../book-class
 @import: ../lib/typeset/code2
@@ -9,19 +11,10 @@ end = struct
 
 let bibliography = []
 
-let python-rule = (|
-  groups = [
-    (|
-      color = RGB(0.8, 0.2, 0.);
-      keywords = [`import`; `from`];
-    |);
-    (|
-      color = RGB(0.5, 0., 0.7);
-      keywords = [`print`];
-    |);
-  ];
-  ident-regexp = RegExp.many1 RegExp.alpha;
-|)
+let-block ctx +image w path =
+    let image = load-pdf-image path 1 in
+    let insert-image = use-image-by-width image w in
+        line-break true true ctx (inline-fil ++ insert-image ++ inline-fil)
 
 let article = '<
     +chapter ?:(`censored-article`)
@@ -41,18 +34,101 @@ let article = '<
     AWS lambda上で動作するmecab-python3およびカスタムipadic-neologd辞書の作成が完了し、
     次のようなコードがlambda functionとして動作するようになりました。
   
-    \d-code?:(python-rule)( 
+    \d-code( 
     `
-    import MeCab
+    import mecab  # Custom MeCab module
     from unzip_neologd import unzip_neologd
-    neologd_path = unzip_neologd()
+    neologd_path = unzip_neologd()  # Unzip custom neologd dictionary and return its path
     tagger = MeCab.Tagger(" -d " + neologd_path)
     print(tagger.parse("2019年のアニメは鬼滅の刃が面白くてオススメです"))
     `);
+    
+    実行結果：
+    \d-code(
+    `
+    2019年  名詞,,2019年
+    の      助詞,,の
+    アニメ  名詞,,アニメ
+    は      助詞,,は
+    鬼滅の刃        名詞,,鬼滅の刃
+    が      助詞,,が
+    面白く  形容詞,連用テ接続,面白い
+    て      助詞,,て
+    オススメ        名詞,,オススメ
+    です    助動詞,基本形,です
+    `);
+    このmecab wrapperを用いてbotの処理を行なっていきますが、本記事では自然言語周りの話ではなくAWSを使う部分にフォーカスしていきます。
     }
     >
     +section{定期ツイート機能} <
-      
+    +p{
+    \figure ?:(`fig:bot_architecture`) {けもフレbotのアーキテクチャ図。IAMなどbot特有でないものは除いてあります。}<
+      +image(100mm)(`censored/serviceflow.pdf`);
+    >   
+    けもフレbotでは1時間に1度タイムラインのツイートを拾ってツイートします。図\ref-figure(`fig:bot_architecture`);
+    にbotのアーキテクチャ図を示しました。無課金で動かすのが目的なのもありとても単純な構造をしています。
+    CloudWatch Event Ruleを用いることでcronのように一定時間ごとにAWSのサービスを呼び出すことができます。
+    今回は1時間おきに次のlambda functionをinvokeします。
+    \d-code(
+    `
+def timeline_handler(event, context):
+    # Check whether dryrun
+    global dry_run
+    dry_run = event.get("dryrun", False)
+
+    # Authentication
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
+    api = tweepy.API(auth)
+    # Read timeline and remove URL
+    public_tweets = api.home_timeline()
+    tweets = list(map(rip_url, map(lambda x: x.text, public_tweets)))
+    result = ""
+    text = ""
+    api_consumed = False
+    # Unzip custom Neologd dictionary for MeCab
+    from unzip_neologd import unzip_neologd
+    neologd_path = unzip_neologd()
+
+    # Tagger initialization
+    tagger = Tagger(" -d " + neologd_path)
+    for text in tweets:
+        if patterns.contains_ng_words(text):
+            # Don't react to tweets containing NG words
+            pass
+        result = process_tweet(tagger, text)
+        if result != "":
+            api_consumed = tweet_with_probability_from_rate_limit(api, dynamodb, result, dry_run)
+            break
+    json_content = {
+        'statusCode': 200,
+        'body': {
+            "dryrun": dry_run,
+            "type": "application/json;charset=UTF-8",
+            "text": {"target_text": result, "source_text": text},
+            "event": event,
+            "api_consumed": api_consumed,
+        }
+    }
+    logger.info(json_content)
+    return json_content
+    `);
+    Lambda functionの基本はeventとcontextを受け取りjsonでresponseを返す、ステートレスな関数です。
+    ステートを保持させたい場合にはAWS DynamoDBなど外部のサービスに状態を保存します。AWS DynamoDBでは無料で
+    \listing {
+    * 5 GB のストレージ
+    * 25 個のプロビジョニングされた書き込みキャパシティーユニット (WCU)
+    * 25 個のプロビジョニングされた読み込みキャパシティーユニット (RCU)
+    }%
+    が提供されるため、twitter bot程度の軽いアプリケーションを十分に賄うことができます。
+    }
+    +subsection{NGワード処理} <
+    +p{
+    tweetsに関するforループの中でNGワードの処理（関数 contains_ng_words）をしていますが、
+    これは以前、悪意のあるユーザーがtwitterの規約に引っかかるようなリプライをbotに送り、これに鸚鵡返しをした結果アカウントが凍結されるという事態が発生したためです。
+    皆さんもTLの単語を拾うbotを運営するときは、xす・xね、ちxこなどの相手に送った際に嫌がらせだとスパムフィルタが反応しそうな単語はNGワードに設定しましょう。
+    }
+    >
     >
     +section{リプライ機能} <
       

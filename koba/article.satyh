@@ -1,65 +1,19 @@
 @import: ../lib/regexp
 @import: ../book-class
 @import: ../lib/typeset/code2
+@import: ./bibliography
+@import: ./defs
 
 module Koba : sig
   val article : block-text
 end = struct
 
-let bibliography = [
-    (`Fuj2006`, Article(|
-        author = {| 藤本 光史 |};
-        title = {ルービックキューブとGap};
-        journal = {};
-        volume = None;
-        number = None;
-        pages = (1, 5);
-        year = 2006;
-    |));
-    (`GAPSystem`, WebSite(|
-        author = {| GAP Group |};
-        title = {GAP System for Computational Discrete Algebra};
-        url = `https://www.gap-system.org/`;
-        year = 2019;
-    |));
-    (`GAPRepositoryKoba`, WebSite(|
-        author = {| koba-e964 |};
-        title = {};
-        url = `https://github.com/koba-e964/rust-schreier-sims`;
-        year = 2019;
-    |));
-    (`WikGroupTheory`, WebSite(|
-        author = {| |};
-        title = {群論};
-        url = `https://ja.wikipedia.org/wiki/%E7%BE%A4%E8%AB%96`;
-        year = 2019;
-    |));
-    (`WikBFS`, WebSite(|
-        author = {| |};
-        title = {幅優先探索};
-        url = `https://ja.wikipedia.org/wiki/%E5%B9%85%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2`;
-        year = 2019;
-    |));
-    (`WikDFS`, WebSite(|
-        author = {| |};
-        title = {深さ優先探索};
-        url = `https://ja.wikipedia.org/wiki/%E6%B7%B1%E3%81%95%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2`;
-        year = 2019;
-    |));
-    (`HoltSlide`, WebSite(|
-        author = {| Holt, Derek |};
-        title = {The Schreier-Sims algorithm for finite permutation groups};
-        url = `https://blogs.cs.st-andrews.ac.uk/codima/files/2015/11/CoDiMa2015_Holt.pdf`;
-        year = 2015;
-    |));
-]
-
 let article = '<
     +chapter ?:(`koba-article`)
     (|
         bibliography = bibliography;
-        title = {pohe};
-        author = {koba};
+        title = {Schreier-SimsのアルゴリズムをRustで実装した};
+        author = {koba-e964};
     |)
     <
         +section {はじめに} <
@@ -152,7 +106,7 @@ let article = '<
                 これを認めれば ${\mathrm{Stab}_G\(x\)} の生成元も計算できる。
 
                 実装には幅優先探索を用いた。以下に擬似コード (\cite[`HoltSlide`]; の p.6) を与える。
-                実装本体は GitHub レポジトリ \footnote{https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad18676db142436eee22955e0908749c049/src/main.rs\#L76-L110} にある。
+                実装本体は GitHub レポジトリ \footnote{https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs\#L76-L110} にある。
 
                 \d-code(
                 `
@@ -196,13 +150,148 @@ let article = '<
                 }
                 `);
 
-                ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad18676db142436eee22955e0908749c049/src/main.rs
+                ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs
                 これの計算量はどうなるだろうか? 各ステップで、生成元の個数は最悪の場合 (軌道の大きさ) 倍になる。
                 ${i} を固定するときの軌道の大きさは最大で ${n - i} であるため、これらの積は最悪 ${\app{O}{n\!}} 程度である。
                 当初の目標は ${n = 48} の場合に群の位数を求めることだったため、これでは到底間に合わない。
 
                 多項式時間バージョンの Schreier-Sims のアルゴリズムはより賢い工夫をしている。それの解説は次節以降に譲る。
 
+            }
+        >
+        +section{Schreier-Sims のアルゴリズム (多項式時間)} <
+            +p{
+                前節のアルゴリズムを高速化し、計算量が多項式に収まるようにする。この改善は Sims \cite[`MO1995`]; による。
+                そもそも問題は、固定化群の生成元が多くなりすぎることだったので、そうならないような工夫をすればよい。
+            }
+            +definition ?:({BSGS}) ?:(`def:BSGS`) {
+                正確な定義は \cite[`HoltSlide`]; に譲るとして、感覚的な概念を説明する。
+                Base and strong generating set (BSGS) とは、以下の列2個のペア ${\beta, S} である。
+                \listing {
+                    * ${\beta_i} (${1 \leq i \leq l}): 頂点の列。${S} を "だんだん固定" していく列。
+                    * ${S_i} (${1 \leq i \leq l}): 生成元の集合の列。${S_1 \supseteq S_2 \supseteq \cdots S_l} を満たす必要がある。
+                    また、${\gen{S_i} = \mathrm{Stab}_{\beta_1, \ldots, \beta_{i}}\(G\)} を満たさなければならない。
+                }
+            }
+            +p{
+                上で固定化部分群をとったときは生成元が膨らんでいったが、BSGS についていえば生成元はだんだん小さくなっていく。
+                (というよりも、だんだん小さくなるように余計な元を足しておくのである。)
+                一般の生成元が BSGS であるわけはないため、BSGS を得るためのアルゴリズムが必要である。
+                修正された Schreier-Sims のアルゴリズムは、与えられた生成元の集合を、BSGS になるまで大きくしていく、というアイディアに基づいている。
+                擬似コードは以下である。
+                \d-code(
+                `
+                    // g を beta_transversal で示される部分群の元の積として表そうとする。
+                    // どうしても残ってしまう余りの部分も返す。
+                    pub fn strip(
+                        g: &Perm,
+                        beta_transversals: &[(usize, Transversal)]
+                    ) -> (Vec<置換>, 余りの置換) {
+                        let mut h = g.clone();
+                        let mut us = vec![];
+                        for &(beta, ref transversal) in beta_transversals {
+                            let moved_to = h[beta];
+                            match transversal[moved_to] {
+                                ダミー => break,
+                                repr => {
+                                    h = h.compose(&repr.inv());
+                                    us.push(repr.clone());
+                                }
+                            }
+                        }
+                        (us, h)
+                    }
+                    // TODO コメント
+                    fn schreier_sims(
+                        n: usize,
+                        beta_transversals: &[(usize, Transversal)],
+                        s: 置換の列,
+                    ) -> Result<(), (Vec<置換>, 余りの置換)> {
+                        if beta_transversals.is_empty() {
+                            if s.is_empty() {
+                                return Ok(());
+                            }
+                            return Err((vec![], s[0].clone()));
+                        }
+                        // The first fixed point
+                        let beta0 = beta_transversals[0].0;
+                        let intersection = (s の中で、beta0 を保つ置換全体);
+                        schreier_sims(n, &beta_transversals[1..], &intersection)?;
+                        // y はナイーブな方法で作った固定化群の生成元
+                        let (_, y) = orbit_transversal_stabilizer(n, s, beta0);
+                        for y in y {
+                            let (us, 余り) = strip(&y, &beta_transversals[1..]);
+                            if 余り が e でない {
+                                異常終了, (us, 余り) を返す
+                            }
+                        }
+                        正常終了
+                    }
+                    fn incrementally_build_bsgs(
+                        n: usize,
+                        initial_beta: &[頂点],
+                        initial_s: &[置換],
+                    ) -> (Vec<(頂点, Transversal)>, Vec<置換>) {
+                        let mut beta_transversals = vec![ダミーデータ; initial_beta.len()];
+                        let mut s = initial_s.to_vec();
+                        let mut used = vec![false; n];
+                        let dummy_transversal = vec![]; // dummy transversals
+                        loop {
+                            {
+                                // TODO コメントを詳しくする
+                                let mut cur_s = s.clone();
+                                for (beta, transversal_ref) in beta_transversals {
+                                    let (orbit_transversal, _) =
+                                        orbit_transversal_stabilizer(n, &cur_s, beta);
+                                    let transversal = get_transversal(n, orbit_transversal);
+                                    *transversal_ref = transversal;
+                                    cur_s = (cur_s の中で beta を固定する置換全体);
+                                    used[beta] = true;
+                                }
+                            }
+
+                            // スライド内の Y をインクリメンタルに計算し、問題ないか調べる。
+                            match schreier_sims(n, &beta_transversals, &s) {
+                                正常終了 => break,
+                                (_, h) を返して異常終了 => {
+                                    s に h を追加;
+                                    // beta に含まれ、h で固定化されない頂点はあるか?
+                                    let mut moved = (h で固定化されない頂点の列);
+                                    if moved と beta の共通部分がない かつ moved が空でない {
+                                        // h で固定化されない頂点は beta の中にはない。
+                                        // その中から一つランダムに選ぶ
+                                        let point = (moved からランダムにとる);
+                                        beta_transversals に (point, dummy_transversal) を追加;
+                                    }
+                                }
+                            }
+                        }
+                        (beta_transversals, s)
+                    }
+                `);
+                実装は schreier::incrementally_build_bsgs に与えた。
+                https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L59-L116
+            }
+        >
+        +section{群の位数の計算} <
+            +p {
+                ここまでくればそこまで難しくない。
+                擬似コードは以下である。
+                \d-code(
+                `
+                    // n: 頂点数, gen: 生成元
+                    fn order(n: usize, gen: &[置換]) -> 整数 {
+                        let mut order = 1;
+                        let (bsgs, _) = incrementally_build_bsgs(n, &[], gen);
+                        for (_, transversal) in bsgs {
+                            let u = (traversal から計算した (H_i:H_{i+1}) の値);
+                            order *= u;
+                        }
+                        order
+                    }
+                `);
+                実装は schreier::order に与えた。
+                https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L118-L132
             }
         >
         +section{謝辞} <
