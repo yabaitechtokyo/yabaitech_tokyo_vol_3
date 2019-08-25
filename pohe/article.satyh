@@ -934,7 +934,8 @@ makeして実行しよう！
 インストールしたのち、さらにRust L4のビルドがnightlyで行われるようcargoを設定してほしい。
 
 \d-code(`
-  $ cargo install cargo-xbuild  $ rustup override add nightly
+  $ cargo install cargo-xbuild
+  $ rustup override add nightly
 `);
 
 では、makeしよう！
