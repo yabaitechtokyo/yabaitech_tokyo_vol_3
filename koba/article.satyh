@@ -273,6 +273,27 @@ let article = '<
                 https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L59-L116
             }
         >
+        +section{群の位数の計算} <
+            +p {
+                ここまでくればそこまで難しくない。
+                擬似コードは以下である。
+                \d-code(
+                `
+                    // n: 頂点数, gen: 生成元
+                    fn order(n: usize, gen: &[置換]) -> 整数 {
+                        let mut order = 1;
+                        let (bsgs, _) = incrementally_build_bsgs(n, &[], gen);
+                        for (_, transversal) in bsgs {
+                            let u = (traversal から計算した (H_i:H_{i+1}) の値);
+                            order *= u;
+                        }
+                        order
+                    }
+                `);
+                実装は schreier::order に与えた。
+                https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L118-L132
+            }
+        >
         +section{謝辞} <
             +p {
                 この記事は以下を参考にして書かれました。
