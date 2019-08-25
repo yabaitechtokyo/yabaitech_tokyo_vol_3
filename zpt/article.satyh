@@ -84,8 +84,9 @@ let article =
         +section {序文} <
             +p{「矛盾」という言葉が中国の古典から来ていることはよく知られていますよね。「この盾はどんな攻撃も防ぐぞ」「この矛は全てのものを貫くんだ」なんて調子のいいことをぬかしていた商人が「じゃあその矛でその盾を突いたらどうなるんだ」と真っ当な指摘をされて何も言えなくなってしまったという話です。}
             +p{この話でもそうなのですが、思考や議論に矛盾を生じることを我々はよしとしません。結論が矛盾しているならそれを導く過程や前提のどこかが間違っていると考えるのです。矛盾があってはならないという考えは論理体系の形式化においても最も基本的なアイデアの一つになっています。}
-            +p{しかしながらこの無矛盾の原則が必ずしも成り立たないと考える人たちがいます。彼らによると矛盾の中には「真なる矛盾」、真でありかつ偽であるような命題が存在するというのです。このような立場を\dfn{真矛盾主義}(\dfn{dialetheism}\footnote{dialetheiaは「二つの真理」を表す造語です。})と呼びます。この記事は真矛盾主義の動機付けやその形式化について紹介します。}
-            +p{\todo{前提知識の説明}}
+            +p{しかしながらこの無矛盾の原則が必ずしも成り立たないと考える人たちがいます。彼らによると矛盾の中には「真なる矛盾」、
+            真でありかつ偽であるような命題が存在するというのです。このような立場を\dfn{真矛盾主義}(\dfn{dialetheism}\footnote{dialetheismという語はdialetheia(=「二つの真理」)という造語から来ています。})と呼びます。この記事は真矛盾主義の動機付けやその形式化について紹介します。}
+            +p{注意：この記事の3章以降は古典論理の意味論とシーケント計算の基礎的な知識を前提としています。}
         >
         +section {「何故」真矛盾主義か} <
             +p{"Logic: A very short introduction"\cite[`LogicVSI`];という論理学の入門書があります。この本のいい所は新しい論理を紹介する時に「自然言語にこういう推論や概念があって、これをうまく表現する論理体系が欲しい」という感じで何故そういう論理を考えたいのかという動機付けをわかりやすく説明してくれている点です。}
@@ -158,53 +159,125 @@ let article =
                 }
             ここでは記法を変えて4値論理のように表記しているだけですが、実際に4値論理として意味論を与えることももちろん可能です。詳しくは\cite[`Belnap77`; `IntroNC`];を参照してください。
             }
-            +p{この定義はそれぞれの命題が${t}か${f}である場合には古典論理と同じふるまいをすることが確認できます。しかしそうでない状況の場合には面白い結果が得られます。
+            +p{これらの論理結合子に関する定義はそれぞれの命題が${t}か${f}である場合には古典論理と同じふるまいをすることが確認できます。しかしそうでない状況の場合には面白い結果が得られます。
             例として排中律${A \vee \neg A}がどのように解釈されうるかを考えてみましょう。${A \tilde 0}でも${A \tilde 1}でもない時、${\neg}の定義より${\neg A \tilde 0}でも${\neg A \tilde 1}でもありません。次に${\vee}の定義より${A \vee \neg A \tilde 0}でも${A \vee \neg A \tilde 1}でもないことが言えます。逆に${A \tilde 0}かつ${A \tilde 1}であるような状況を考えると、${\neg}の定義より${\neg A \tilde 0}かつ${\neg A \tilde 1}で、さらに${\vee}の定義より${A \vee \neg A \tilde 0}かつ${A \vee \neg A \tilde 1}であることが導けます。これはFDEにおいて排中律が「真でない」あるいは「偽である」状況がありうることを意味しています。同様のことが無矛盾則${\neg A \wedge \neg A}でも成り立ちます。}
         >
         +section{双シーケント計算による推論体系} <
-            +p{先程の話はFDEの意味論の側の話でしたが、FDEを論理体系として成立させるためにはその意味論に対応する推論体系も必要です。BelnapによるFDEの元論文\cite[`Belnap77`];でもそういった推論規則を提示していますが、この記事ではBochmanによるBiconsequence Relationを用いた推論体系\cite[`Bochman98`];を紹介します。}
-
+            +p{先程の話はFDEの意味論の側の話でしたが、FDEを論理体系として成立させるためにはその意味論に対応する推論体系も必要です。BelnapによるFDEの元論文\cite[`Belnap77`];でもそういった推論規則を提示していますが、この記事ではBochmanによるBiconsequence Relationを用いた推論体系\cite[`Bochman98`];をベースにした\dfn{双シーケント計算}による推論体系を紹介します。}
             +subsection{双シーケント計算} <
-                +p{\todo{Bochman's biconsequence reltaionは多値論理を扱うフレームワーク的なものでオーバーキルなのでFDEに関する部分だけを抜き出した双シーケント計算の体系を紹介することにする}Biconsequence Relationは基本的には古典論理のシーケント計算を拡張したものと考えて差し支えなさそうです\footnote{もう少し捕捉すると古典論理のシーケント計算を一般化したものらしいScott consequence relationを更に拡張したもののようです}。命題の有限集合を${a, b, \ldots}と表記することにしましょう。古典論理のシーケント計算では、
-                \math-list(${| \seq{a}{b} |});
-                というシーケントは「${a}の命題が全て真であれば${b}の命題うち少なくとも1つが真である」ことを主張するのでした。Biconsequent Relationでは以下のようにシーケント\footnote{元論文ではbisequentと呼んでいますがこの記事では単にシーケントと呼ぶことにします。}を表記します。
-                \math-list(${| \biseq{a}{b}{c}{d} |});
-                このシーケントは「${a}の全てが真で、かつ${b}の全てが偽である時に、${c}の少なくとも1つが真であるか、あるいは${d}の少なくとも一つは偽である」ことを主張します。真と偽が別々の性質になったのでシーケントが倍になったわけです。これは形式的には以下のように定義で表わされます。
-                    \definition ?:({妥当な双シーケント\todo{validの訳は「妥当」か？}}) ?:(`validity`) {
-                        ある双シーケント${\biseq{a}{b}{c}{d}}がFDEの解釈${\tilde}に対して\dfn{妥当}であるとは、全ての${A \in a}について${A \tilde 1}かつ全ての${B \in b}について${B \tilde 0}である場合に、${C \tilde 1}であるような${C \in c}があるかあるいは${D \tilde 0}であるような${D \in d}があることである。またある双シーケントが任意の解釈に対して妥当であるとき、単にそのシーケントを妥当であるという。
+                +p{双シーケント計算は古典論理のシーケント計算を拡張したものです。命題の有限集合を${a, b, \ldots}と表記することにしましょう。古典論理のシーケント計算では、
+                    \math-list(${| \seq{a}{b} |});
+                と表記して「${a}の命題が全て真であれば${b}の命題うち少なくとも1つが真である」ことを主張するものでした。これを\dfn{シーケント}と呼びます。双シーケント計算ではこれを拡張して以下のような\dfn{双シーケント}を表記をします。
+                    \math-list(${| \biseq{a}{b}{c}{d} |});
+                古典論理のシーケントでは2つパートがあったのに対し、こちらでは4つになっています。この双シーケントは「${a}の全てが真で、かつ${b}の全てが偽である時に、${c}の少なくとも1つが真であるか、あるいは${d}の少なくとも一つは偽である」ことを主張します。真と偽が別々の性質になったのでシーケントの持つ情報が倍になったわけです。これは意味論の言葉を使うと以下のような定義で表わされます。
+                    \definition ?:({妥当な双シーケント}) ?:(`validity`) {
+                        ある双シーケント${\biseq{a}{b}{c}{d}}がFDEの解釈${\tilde}に対して\dfn{妥当}であるとは、全ての${A \in a}について${A \tilde 1}かつ全ての${B \in b}について${B \tilde 0}である場合に、${C \tilde 1}であるような${C \in c}があるかあるいは${D \tilde 0}であるような${D \in d}があることである。また、ある双シーケントが任意の解釈に対して妥当であるとき、単にそのシーケントを妥当であるという。
                     }
                 }
-                +p{biconsequent relationにおける構造規則も古典論理のシーケント計算の拡張となっています。具体的には以下のような構造規則があります。}
+                +p{古典論理のシーケント計算と同じく、双シーケント計算では様々な規則を適用することで推論を行います。規則には双シーケントの性質を表す構造規則と論理結合子の意味を規程する規則に分かれます。}
+                +p{双シーケント計算おける構造規則は以下のとおりで、古典論理のそれを拡張したものになっています。}
                 +math(${
                         \proven!(
                             open DeriveDSL in
-                            derive(${\biseq{a'}{b'}{c'}{d'}})
-                            |> by ({(Monotonicity)})
+                            derive(${\biseq{a, a'}{b, b'}{c, c'}{d, d'}})
+                            |> by ({(Weakening)})
                             |> from [
-                                assume(${\biseq{a}{b}{c}{d}});
-                                assume(${a \subseteq a', b \subseteq b', c \subseteq c', d \subseteq d'})
+                                assume(${\biseq{a}{b}{c}{d}})
                             ]
                         )
                 });
-                +math(${
-                    \proven!(
+                +math-list(${
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a, B, A}{b}{c}{d}})
+                        |> by ({(Exchange PL)})
+                        |> from [
+                            assume(${\biseq{a, A, B}{b}{c}{d}})
+                        ]
+                    )
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b, B, A}{c}{d}})
+                        |> by ({(Exchange NL)})
+                        |> from [
+                            assume(${\biseq{a}{b, A, B}{c}{d}})
+                        ]
+                    )
+                |});
+                +math-list(${
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c, B, A}{d}})
+                        |> by ({(Exchange PR)})
+                        |> from [
+                            assume(${\biseq{a}{b}{c, A, B}{d}})
+                        ]
+                    )
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c}{d, B, A}})
+                        |> by ({(Exchange NR)})
+                        |> from [
+                            assume(${\biseq{a}{b}{c}{d, A, B}})
+                        ]
+                    )
+                |});
+                
+                +math-list(${
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a, A}{b}{c}{d}})
+                        |> by ({(Contraction PL)})
+                        |> from [
+                            assume(${\biseq{a, A, A}{b}{c}{d}})
+                        ]
+                    )
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b, A}{c}{d}})
+                        |> by ({(Contraction NL)})
+                        |> from [
+                            assume(${\biseq{a}{b, A, A}{c}{d}})
+                        ]
+                    )
+                |});
+                +math-list(${
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c, A}{d}})
+                        |> by ({(Contraction PR)})
+                        |> from [
+                            assume(${\biseq{a}{b}{c, A, A}{d}})
+                        ]
+                    )
+                    | \proven!(
+                        open DeriveDSL in
+                        derive(${\biseq{a}{b}{c}{d, A}})
+                        |> by ({(Contraction NR)})
+                        |> from [
+                            assume(${\biseq{a}{b}{c}{d, A, A}})
+                        ]
+                    )
+                |});
+                
+
+                +math-list(${
+                    | \proven!(
                         open DeriveDSL in
                         derive(${\biseq{A}{\void}{A}{\void}})
-                        |> by ({(Positive Reflexivity)})
+                        |> by ({(Reflexivity P)})
                     )
-                });
-                +math(${
-                    \proven!(
+                    | \proven!(
                         open DeriveDSL in
                         derive(${\biseq{\void}{A}{\void}{A}})
-                        |> by ({(Negative Reflexivity)})
+                        |> by ({(Reflexivity P)})
                     )
-                });
+                |});
                 +math(${
                     \proven!(
                         open DeriveDSL in
                         derive(${\biseq{a}{b}{c}{d}})
-                        |> by ({(Positive Cut)})
+                        |> by ({(Cut P)})
                         |> from [
                             assume(${\biseq{a}{b}{A, c}{d}});
                             assume(${\biseq{A, a}{b}{c}{d}});
@@ -215,17 +288,20 @@ let article =
                     \proven!(
                         open DeriveDSL in
                         derive(${\biseq{a}{b}{c}{d}})
-                        |> by ({(Negative Cut)})
+                        |> by ({(Cut N)})
                         |> from [
                             assume(${\biseq{a}{b}{c}{A, d}});
                             assume(${\biseq{a}{A, b}{c}{d}});
                         ]
                     )
                 });
-                +p{Monotonicityは弱化の規則ですね。交換と縮約の規則はありませんが、これは${a, b, \ldots}が有限の集合であるという条件に内包されています。また真の命題と偽の命題それぞれについてReflexivityとCutがあります。}   
+                +p{各規則のPとNはPositiveとNegativeの略で双シーケントの真の部分か偽の部分かに対応します。また、LとRは双シーケントの左側か右かを表しているので以下のように対応します。
+                \math-list(${| \biseq{\text!({(PL)})}{\text!({(NL)})}{\text!({(PR)})}{\text!({(NR)})} |});
+                }
+                +p{(Weakening), (Exchange), (Contraciton)の各規則は双シーケントのそれぞれのパートが集合のように振る舞うことを規程しています。(Reflexivity)の規則は「Aが真ならばAは真である」「Aが偽ならばAは偽である」という直観を規則にしたものです。(Cut)は二つの双シーケントを繋ぎ合わせる役割をもっています。}
             >
-            +subsection {FDEの推論規則} <
-                +p{次に論理結合子に関するルールを見ていきましょう。古典論理のシーケント計算ではそれぞれの論理結合子について右規則と左規則がありますが、例によってFDEの双シーケント計算ではそれぞれが真と偽の場合に分裂します。}
+            +subsection {FDEの論理結合子に関する規則} <
+                +p{次に論理結合子に関する規則を見ていきましょう。古典論理のシーケント計算ではそれぞれの論理結合子について右規則と左規則がありますが、例によってFDEの双シーケント計算ではそれぞれが真と偽の場合に分裂するため論理結合子ごとに4つの規則を持つことになりま。}
                 +p{
                     ${\vee}に関する規則
                     \math-list(${
@@ -352,84 +428,84 @@ let article =
             +p{これまで説明してきたFDEの体系は古典論理のそれを内包するようなものになっています。つまり意味論においては「全ての命題の解釈が古典的である、つまり真のみか偽のみである、ような場合にはFDEの論理結合子は古典論理のそれと同じ振舞いをする」ということができます。あるいは推論体系においては「古典論理で${\seq{a}{b}}である時にFDEで${\biseq{a}{}{b}{}}」
             それゆえFDEに特徴的な論理結合子を定義することができます。ここでは元論文より\dfn{local negation}と\dfn{L}を紹介します。}
             +p{local negation${\lneg A}は${\neg A}と同じく否定を意味する論理結合子です。${\lneg A}の解釈は以下の通りです。
-            \align[
-                ${| \lneg A \tilde 1 | \iff A \ntilde 1 |};
-                ${| \lneg A \tilde 0 | \iff A \ntilde 0 |};
-            ];
+                \align[
+                    ${| \lneg A \tilde 1 | \iff A \ntilde 1 |};
+                    ${| \lneg A \tilde 0 | \iff A \ntilde 0 |};
+                ];
             ${\neg A}が${A}の真と偽を入れ替えるのに対して、${\lneg A}は${A}の真と偽をそれぞれ裏返すような論理結合子になっています。ちなみに${\lneg}との対比で${\neg}のことを\dfn{switchng negation}と呼ぶことがあります\cite[`Bochman98`];。
             local negationは古典的にはswitching negationと同じ振舞いをするのでFDEに特有の論理結合子というのはあまり適切ではないでね。どちらかというと\emph{古典論理における否定がFDEではlocal negationとswitching negationに分裂する}というのが正確に言い方になります。双シーケント計算における規則は以下のようになります。
-            \math-list(${
-            | \proven!(
-                open DeriveDSL in
-                derive(${\biseq{a,\lneg A}{b}{c}{d}})
-                |> by ({(${\lneg}PL)})
-                |> from [
-                    assume(${\biseq{a}{b}{c, A}{d}})
-                ])
-            | \proven!(
-                open DeriveDSL in
-                derive(${\biseq{a}{b}{c, \lneg A}{d}})
-                |> by ({(${\lneg}PR)})
-                |> from [
-                    assume(${\biseq{a, A}{b}{c}{d}})
-                ])
-            |});
-            \math-list(${
-            | \proven!(
-                open DeriveDSL in
-                derive(${\biseq{a}{b,\lneg A}{c}{d}})
-                |> by ({(${\lneg}NL)})
-                |> from [
-                    assume(${\biseq{a}{b}{c}{d, A}})
-                ])
-            | \proven!(
-                open DeriveDSL in
-                derive(${\biseq{a}{b}{c}{d, \lneg A}})
-                |> by ({(${\lneg}NR)})
-                |> from [
-                    assume(${\biseq{a}{b, A}{c, A}{d}})
-                ])
-            |});
+                \math-list(${
+                | \proven!(
+                    open DeriveDSL in
+                    derive(${\biseq{a,\lneg A}{b}{c}{d}})
+                    |> by ({(${\lneg}PL)})
+                    |> from [
+                        assume(${\biseq{a}{b}{c, A}{d}})
+                    ])
+                | \proven!(
+                    open DeriveDSL in
+                    derive(${\biseq{a}{b}{c, \lneg A}{d}})
+                    |> by ({(${\lneg}PR)})
+                    |> from [
+                        assume(${\biseq{a, A}{b}{c}{d}})
+                    ])
+                |});
+                \math-list(${
+                | \proven!(
+                    open DeriveDSL in
+                    derive(${\biseq{a}{b,\lneg A}{c}{d}})
+                    |> by ({(${\lneg}NL)})
+                    |> from [
+                        assume(${\biseq{a}{b}{c}{d, A}})
+                    ])
+                | \proven!(
+                    open DeriveDSL in
+                    derive(${\biseq{a}{b}{c}{d, \lneg A}})
+                    |> by ({(${\lneg}NR)})
+                    |> from [
+                        assume(${\biseq{a}{b, A}{c, A}{d}})
+                    ])
+                |});
             }
             +p{もう一つ紹介するのは${\L}演算子です。これはFDEに特有の論理結合子で、${\L A}は「Aは真である」ことを意味します。以下の解釈の定義が示すように、${A}が真の時には${\L A}も真で、\emph{${A}が真でない時に${\L A}が偽になります}。
-            \align[
-                ${| \L A \tilde 1 | \iff A \tilde 1 |};
-                ${| \L A \tilde 0 | \iff A \ntilde 1 |};
-            ];
+                \align[
+                    ${| \L A \tilde 1 | \iff A \tilde 1 |};
+                    ${| \L A \tilde 0 | \iff A \ntilde 1 |};
+                ];
             導出規則は以下のようになります。
-            \math-list(${
-            | \proven!(
-                open DeriveDSL in
-                derive(${\biseq{a, \L A}{b}{c}{d}})
-                |> by ({(${\L}PL)})
-                |> from [
-                    assume(${\biseq{a, A}{b}{c}{d}})
-                ])
-            | \proven!(
-                open DeriveDSL in
-                derive(${\biseq{a}{b}{c, \L A}{d}})
-                |> by ({(${\L}PR)})
-                |> from [
-                    assume(${\biseq{a, A}{b}{c, A}{d}})
-                ])
-            |});
-            \math-list(${
-            | \proven!(
-                open DeriveDSL in
-                derive(${\biseq{a}{b,\L A}{c}{d}})
-                |> by ({(${\L}NL)})
-                |> from [
-                    assume(${\biseq{a}{b}{c, A}{d}})
-                ])
-            | \proven!(
-                open DeriveDSL in
-                derive(${\biseq{a}{b}{c}{d, \L A}})
-                |> by ({(${\L}NR)})
-                |> from [
-                    assume(${\biseq{a, A}{b}{A}{d}})
-                ])
-            |});
-        ここで再度${\vee, \wedge, \neg, \lneg}の導出規則を見返してほしいのですが、これらの導出規則では(PL)と(NR)、(PR)と(NL)の規則がそれぞれ「裏返し」、つまり規則に出てくる${\biseq{a}{b}{c}{d}}を${\biseq{d}{c}{b}{a}}の形に移したものになっています。これらの論理結合子が古典的であることに由来します\todo{ほんまか？}。一方で${\L}の導出規則がそのような形になっていないことは${\L}がFDEに特有の論理結合子であることを意味しています。}
+                \math-list(${
+                | \proven!(
+                    open DeriveDSL in
+                    derive(${\biseq{a, \L A}{b}{c}{d}})
+                    |> by ({(${\L}PL)})
+                    |> from [
+                        assume(${\biseq{a, A}{b}{c}{d}})
+                    ])
+                | \proven!(
+                    open DeriveDSL in
+                    derive(${\biseq{a}{b}{c, \L A}{d}})
+                    |> by ({(${\L}PR)})
+                    |> from [
+                        assume(${\biseq{a, A}{b}{c, A}{d}})
+                    ])
+                |});
+                \math-list(${
+                | \proven!(
+                    open DeriveDSL in
+                    derive(${\biseq{a}{b,\L A}{c}{d}})
+                    |> by ({(${\L}NL)})
+                    |> from [
+                        assume(${\biseq{a}{b}{c, A}{d}})
+                    ])
+                | \proven!(
+                    open DeriveDSL in
+                    derive(${\biseq{a}{b}{c}{d, \L A}})
+                    |> by ({(${\L}NR)})
+                    |> from [
+                        assume(${\biseq{a, A}{b}{A}{d}})
+                    ])
+                |});
+            ここで再度${\vee, \wedge, \neg, \lneg}の導出規則を見返してほしいのですが、これらの導出規則では(PL)と(NR)、(PR)と(NL)の規則がそれぞれ「裏返し」、つまり規則に出てくる${\biseq{a}{b}{c}{d}}を${\biseq{d}{c}{b}{a}}の形に移したものになっています。これらの論理結合子が古典的であることに由来します\todo{ほんまか？}。一方で${\L}の導出規則がそのような形になっていないことは${\L}がFDEに特有の論理結合子であることを意味しています。}
         >
         +section{真なる矛盾と真でない矛盾} <
             +p{今までFDEの意味論と推論体系について説明してきました。これを用いて実際にどんなことが導けるか、あるいは導けないかを確認してみましょう。}
