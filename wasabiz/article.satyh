@@ -4,32 +4,55 @@
 @import: ../lib/inline
 @import: ../lib/block
 @import: ../lib/length
+@import: ../lib/color2
 
 module Wasabiz : sig
   val article : block-text
 end = struct
 
-let bibliography = []
-
-let-inline ctx \image len path = Image.of-jpeg path |> Inline.of-image len
+let-inline ctx \image len path = path |> String.append `wasabiz/` |> Image.of-jpeg |> Inline.of-image len
 
 let-block ctx +centering it =
-  line-break true true ctx (inline-fil ++ read-inline ctx it ++ inline-fil)
+  ctx |> Block.of-inline true true (Inline.fil ++ (ctx |> Inline.read it) ++ Inline.fil)
 
-let-block ctx +image-frame content =
-  let pads = (10pt, 10pt, 10pt, 10pt) in
-    block-frame-breakable ctx pads VDecoSet.empty (fun ctx -> read-block ctx '<+centering{#content;}>)
+let-block ctx +frame content =
+  ctx |> Block.add-frame-breakable (10pt, 10pt, 10pt, 10pt) VDecoSet.empty (Block.read '<+centering{#content;}>)
 
-%let-inline ctx \figpic path caption =
+% let-inline ctx \figpic path caption =
 %  ctx |> Inline.read {\figure{#caption;}<>}
 
 let-block ctx +figpic path caption =
-  ctx |> Block.read '<+image-frame{\image(14cm)(String.append `wasabiz/` path);} +p{#caption;}>
+  ctx |> Block.add-frame-breakable (10pt, 10pt, 10pt, 10pt) (VDecoSet.simple-frame-stroke 1pt (Color2.of-css `black`)) (Block.read '<+frame{\image(14cm)(path);} +p{#caption;}>)
+
+let-inline ctx \table f =
+  ctx |> Inline.read {\tabular(f)(fun xs ys -> (
+  let thin = stroke 0.5pt Color.black in
+  let thick = stroke 1pt Color.black in
+  match (ys, List.reverse ys) with
+  | (y0 :: y1 :: y2 :: _, ylast :: _) ->
+    ( match (xs, List.reverse xs) with
+      | (x0 :: x1 :: _ :: x3 :: _, xlast :: _) ->
+        let gsY1 =
+          [y1] |> List.map (fun y ->
+            thin (Gr.line (x0, y) (xlast, y))) in
+        let gsY2 =
+          [y0; ylast] |> List.map (fun y ->
+            thick (Gr.line (x0, y) (xlast, y))) in
+        let gsX =
+          [x1] |> List.map (fun x ->
+            thin (Gr.line (x, y0) (x, ylast))) in
+        List.concat [
+          gsX; gsY1; gsY2;
+        ]
+      | _ -> []
+      )
+  | _ -> []
+));}
 
 let article = '<
 +chapter ?:(`wasabiz-article`) (|
-  bibliography = bibliography;
-  title = {粘菌で計算がしたい};
+  bibliography = [];
+  title = {粘菌で計算がしたい！};
   author = {wasabiz};
 |) <
 
@@ -57,7 +80,9 @@ let article = '<
   この受賞は日本でも大きくニュースになりました．
   当時を記憶している読者の中には「粘菌でパズルを解く」とか「粘菌で東京の鉄道網を再現」といった表現に覚えがある方も多いと思います．
   より詳細には以下のような功績で粘菌計算の研究にイグノーベル賞が授与されています．(日本語版Wikipediaからの抜粋)
-\tabular(fun t -> (
+}
++p{
+  \table(fun t -> (
 let (c, l, r) = (t#c, t#l, t#r) in
 [
     [c {2008年}; c {認知科学賞}; c {単細胞生物の真正粘菌に、パズルを解く能力があったことを発見したことに対して}; c {中垣俊之（北海道大学/理化学研究所）
@@ -76,28 +101,6 @@ let (c, l, r) = (t#c, t#l, t#r) in
 弓木健嗣（広島大学）ら
 }];
 ]
-))(fun xs ys -> (
-  let thin = stroke 0.5pt Color.black in
-  let thick = stroke 1pt Color.black in
-  match (ys, List.reverse ys) with
-  | (y0 :: y1 :: y2 :: _, ylast :: _) ->
-    ( match (xs, List.reverse xs) with
-      | (x0 :: x1 :: _ :: x3 :: _, xlast :: _) ->
-        let gsY1 =
-          [y1] |> List.map (fun y ->
-            thin (Gr.line (x0, y) (xlast, y))) in
-        let gsY2 =
-          [y0; ylast] |> List.map (fun y ->
-            thick (Gr.line (x0, y) (xlast, y))) in
-        let gsX =
-          [x1] |> List.map (fun x ->
-            thin (Gr.line (x, y0) (x, ylast))) in
-        List.concat [
-          gsX; gsY1; gsY2;
-        ]
-      | _ -> []
-      )
-  | _ -> []
 ));
 }
 +p{
@@ -211,11 +214,11 @@ let (c, l, r) = (t#c, t#l, t#r) in
   基本的にはスーパーやコンビニで買ってきたオートミールで問題ありません．
 }
 +figpic(`オートミール.jpeg`){
-  スーパーで買ってきたオートミール．
+  スーパーで買ってきたオートミール．もちろん人間用．
 }
 +p{
   実際にモジホコリを飼育するためには餌以外にも育てる環境を用意してやらねばなりません．
-  ですが，これもとても簡単です．
+  と言っても，これもとても簡単です．
   まず粘菌を育てる培地ですが，これは普通のキッチンペーパーを濡らしたもので大丈夫です．
   ポイントは常に湿らせておくことですが，それもタッパーに入れておくだけで実現できます．(霧吹きは用意しておくと良いです．)
   あとは餌をあげたり，古くなった餌を取り除くためのピンセットもあればよいですが，別に割り箸でも代用できます．
@@ -275,7 +278,7 @@ let (c, l, r) = (t#c, t#l, t#r) in
   地面に張り付いている粘菌っぽいなにか．
 }
 +p{
-  さて，自分の足で粘菌を見つけられなかったので，代わりに別のところから手に入れることにします．
+  さて，自分の足で見つけた粘菌を育てるという企みは上手く行かなかったので，代わりに別のところから手に入れることにします．
   最もお手軽な方法はインターネット通販でしょう．
   なんと実は，\emph{粘菌（モジホコリ）はメルカリに売っています}！
   メルカリすごい．
@@ -310,7 +313,7 @@ let (c, l, r) = (t#c, t#l, t#r) in
 }
 +p{
   粘菌が到着してからとりあえず丸一日置いて成長を見ることにします．
-  粘菌は光を嫌がるため，普段は段ボール箱の下に入れておきます．
+  粘菌は光を嫌がるため，普段は段ボール箱の中に入れておきます．
   なお，粘菌の変形体を飢餓状態に置いたのち光を当てると子実体に変化するそうです．
   これを後々実験してみたのですがうまくいかず，子実体を作ることなく枯れて（？）しまいました．
   なのでこの記事では写真とかは特に載せません．  
@@ -371,23 +374,52 @@ let (c, l, r) = (t#c, t#l, t#r) in
   最低気温でも25度を超えるようになり，冷房の効かない部屋に長時間放置されたタッパーには大量のカビが生えてしまいます．
 }
 +figpic(`粘菌10.jpeg`){
-  Slackでカビの報告をする人．
+  Slackの粘菌チャンネルでカビの報告をする人．
 }
 +p{
-  加えて研究室全体がお盆休みに入りほとんどの人が粘菌の世話をできなくなった結果，カビの状況が悪化しました．
+  その後さらに研究室全体がお盆休みに入りほとんどの人が粘菌の世話をできなくなった結果，カビの状況が悪化しました．
   結果的に，カビの魔の手から逃げようとする粘菌が培地を捨ててタッパーの蓋（天井）を目指す事態に…．
 }
 +figpic(`粘菌11.jpeg`){
-  汚染された大地を捨てて空を目指す粘菌たち
+  汚染された大地を捨てて空を目指す粘菌たち．（寒天培地はカビで真っ黒）
 }
 +p{
-  Yabaitech.tokyoの原稿の締め切りも迫るなか，カビの大繁殖によって迷路を解くってレヴェルじゃなくなってしまったので迷路の実験は次号以降に延期することにしました．
+  Yabaitech.tokyoの原稿の締め切りも迫るなか，カビの大繁殖によって迷路を解くってレヴェルじゃなくなってしまったので迷路の実験は一旦中止．
+  今後やろうと思っていた次号以降に延期することにし，ひとまず安定的な粘菌の飼育に専念することにしました．
 }
 >
 
-+section{まとめ}<
++section{粘菌の魅力}<
 +p{
-  まとめ太郎
+  粘菌を迎え入れてからおおよそ2ヶ月面倒を見てきましたが粘菌には独特の魅力があります．
+  ペットというには動きが遅すぎ，観葉植物として見るには少々華が足りない粘菌ですが，裏を返せば，ペットほどの世話が必要なくかつゆっくりながらも動きがあり見ていて面白い生き物でもあります．
+}
++p{
+  世話に関して1つ補足をしておくと，実は粘菌は冷蔵庫に入れて保存することができるそうです．
+  粘菌をある程度飢餓状態に置いた後冷たい場所で徐々に乾燥させると粘菌は変形体から\emph{休眠体}と呼ばれる新たな形体に変わります．
+  この形体ではもはや水をやる必要すらなく，冷蔵庫に安置することで1年から2年程度保存することが可能とのことです．
+  さらに休眠体を変形体戻すときは水をやるだけで戻るというお手軽さです．
+  なので，粘菌と遊びつくして世話するのが面倒になったという時には休眠体にしておき，また遊びたくなったらいつでも元に戻すことができます．
+  実は，粘菌を手に入れてから休眠体にする実験も行ったのですが上手く水で戻すことができず，失敗してしまいました．
+  なので，粘菌を保存するためにはある程度コツが必要なのだと思いますが，以上のことは様々な文献に記述されているので私の手際が悪かっただけかもしれません．
+}
++p{
+  粘菌がペットとして独特な点として，ちょっとずつ切り取って実験に使えるということがあります．
+  基本的に環境さえ整えばいくらでも大きくなっていくので，一部だけ切り取って遊ぶだけ遊んでも残りの部分にはダメージはなく，元気に大きくなっていきます．
+  （直観的には）生きているのか生きていないのかもよくわからないので，生物実験の中でもそんなに罪悪感がない方ではないかと思います．
+}
++p{
+  粘菌は水と餌さえあればいくらでも大きくはなるのですが，与え方にもコツがあります．
+  あまり多くの餌を一度に与えすぎるとある程度以上食べた後はそのまま残りに手をつけずにそっぽを向いてしまいます．
+  オートミールの種類によっても好き嫌いがあるようで，メルカリでいただいたオートミールは安定して食べてくれているようです．
+  他にもオートミールの配置の仕方など細かいところで工夫するところが多く，単に見ていて楽しいだけでなく粘菌をどんどん元気にするための工夫ができる点も大きな魅力です．
+}
++p{
+  あとこれはペット全体に言えることだと思いますが，ふと作業に飽きた時にじーっとながめる対象がいるというのはなかなか精神的に良いものです．
+  数十秒程度では粘菌の形に変化はないとわかっていてもなんとなく眺めてしまいます．（一方で一時間おきに見れば粘菌が餌を探して動き回っていることがよくわかります．）
+  ある程度大きく育っていればしばらく世話を忘れてしまっても全然元気に生きています．
+  小さい変な生き物ですが，分かりやすくて元気な生き物でもあります．
+  科学的にも興味深く，ペットとしても可愛い粘菌，興味が出た方はぜひ一度，育ててみてはいかがでしょうか？
 }
 >
 
