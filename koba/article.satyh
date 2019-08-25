@@ -158,16 +158,108 @@ let article = '<
 
             }
         >
-        +section{Schreier-Sims のアルゴリズム (多項式)} <
+        +section{Schreier-Sims のアルゴリズム (多項式時間)} <
             +p{
                 前節のアルゴリズムを高速化し、計算量が多項式に収まるようにする。この改善は Sims \cite[`MO1995`]; による。
                 そもそも問題は、固定化群の生成元が多くなりすぎることだったので、そうならないような工夫をすればよい。
             }
             +definition ?:({BSGS}) ?:(`def:BSGS`) {
-                BSGS の定義
+                BSGS の定義 (TODO)
             }
             +p{
                 アルゴリズムは、与えられた生成元の集合を、BSGS になるまで大きくしていく、というアイディアに基づいている。
+                擬似コードは以下である。
+                \d-code(
+                `
+                    // g を beta_transversal で示される部分群の元の積として表そうとする。
+                    // どうしても残ってしまう余りの部分も返す。
+                    pub fn strip(
+                        g: &Perm,
+                        beta_transversals: &[(usize, Transversal)]
+                    ) -> (Vec<置換>, 余りの置換) {
+                        let mut h = g.clone();
+                        let mut us = vec![];
+                        for &(beta, ref transversal) in beta_transversals {
+                            let moved_to = h[beta];
+                            match transversal[moved_to] {
+                                ダミー => break,
+                                repr => {
+                                    h = h.compose(&repr.inv());
+                                    us.push(repr.clone());
+                                }
+                            }
+                        }
+                        (us, h)
+                    }
+                    // TODO コメント
+                    fn schreier_sims(
+                        n: usize,
+                        beta_transversals: &[(usize, Transversal)],
+                        s: 置換の列,
+                    ) -> Result<(), (Vec<置換>, 余りの置換)> {
+                        if beta_transversals.is_empty() {
+                            if s.is_empty() {
+                                return Ok(());
+                            }
+                            return Err((vec![], s[0].clone()));
+                        }
+                        // The first fixed point
+                        let beta0 = beta_transversals[0].0;
+                        let intersection = (s の中で、beta0 を保つ置換全体);
+                        schreier_sims(n, &beta_transversals[1..], &intersection)?;
+                        // y はナイーブな方法で作った固定化群の生成元
+                        let (_, y) = orbit_transversal_stabilizer(n, s, beta0);
+                        for y in y {
+                            let (us, 余り) = strip(&y, &beta_transversals[1..]);
+                            if 余り が e でない {
+                                異常終了, (us, 余り) を返す
+                            }
+                        }
+                        正常終了
+                    }
+                    fn incrementally_build_bsgs(
+                        n: usize,
+                        initial_beta: &[頂点],
+                        initial_s: &[置換],
+                    ) -> (Vec<(頂点, Transversal)>, Vec<置換>) {
+                        let mut beta_transversals = vec![ダミーデータ; initial_beta.len()];
+                        let mut s = initial_s.to_vec();
+                        let mut used = vec![false; n];
+                        let dummy_transversal = vec![]; // dummy transversals
+                        loop {
+                            {
+                                // TODO コメントを詳しくする
+                                let mut cur_s = s.clone();
+                                for (beta, transversal_ref) in beta_transversals {
+                                    let (orbit_transversal, _) =
+                                        orbit_transversal_stabilizer(n, &cur_s, beta);
+                                    let transversal = get_transversal(n, orbit_transversal);
+                                    *transversal_ref = transversal;
+                                    cur_s = (cur_s の中で beta を固定する置換全体);
+                                    used[beta] = true;
+                                }
+                            }
+
+                            // スライド内の Y をインクリメンタルに計算し、問題ないか調べる。
+                            match schreier_sims(n, &beta_transversals, &s) {
+                                正常終了 => break,
+                                (_, h) を返して異常終了 => {
+                                    s に h を追加;
+                                    // beta に含まれ、h で固定化されない頂点はあるか?
+                                    let mut moved = (h で固定化されない頂点の列);
+                                    if moved と beta の共通部分がない かつ moved が空でない {
+                                        // h で固定化されない頂点は beta の中にはない。
+                                        // その中から一つランダムに選ぶ
+                                        let point = (moved からランダムにとる);
+                                        beta_transversals に (point, dummy_transversal) を追加;
+                                    }
+                                }
+                            }
+                        }
+                        (beta_transversals, s)
+                    }
+                `);
+                実装は schreier::incrementally_build_bsgs に与えた。
             }
         >
         +section{謝辞} <
