@@ -1,0 +1,4 @@
+@import: ../book-class
+
+% TODO better definition
+let-math \gen l = ${<#l>}
