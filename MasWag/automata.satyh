@@ -34,7 +34,7 @@ ${\text!{KBFBBKKBKK}}も文字列です。また、長さ0の特別な文字列�
      +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/mustHaveKBF.pdf`)(1);}
   >
 
-  \emph{非決定的有限オートマトン} (Nondeterministic Finite Automata, NFA)は、様々な言語の中でも\emph{正規言語}と呼ばれる言語を表現する方法の中の一つです。NFAは例えば\ref-figure(`fig:mustHaveKBF`);にある、${\A}のような状態遷移図を用いて表されます。
+  \emph{非決定的有限オートマトン} (nondeterministic finite automata, NFA)は、様々な言語の中でも\emph{正規言語}と呼ばれる言語を表現する方法の中の一つです。NFAは例えば\ref-figure(`fig:mustHaveKBF`);にある、${\A}のような状態遷移図を用いて表されます。
 NFA${\A}が表現する言語を${\Lgof{\A}}と表記することとし、文字列${\word\in\Word}が${\Lgof{\A}}に含まれるとき、${\A}が${\word}を\emph{受理する}と言います。
 \ref-figure(`fig:mustHaveKBF`);にあるNFA${\A}は、文字集合${\set{\text!{K,B,F}}}の上で定義されたNFAで、「KBFという部分列が存在する文字列」を受理します。
 このNFAには状態が${\loc_0,\loc_1,\loc_2,\loc_3}の4つありますがその中に特別な役割をする状態が二種類あります。
@@ -75,3 +75,7 @@ NFAによって受理される言語を\emph{正規言語} (regular language)と
   }
   #myhill-nerode;
 >>
+
+% LocalWords:  myhill nerode emph cdot KBF BBKKBKK KBFBBKKBKK cdots
+% LocalWords:  ast bigcup infty mustHaveKBF pdf Lgof loc mathcal KKBF
+% LocalWords:  paren InitLoc AccLoc subseteq wordWithInside ldots DFA

@@ -35,7 +35,7 @@ let introduction = '<
                 +p {
                   本章では正規言語\cite([`HopcroftMU2003`]);を、神託を用いて正確に学習する手法 (automata learning, automata inference)のアルゴリズムについて説明します。
                   本章において、形式言語理論についての知識は仮定しませんが、素朴集合論や基本的なグラフ理論の知識や記号などは適宜使用します。
-                  Automata learningではdetermistic Finite Automaton(決定的有限オートマトン、DFA)を学習するL\*アルゴリズム\cite([`journals/iandc/Angluin87`]);が良く知られています。
+                  Automata learningでは deterministic  finite automaton(決定的有限オートマトン、DFA)を学習するL\*アルゴリズム\cite([`journals/iandc/Angluin87`]);が良く知られています。
                   L\*アルゴリズムはある文字列 ${\word \in \Word} が学習したい言語 ${\Lg\subseteq \Word} に含まれているか (${\word \in \Lg})を質問する\emph{所属性質問} (membership query)と、学習した言語${\Lg'\subseteq \Word}が学習したい言語${\Lg\subseteq \Word}と等しいかどうかを質問する\emph{等価性質問} (equivalence query)の二種類の質問を繰り返すことで効率良く、学習したい言語を最小の状態数を持つオートマトンで学習します。
                   本章ではL\*アルゴリズムに加えて、等価性質問を用いないIDアルゴリズム\cite([`journals/iandc/Angluin81`]);と、DFAの代わりにnon-deterministic finite automaton(非決定的有限オートマトン、NFA)を学習するNL\*アルゴリズム\cite([`conf/ijcai/BolligHKL09`]);も説明します。
                 }
@@ -66,7 +66,9 @@ let introduction = '<
         >
 +subsection{記法} <
 +p {
-  本章では実数の集合を${\mathbb{R}}、自然数の集合を${\mathbb{N}}を用いて表わします。また、真理値を${\mathrm{T}}と${\mathrm{F}}を用いて表わします。また、数式中で変数及び単なる文字としてラテン文字が表われますが、原則として変数として用いるときには${a}の様に斜体で、文字として用いるときは${\text!{a}}のように立体で表記します。
+  本章では実数の集合を${\mathbb{R}}、自然数の集合を${\mathbb{N}}を用いて表わします。
+  また、真理値を+と-を用いて表わします。
+  数式中で変数及び単なる文字としてラテン文字が表われますが、原則として変数として用いるときには${a}の様に斜体で、文字として用いるときは${\text!{a}}のように立体で表記します。
 }
 >
            +acknowledgement {
@@ -74,3 +76,6 @@ let introduction = '<
            }
         >
 >
+% LocalWords:  HopcroftMU DFA subseteq emph NL conf WFA Balle Mohri
+% LocalWords:  Drews Cassel LearnLib libalf Angluin lstar nlstar
+% LocalWords:  mathbb mathrm

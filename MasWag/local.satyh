@@ -197,6 +197,9 @@ let-block ctx +acknowledgement inner =
     let ib-inner = inline-skip len ++ read-inline ctx-title {謝辞} ++ inline-skip len ++ read-inline ctx inner ++ inline-fil in
       form-paragraph ctx ib-inner
 
+let-block ctx +clear-page =
+    clear-page
+
 let-inline ctx \observationTable content = read-inline ctx {\tabular(fun t -> 
              (let (cellf, multif, empty) = (t#c, t#m, t#e) in
                List.map (fun row -> List.map cellf row) content))(fun xs ys -> (

@@ -58,7 +58,7 @@ let lstar = '<+section?:(`sec:lstar`){L\*アルゴリズム} <
 }
 +p {
   ここで\ref-figure(`fig:LStarObservationTable1`);右の観察表が閉じているかを判定します。
-  今回は任意の${w\in P'}について、${T\[w,\text!{-}\]=T\[\epsilon,\text!{-}\]}が成り立ちますし、各${a\in\alphabet}について、${a\in P'}もが成り立つので観察表は閉じています。
+  今回は任意の${w\in P'}について、${T\[w,\text!{-}\]=T\[\epsilon,\text!{-}\]}が成り立ちますし、各${a\in\alphabet}について、${a\in P'}が成り立つので観察表は閉じています。
   観察表が閉じている場合、IDアルゴリズムのときと同様に観察表からDFAを生成します。
   \figure ?:(`fig:KBFStep1`){\ref-figure(`fig:LStarObservationTable1`);右の観察表に対応するDFA${\A_1}}<
      +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/KBFStep1.pdf`)(1);}
@@ -84,9 +84,8 @@ DFA${\A_1}を生成することができたので等価性質問によって、D
 ここで、${P'}にKBFのprefixで${P}にも${P'}にも含まれていないものを追加します。
 KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P'}にKBとKBFを追加し、観察表を埋めます。 (\ref-figure(`fig:LStarObservationTable2`);)
 }
-%      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
-+p {  
-  \figure ?:(`fig:LStarObservationTable3`){\ref-figure(`fig:LStarObservationTable2`);の観察表を閉じさせた観察表 (左)、及び更に一貫させるまで${S}に文字列を追加した観察表 (右)}<
++p {
+  \figure ?:(`fig:LStarObservationTable3`){\ref-figure(`fig:LStarObservationTable2`);の観察表を閉じさせた観察表 (左)、及び更に一貫かつ閉じさせるまで${P,P',S}に文字列を追加した観察表 (右)}<
 +centering{
   \observationTable(
     [[{} ;{${\epsilon}} ;];
@@ -118,6 +117,7 @@ KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P'}にKBとKBF�
      [{KBFF};{+};{+};{+};];]);
 }
 >
+%      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
   \ref-figure(`fig:LStarObservationTable2`);の観察表は閉じていないので、\ref-figure(`fig:LStarObservationTable2`);の観察表が閉じるまで${P}及び${P'}に文字列を追加し、観察表を埋めます。 (\ref-figure(`fig:LStarObservationTable3`);左)
   具体的にはまず、${T\[\text!{KBF},\text!{-}\]}が${T\[\epsilon,\text!{-}\]}と一致しないのでKBFを${P'}から取り除き${P}に追加します。
   次に、${\text!{KBF} \in P}ですがKBFK、KBFB、KBFFが${P}にも${P'}にも含まれていないので、これらを${P'}に追加します。
@@ -127,8 +127,8 @@ KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P'}にKBとKBF�
    観察表を一貫させる操作はIDアルゴリズムのものと同じです。
 }
 +p {
-  \figure ?:(`fig:evenDFAStep2`){\ref-figure(`fig:LStarObservationTable3`);左の観察表に対応するDFA${\A_2}}<
-     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/mustHaveKBF.pdf`)(1);}
+  \figure ?:(`fig:evenDFAStep2`){\ref-figure(`fig:LStarObservationTable3`);左の観察表に対応するDFA${\A_2}} <
+     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/mustHaveKBFDFA.pdf`)(1);}
   >
   最後に\ref-figure(`fig:LStarObservationTable3`);左の観察表に対応するDFA${\A_2}を生成し、等価性質問によって${\Lgof{\A_2}}と学習したい正規言語が一致するかどうかを調べます。
   今回は${\Lgof{\A_2}}が学習したい正規言語と一致するので、L\*アルゴリズムはここで終了となります。
