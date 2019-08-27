@@ -5,6 +5,7 @@
 @import: ../lib/block
 @import: ../lib/length
 @import: ../lib/color2
+@import: ../lib/graphics
 
 module Wasabiz : sig
   val article : block-text
@@ -12,8 +13,8 @@ end = struct
 
 let as-type-of x a = a
 
-let-inline ctx \embed ib = ib ctx
-let-inline ctx \const ib = ib |> as-type-of Inline.fil
+let-inline ctx \eval ibf = ibf ctx
+let-inline ctx \const ib = ib |> as-type-of Inline.nil
 %let-inline ctx \block b1 b2 bb = ctx |> Block.of-inline b1 b2 (bb ctx)
 
 let-inline ctx \force-line-break = ctx |> Inline.of-block-breakable Block.nil
@@ -24,7 +25,7 @@ let get-image ratio path =
        |> Inline.of-image (13.5cm |> Length.scale ratio)
 
 let-block ctx +centering it =
-  ctx |> Block.of-inline true true (Inline.fil ++ (ctx |> Inline.read it) ++ Inline.fil)
+  ctx |> Block.of-inline true true (fun ctx -> Inline.fil ++ (ctx |> Inline.read it) ++ Inline.fil)
 
 let-block ctx +figpic ?:ratio path caption =
   let ratio = ratio |> Option.from 1.0 in
@@ -35,7 +36,6 @@ let-block ctx +figpic ?:ratio path caption =
   let bb ctx = Block.concat [im-bb ctx; cap-bb-with-pads ctx] in
   ctx |> Block.add-frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bb
 
-
 let-block ctx +figpic2 path1 path2 caption =
   let im1 = get-image 0.45 path1 in
   let im2 = get-image 0.45 path2 in
@@ -45,36 +45,33 @@ let-block ctx +figpic2 path1 path2 caption =
   let bb ctx = Block.concat [im-bb ctx; cap-bb-with-pads ctx] in
   ctx |> Block.add-frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bb
 
-let-inline ctx \table f =
+type cell-align-spec = C | L | R
+
+let c ib = (C, ib)
+let l ib = (L, ib)
+let r ib = (R, ib)
+
+let-inline ctx \table dat =
+  let f t = dat |> List.map (List.map (fun x -> (match x with
+    | (C, ib) -> t#c ib
+    | (L, ib) -> t#l ib
+    | (R, ib) -> t#r ib))) in
   ctx |> Inline.read {\tabular(f)(fun xs ys -> (
-  let thin = stroke 0.5pt Color.black in
-  let thick = stroke 1pt Color.black in
-  match (ys, List.reverse ys) with
-  | (y0 :: y1 :: y2 :: _, ylast :: _) ->
-    ( match (xs, List.reverse xs) with
-      | (x0 :: x1 :: _ :: x3 :: _, xlast :: _) ->
-        let gsY1 =
-          [y1] |> List.map (fun y ->
-            thin (Gr.line (x0, y) (xlast, y))) in
-        let gsY2 =
-          [y0; ylast] |> List.map (fun y ->
-            thick (Gr.line (x0, y) (xlast, y))) in
-        let gsX =
-          [x1] |> List.map (fun x ->
-            thin (Gr.line (x, y0) (x, ylast))) in
-        List.concat [
-          gsX; gsY1; gsY2;
-        ]
-      | _ -> []
-      )
-  | _ -> []
+  let thin = Graphics.stroke 0.5pt Color.black in
+  let (y0 :: ys, ylast :: _) = (ys, List.reverse ys) in
+  let (_ :: ys) = List.reverse ys in
+  let (x0 :: xs, xlast :: _) = (xs, List.reverse xs) in
+  let (_ :: xs) = List.reverse xs in
+  let gsYs = ys |> List.map (fun y -> thin (Gr.line (x0, y) (xlast, y))) in
+  let gsXs = xs |> List.map (fun x -> thin (Gr.line (x, y0) (x, ylast))) in
+  List.append gsXs gsYs
 ));}
 
-let-inline ctx \lines ls =
-  ls |> List.map (fun it -> ctx |> Inline.read it)
-     |> List.map (fun ib -> ctx |> Block.of-inline false true ib)
-     |> Block.concat
-     |> (fun bb -> ctx |> Inline.of-block-breakable bb)
+% let-inline ctx \lines ls =
+%   ls |> List.map (fun it -> ctx |> Inline.read it)
+%      |> List.map (fun ib -> ctx |> Block.of-inline false true (Fn.const ib))
+%      |> Block.concat
+%      |> (fun bb -> ctx |> Inline.of-block-breakable bb)
 
 let article = '<
 +chapter ?:(`wasabiz-article`) (|
@@ -109,51 +106,48 @@ let article = '<
   より詳細には以下のような功績で粘菌計算の研究にイグノーベル賞が授与されています．(日本語版Wikipediaからの抜粋)
 }
 +p{
-  \table(fun t -> (
-let (c, l, r) = (t#c, t#l, t#r) in
-[
+  \table([
     [c {2008年};
      c {認知科学賞};
      c {
-       \lines([
-        {中垣俊之（北海道大学/理化学研究所）};
-        {小林亮（広島大学）};
-        {石黒章夫（東北大学）};
-        {手老篤史（北海道大学/Presto JST）};
-        {山田裕康（名古屋大学/理化学研究所};
-       ]);
+       \eval(Inline.of-block ?:(Top) 5cm (Block.of-inline false false (Inline.read {
+         単細胞生物の真正粘菌に、パズルを解く能力があったことを発見したことに対して
+       })));
      };
      c {
-      \lines([
-        {単細胞生物の真正粘菌に、};
-        {パズルを解く能力があったことを};
-        {発見したことに対して};
-      ]);
+       \eval(Inline.of-block ?:(Top) 5cm (Block.of-inline false false (Inline.read {
+         \listing{
+           * 中垣俊之（北海道大学/理化学研究所）
+           * 小林亮（広島大学）
+           * 石黒章夫（東北大学）
+           * 手老篤史（北海道大学/Presto JST）
+           * 山田裕康（名古屋大学/理化学研究所）
+         }
+       })));
      };
     ];
     [c {2010年};
      c {交通計画賞};
      c {
-       \lines([
-        {中垣俊之（公立はこだて未来大学）};
-        {小林亮（広島大学）};
-        {手老篤史（科学技術振興機構さきがけプロジェクト）};
-        {高木清二（北海道大学）};
-        {三枝徹（北海道大学）};
-        {伊藤賢太郎（北海道大学）};
-        {弓木健嗣（広島大学）ら};
-       ]);
+       \eval(Inline.of-block ?:(Top) 5cm (Block.of-inline false false (Inline.read {
+         鉄道網など都市のインフラストラクチャー整備を行う際、真正粘菌を用いて、輸送効率に優れた最適なネットワークを設計する研究に対して。
+       })));
      };
      c {
-       \lines([
-         {鉄道網など都市のインフラストラクチャー整備を};
-         {行う際、真正粘菌を用いて、輸送効率に優れた};
-         {最適なネットワークを設計する研究に対して。};
-       ]);
+       \eval(Inline.of-block ?:(Top) 5cm (Block.of-inline false false (Inline.read {
+         \listing{
+           * 中垣俊之（公立はこだて未来大学）
+           * 小林亮（広島大学）
+           * 手老篤史（科学技術振興機構さきがけプロジェクト）
+           * 高木清二（北海道大学）
+           * 三枝徹（北海道大学）
+           * 伊藤賢太郎（北海道大学）
+           * 弓木健嗣（広島大学）ら
+         }
+       })));
      };
     ];
-]
-));
+  ]);
 }
 +p{
   粘菌の詳しい説明をする前に，粘菌計算で実現できる計算について簡単に説明しておきます．
