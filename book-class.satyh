@@ -9,6 +9,9 @@
 @require: footnote-scheme
 @require: table
 @import: lib/int
+@import: lib/pager
+@import: lib/block
+@import: lib/fn
 
 type bib-in-proceedings =
   (|
@@ -633,6 +636,7 @@ end = struct
         leftf ctx-title (embed-string title);
         okutsuke;
 %        clear-page;
+        ctx-doc |> Block.of-inline false false (Fn.const (Pager.make-hook (fun _ _ -> (show-page-number-ref <- None))))
       ] |> List.fold-left (+++) block-nil
 
   let document record inner =
