@@ -10,19 +10,40 @@ module Wasabiz : sig
   val article : block-text
 end = struct
 
-let-inline ctx \image len path = path |> String.append `wasabiz/` |> Image.of-jpeg |> Inline.of-image len
+let as-type-of x a = a
+
+let-inline ctx \embed ib = ib ctx
+let-inline ctx \const ib = ib |> as-type-of Inline.fil
+%let-inline ctx \block b1 b2 bb = ctx |> Block.of-inline b1 b2 (bb ctx)
+
+let-inline ctx \force-line-break = ctx |> Inline.of-block-breakable Block.nil
+
+let get-image ratio path =
+  path |> String.append `wasabiz/`
+       |> Image.of-jpeg
+       |> Inline.of-image (13.5cm |> Length.scale ratio)
 
 let-block ctx +centering it =
   ctx |> Block.of-inline true true (Inline.fil ++ (ctx |> Inline.read it) ++ Inline.fil)
 
-let-block ctx +frame content =
-  ctx |> Block.add-frame-breakable (10pt, 10pt, 10pt, 10pt) VDecoSet.empty (Block.read '<+centering{#content;}>)
+let-block ctx +figpic ?:ratio path caption =
+  let ratio = ratio |> Option.from 1.0 in
+  let image = get-image ratio path in
+  let im-bb = Block.read '<+centering{\const(image);}> in
+  let cap-bb = Block.read '<+centering{#caption;}> in
+  let cap-bb-with-pads = Block.add-frame-breakable (10pt, 10pt, 0pt, 10pt) VDecoSet.empty cap-bb in
+  let bb ctx = Block.concat [im-bb ctx; cap-bb-with-pads ctx] in
+  ctx |> Block.add-frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bb
 
-% let-inline ctx \figpic path caption =
-%  ctx |> Inline.read {\figure{#caption;}<>}
 
-let-block ctx +figpic path caption =
-  ctx |> Block.add-frame-breakable (10pt, 10pt, 10pt, 10pt) (VDecoSet.simple-frame-stroke 1pt (Color2.of-css `black`)) (Block.read '<+frame{\image(14cm)(path);} +p{#caption;}>)
+let-block ctx +figpic2 path1 path2 caption =
+  let im1 = get-image 0.45 path1 in
+  let im2 = get-image 0.45 path2 in
+  let im-bb = Block.read '<+centering{\const(im1); \const(Inline.skip 1cm); \const(im2);}> in
+  let cap-bb = Block.read '<+centering{#caption;}> in
+  let cap-bb-with-pads = Block.add-frame-breakable (10pt, 10pt, 0pt, 10pt) VDecoSet.empty cap-bb in
+  let bb ctx = Block.concat [im-bb ctx; cap-bb-with-pads ctx] in
+  ctx |> Block.add-frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bb
 
 let-inline ctx \table f =
   ctx |> Inline.read {\tabular(f)(fun xs ys -> (
@@ -48,6 +69,12 @@ let-inline ctx \table f =
       )
   | _ -> []
 ));}
+
+let-inline ctx \lines ls =
+  ls |> List.map (fun it -> ctx |> Inline.read it)
+     |> List.map (fun ib -> ctx |> Block.of-inline false true ib)
+     |> Block.concat
+     |> (fun bb -> ctx |> Inline.of-block-breakable bb)
 
 let article = '<
 +chapter ?:(`wasabiz-article`) (|
@@ -85,21 +112,46 @@ let article = '<
   \table(fun t -> (
 let (c, l, r) = (t#c, t#l, t#r) in
 [
-    [c {2008年}; c {認知科学賞}; c {単細胞生物の真正粘菌に、パズルを解く能力があったことを発見したことに対して}; c {中垣俊之（北海道大学/理化学研究所）
-小林亮（広島大学）
-石黒章夫（東北大学）
-手老篤史（北海道大学/Presto JST）
-山田裕康（名古屋大学/理化学研究所）} ];
-    [c {2010年}; c {交通計画賞}; c {鉄道網など都市のインフラストラクチャー整備を行う際、真正粘菌を用いて、輸送効率に優れた最適なネットワークを設計する研究に対して。
-中垣俊之、小林亮、手老篤史の3氏は、2008年の認知科学賞に続いて2度目の受賞。2010年受賞のこの研究は、2008年の研究を継続・延長させたもの。}; c {
-  中垣俊之（公立はこだて未来大学）
-小林亮（広島大学）
-手老篤史（科学技術振興機構さきがけプロジェクト）
-高木清二（北海道大学）
-三枝徹（北海道大学）
-伊藤賢太郎（北海道大学）
-弓木健嗣（広島大学）ら
-}];
+    [c {2008年};
+     c {認知科学賞};
+     c {
+       \lines([
+        {中垣俊之（北海道大学/理化学研究所）};
+        {小林亮（広島大学）};
+        {石黒章夫（東北大学）};
+        {手老篤史（北海道大学/Presto JST）};
+        {山田裕康（名古屋大学/理化学研究所};
+       ]);
+     };
+     c {
+      \lines([
+        {単細胞生物の真正粘菌に、};
+        {パズルを解く能力があったことを};
+        {発見したことに対して};
+      ]);
+     };
+    ];
+    [c {2010年};
+     c {交通計画賞};
+     c {
+       \lines([
+        {中垣俊之（公立はこだて未来大学）};
+        {小林亮（広島大学）};
+        {手老篤史（科学技術振興機構さきがけプロジェクト）};
+        {高木清二（北海道大学）};
+        {三枝徹（北海道大学）};
+        {伊藤賢太郎（北海道大学）};
+        {弓木健嗣（広島大学）ら};
+       ]);
+     };
+     c {
+       \lines([
+         {鉄道網など都市のインフラストラクチャー整備を};
+         {行う際、真正粘菌を用いて、輸送効率に優れた};
+         {最適なネットワークを設計する研究に対して。};
+       ]);
+     };
+    ];
 ]
 ));
 }
@@ -107,10 +159,10 @@ let (c, l, r) = (t#c, t#l, t#r) in
   粘菌の詳しい説明をする前に，粘菌計算で実現できる計算について簡単に説明しておきます．
   粘菌計算と一言で言っても大まかに二種類あります．
   一つ目は本物の粘菌を使って計算を行うもので，もう一つが粘菌の動きを数学的にモデル化してそのモデルを基にアルゴリズムを開発するものです．
-  \enumerate{
-    * 本物の粘菌を使う
-    * 粘菌を数学的にモデル化する
-  }
+}
++enumerate{
+  * 本物の粘菌を使う
+  * 粘菌を数学的にモデル化する
 }
 +p{
   一つ目の本物の粘菌を使う方は実際に粘菌がうにょうにょ動いているのを目でみながら実験ができるので粘菌を扱っている実感がして楽しいです．
@@ -148,19 +200,19 @@ let (c, l, r) = (t#c, t#l, t#r) in
   ここまでの説明ですと非常にグロテスクな見た目を想像してしまうかと思いますが，実際には粘菌は多くの場合非常に綺麗な色と形をしており，見るものをうっとりさせます．
   粘菌の種類により見た目も形もさまざまなのですが，特に個人的に綺麗だと思ったものをここで引用しておきたいと思います．
 }
-+figpic(`タマツノホコリ.jpg`){
++figpic?:(.6)(`タマツノホコリ.jpg`){
   タマツノホコリ \footnote{http://kuromedaka-saitama.cocolog-nifty.com/blog/2016/10/post-d7fb.html}
 }
-+figpic(`ヘビヌカホコリ.jpg`){
++figpic?:(.6)(`ヘビヌカホコリ.jpg`){
   ヘビヌカホコリ \footnote{http://furuhon-mayu.com/kinoko/hebinukahokori.htm}
 }
-+figpic(`タマツノホコリ・クダホコリ・マメホコリ.jpg`){
++figpic?:(.6)(`タマツノホコリ・クダホコリ・マメホコリ.jpg`){
   タマツノホコリ・クダホコリ・マメホコリ \footnote{https://www.1101.com/nenkin/2016-05-06.html}
 }
-+figpic(`ムラサキホコリ.jpg`){
++figpic?:(.6)(`ムラサキホコリ.jpg`){
   ムラサキホコリ \footnote{https://www.1101.com/nenkin/2016-05-06.html}
 }
-+figpic(`キイロタマホコリ.jpg`){
++figpic?:(.6)(`キイロタマホコリ.jpg`){
   キイロタマホコリ？ \footnote{https://blog.goo.ne.jp/tg660/e/97f630326eeab13946490f91406623a6}
 }
 +p{
@@ -186,10 +238,10 @@ let (c, l, r) = (t#c, t#l, t#r) in
 +figpic(`ナウシカ1.jpeg`){
   粘菌に飲み込まれる家々．
 }
-+figpic(`ナウシカ2.jpeg`){
++figpic?:(0.6)(`ナウシカ2.jpeg`){
   実は変形体という単語も出てくる．
 }
-+figpic(`ナウシカ3.jpeg`){
++figpic?:(0.6)(`ナウシカ3.jpeg`){
   空飛ぶ粘菌 (現実の粘菌はたぶん空を飛ばない)
 }
 +p{
@@ -205,7 +257,7 @@ let (c, l, r) = (t#c, t#l, t#r) in
   と言っても全ての種類の粘菌が簡単に飼育できるわけではありません．
   よくペットとして飼育されているのは\emph{モジホコリ}と呼ばれる種類の粘菌です．
 }
-+figpic(`Physarumの変形体.jpg`){
++figpic?:(.6)(`Physarumの変形体.jpg`){
   モジホコリの写真 \footnote{https://ja.wikipedia.org/wiki/変形菌}
 }
 +p{
@@ -213,7 +265,7 @@ let (c, l, r) = (t#c, t#l, t#r) in
   嬉しいことに，モジホコリの変形体は\emph{オートミール}を餌として食べます．
   基本的にはスーパーやコンビニで買ってきたオートミールで問題ありません．
 }
-+figpic(`オートミール.jpeg`){
++figpic?:(0.6)(`オートミール.jpeg`){
   スーパーで買ってきたオートミール．もちろん人間用．
 }
 +p{
@@ -260,6 +312,9 @@ let (c, l, r) = (t#c, t#l, t#r) in
   具体的には雑木林の中の地面や葉の裏，木の幹などです．
   あるいは，屋外にあるコンクリート壁や岩の垣根などの表面にいるという情報もあります．
 }
++figpic?:(0.6)(`粘菌ぽいもの.jpeg`){
+  地面に張り付いている粘菌っぽいなにか．
+}
 +p{
   今回は粘菌を手に入れるために，まずは近所の雑木林を探しにいきました．
   結論からいうとそこで拾ってきた粘菌のような何かはうまく育てられませんでした．
@@ -271,11 +326,9 @@ let (c, l, r) = (t#c, t#l, t#r) in
   粘菌の同定は基本的に子実体を見て行うそうで，変形体を眺めて同定するのはほぼ無理なんだと思います．
   素直に専門家に頼みましょう．
 }
-+figpic(`三四郎池.jpg`){
-  東大本郷キャンパス内にある三四郎池という雑木林の中で拾ってきたキノコとか粘菌のような何か
-}
-+figpic(`粘菌ぽいもの.jpeg`){
-  地面に張り付いている粘菌っぽいなにか．
++figpic?:(.7)(`三四郎池.jpg`){
+  東大本郷キャンパス内にある三四郎池という雑木林の中で拾ってきた
+  キノコとか粘菌のような何か．結局なんなのかよくわからなかった．
 }
 +p{
   さて，自分の足で見つけた粘菌を育てるという企みは上手く行かなかったので，代わりに別のところから手に入れることにします．
@@ -287,7 +340,7 @@ let (c, l, r) = (t#c, t#l, t#r) in
   あいにく出品者はこの方ひとりなのですがメルカリで「モジホコリ」と検索するといわゆる「専用」ページが複数出てきます．
   粘菌というニッチな商品でもそれなりに売れているようで世の中の広さを実感します．
 }
-+figpic(`メルカリ.jpeg`){
++figpic?:(0.4)(`メルカリ.jpeg`){
   メルカリで出品されているモジホコリ
 }
 +p{
@@ -295,11 +348,8 @@ let (c, l, r) = (t#c, t#l, t#r) in
   出品者は非常に丁寧な方で，オートミールに加えて育て方に関するノウハウをまとめた自作の資料まで送ってくださいました．
   感謝しかありません．
 }
-+figpic(`粘菌到着.jpeg`){
++figpic?:(.7)(`粘菌到着.jpeg`){
   到着した粘菌．出品者の方の人の良さと粘菌愛が伺える．
-}
-+figpic(`到着した粘菌.jpeg`){
-  粘菌を開封
 }
 +p{
   この元気な粘菌を頑張って育てていきます．
@@ -321,11 +371,8 @@ let (c, l, r) = (t#c, t#l, t#r) in
 +p{
   さて，丸一日置いた翌日の粘菌の状態が以下の通りです．
 }
-+figpic(`到着した粘菌.jpeg`){
-  初日の粘菌
-}
-+figpic(`粘菌1.jpeg`){
-  丸一日置いた後の粘菌
++figpic2(`到着した粘菌.jpeg`)(`粘菌1.jpeg`){
+  初日の粘菌（左）と丸一日置いた後の粘菌（右）
 }
 +p{
   左に向かって大きく足が伸びていることがみて取れます．
@@ -333,25 +380,22 @@ let (c, l, r) = (t#c, t#l, t#r) in
   6月の末で最低気温が22度前後だったので気温がちょうどよかったのも幸いしたと思います．
   ここからしばらく旅行に出かけたためしばらく粘菌をほったらかしにしました．
 }
-+figpic(`網走.jpeg`){
++figpic?:(0.5)(`網走.jpeg`){
   網走でとった写真．星が綺麗．
 }
 +p{
   旅行から帰ってくると見事にキッチンペーパーにカビが生えていました．
   ということで元気なところだけを切り取って別のキッチンペーパー培地に移植．
 }
-+figpic(`粘菌2.jpeg`){
-  カビが生えた培地
-}
-+figpic(`粘菌3.jpeg`){
-  新しいキッチンペーパー培地に移植
++figpic2(`粘菌2.jpeg`)(`粘菌3.jpeg`){
+  カビが生えた培地（１枚目）を切り取って新しいキッチンペーパー培地に移植（２枚目）．
 }
 +p{
   粘菌は単細胞生物ですが，適当に切り取っても残りの部分は普通に生きています．
   というより，真っ二つに切ると二つに分裂します．
   これを利用して株分けを行っていき，実験の規模を大きくしていきます．
 }
-+figpic(`粘菌4.jpeg`){
++figpic?:(0.5)(`粘菌4.jpeg`){
   株分けを行う．少しずつ大きくなっていく．
 }
 +p{
@@ -359,14 +403,13 @@ let (c, l, r) = (t#c, t#l, t#r) in
   ただし一時間ごとに見ていくと移動していることがはっきり分かる程度には速いです．
   たとえば，同じ日の13時と17時半にとった写真二枚を比較すると，その4時間半の間にかなり大きく移動していることが分かるでしょう．
 }
-+figpic(`粘菌7.jpeg`){}
-+figpic(`粘菌8.jpeg`){
++figpic2(`粘菌7.jpeg`)(`粘菌8.jpeg`){
   粘菌の移動速度．一つ目が13時00分に撮ったもの．二つ目が同じ日の17時30分に撮ったもの．4時間半でもかなり大きく移動している．
 }
 +p{
   この辺りから粘菌の飼育に慣れてきたので，タッパーの数と大きさをどんどん大きくしていきます．
 }
-+figpic(`粘菌9.jpeg`){
++figpic?:(0.5)(`粘菌9.jpeg`){
   増えるタッパー．（タッパー５つとシャーレ1つ）
 }
 +p{

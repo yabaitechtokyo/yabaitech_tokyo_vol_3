@@ -202,7 +202,7 @@ end = struct
       )) ++ read-inline ctx it
 
 
-  let font-size-normal  = 12pt
+  let font-size-normal  = 11pt
   let font-size-title   = 32pt
   let font-size-author  = 16pt
   let font-size-chapter = 24pt
