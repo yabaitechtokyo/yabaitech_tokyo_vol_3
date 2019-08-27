@@ -6,72 +6,41 @@
 @import: ../lib/length
 @import: ../lib/color2
 @import: ../lib/graphics
+@import: ../lib/typeset/base
+@import: ../lib/typeset/tabular2
 
 module Wasabiz : sig
   val article : block-text
 end = struct
-
-let as-type-of x a = a
-
-let-inline ctx \eval ibf = ibf ctx
-let-inline ctx \const ib = ib |> as-type-of Inline.nil
-%let-inline ctx \block b1 b2 bb = ctx |> Block.of-inline b1 b2 (bb ctx)
-
-let-inline ctx \force-line-break = ctx |> Inline.of-block-breakable Block.nil
 
 let get-image ratio path =
   path |> String.append `wasabiz/`
        |> Image.of-jpeg
        |> Inline.of-image (13.5cm |> Length.scale ratio)
 
-let-block ctx +centering it =
-  ctx |> Block.of-inline true true (fun ctx -> Inline.fil ++ (ctx |> Inline.read it) ++ Inline.fil)
-
 let-block ctx +figpic ?:ratio path caption =
   let ratio = ratio |> Option.from 1.0 in
   let image = get-image ratio path in
-  let im-bb = Block.read '<+centering{\const(image);}> in
-  let cap-bb = Block.read '<+centering{#caption;}> in
-  let cap-bb-with-pads = Block.add-frame-breakable (10pt, 10pt, 0pt, 10pt) VDecoSet.empty cap-bb in
+  let im-bb = Block.centering (Fn.const image) in
+  let cap-bb = Block.centering (Inline.read caption) in
+  let cap-bb-with-pads = Block.frame-breakable (10pt, 10pt, 0pt, 10pt) VDecoSet.empty cap-bb in
   let bb ctx = Block.concat [im-bb ctx; cap-bb-with-pads ctx] in
-  ctx |> Block.add-frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bb
+  ctx |> Block.frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bb
 
 let-block ctx +figpic2 path1 path2 caption =
-  let im1 = get-image 0.45 path1 in
-  let im2 = get-image 0.45 path2 in
-  let im-bb = Block.read '<+centering{\const(im1); \const(Inline.skip 1cm); \const(im2);}> in
-  let cap-bb = Block.read '<+centering{#caption;}> in
-  let cap-bb-with-pads = Block.add-frame-breakable (10pt, 10pt, 0pt, 10pt) VDecoSet.empty cap-bb in
-  let bb ctx = Block.concat [im-bb ctx; cap-bb-with-pads ctx] in
-  ctx |> Block.add-frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bb
-
-type cell-align-spec = C | L | R
-
-let c ib = (C, ib)
-let l ib = (L, ib)
-let r ib = (R, ib)
-
-let-inline ctx \table dat =
-  let f t = dat |> List.map (List.map (fun x -> (match x with
-    | (C, ib) -> t#c ib
-    | (L, ib) -> t#l ib
-    | (R, ib) -> t#r ib))) in
-  ctx |> Inline.read {\tabular(f)(fun xs ys -> (
-  let thin = Graphics.stroke 0.5pt Color.black in
-  let (y0 :: ys, ylast :: _) = (ys, List.reverse ys) in
-  let (_ :: ys) = List.reverse ys in
-  let (x0 :: xs, xlast :: _) = (xs, List.reverse xs) in
-  let (_ :: xs) = List.reverse xs in
-  let gsYs = ys |> List.map (fun y -> thin (Gr.line (x0, y) (xlast, y))) in
-  let gsXs = xs |> List.map (fun x -> thin (Gr.line (x, y0) (x, ylast))) in
-  List.append gsXs gsYs
-));}
-
-% let-inline ctx \lines ls =
-%   ls |> List.map (fun it -> ctx |> Inline.read it)
-%      |> List.map (fun ib -> ctx |> Block.of-inline false true (Fn.const ib))
-%      |> Block.concat
-%      |> (fun bb -> ctx |> Inline.of-block-breakable bb)
+  let im-bbf = Block.centering (Inline.read {
+    \eval-const(get-image 0.45 path1);
+    \eval-const(Inline.skip 1cm);
+    \eval-const(get-image 0.45 path2);
+  }) in
+  let cap-bbf = Block.frame-breakable (10pt, 10pt, 0pt, 10pt) VDecoSet.empty (
+    Block.centering (Inline.read caption)
+  ) in
+  let bbf ctx = Block.concat [
+    im-bbf ctx;
+    cap-bbf ctx;
+  ] in
+  ctx |> Block.frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bbf
 
 let article = '<
 +chapter ?:(`wasabiz-article`) (|
@@ -106,7 +75,7 @@ let article = '<
   より詳細には以下のような功績で粘菌計算の研究にイグノーベル賞が授与されています．(日本語版Wikipediaからの抜粋)
 }
 +p{
-  \table([
+  \tabular2(open Tabular2 in [
     [c {2008年};
      c {認知科学賞};
      c {

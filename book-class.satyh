@@ -631,13 +631,13 @@ end = struct
               | _ -> []
           )); }
       in
-      [
+      Block.concat [
         block-skip 15cm;
         leftf ctx-title (embed-string title);
         okutsuke;
 %        clear-page;
         ctx-doc |> Block.of-inline false false (Fn.const (Pager.make-hook (fun _ _ -> (show-page-number-ref <- None))))
-      ] |> List.fold-left (+++) block-nil
+      ]
 
   let document record inner =
     % -- constants --
@@ -849,17 +849,16 @@ end = struct
     let ctx-category =
       ctx |> set-font Latin font-latin-sans
           |> set-cjk-font font-cjk-gothic in
-    let ib-caption-inside = read-inline ctx-category {#category; #it-num;} ++ inline-skip (get-font-size ctx) ++ read-inline ctx caption in
-    % Centerize only if the length is less than the length of the page
-    let ib-caption = if get-natural-width ib-caption-inside >' text-width then
-            ib-caption-inside ++ inline-fil
-        else
-            inline-fil ++ ib-caption-inside ++ inline-fil in
+    let ib-caption =
+      Inline.concat [
+        ctx-category |> Inline.read {#category; #it-num;};
+        Inline.skip (get-font-size ctx);
+        ctx |> Inline.read caption
+      ] in
     let bb-inner =
       let d (_, _) _ _ _ = [] in
       block-frame-breakable ctx (2pt, 2pt, 2pt, 2pt) (d, d, d, d) (fun ctx -> (
-        read-block ctx inner
-          +++ line-break true true ctx ib-caption
+        (ctx |> Block.read inner) +++ (ctx |> Block.centering (Fn.const ib-caption))
       ))
     in
       hook-page-break (fun pbinfo _ -> (
