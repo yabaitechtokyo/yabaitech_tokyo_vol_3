@@ -169,8 +169,8 @@ let article = '<
 +figpic?:(.6)(`ヘビヌカホコリ.jpg`){
   ヘビヌカホコリ \footnote{http://furuhon-mayu.com/kinoko/hebinukahokori.htm}
 }
-+figpic?:(.6)(`タマツノホコリ・クダホコリ・マメホコリ.jpg`){
-  タマツノホコリ・クダホコリ・マメホコリ \footnote{https://www.1101.com/nenkin/2016-05-06.html}
++figpic?:(.6)(`タマツノホコリ・クダホコリ・マメホコリ.jpg`){
+  タマツノホコリ・クダホコリ・マメホコリ \footnote{https://www.1101.com/nenkin/2016-05-06.html}
 }
 +figpic?:(.6)(`ムラサキホコリ.jpg`){
   ムラサキホコリ \footnote{https://www.1101.com/nenkin/2016-05-06.html}
