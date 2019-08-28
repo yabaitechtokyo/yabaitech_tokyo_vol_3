@@ -32,7 +32,7 @@ document (|
   website = `http://yabaitech.tokyo`;
   publisher = `有限会社 ねこのしっぽ`
   |) '<
-    #Censored.article;
+%    #Censored.article;
 %    #Gfn.article;
 %    #IrnBru.article;
     #Koba.article;
