@@ -31,7 +31,7 @@ let id = '<
                  正規言語${\Lg \subseteq \Word}について、文字列集合${P \subseteq \Word}が以下を充たすとき、${P}がlive-completeであるという。
                  但し${\equivClass{\word}{\MNRel{\Lg}}}は元${\word \in \Word}の、Myhill-Nerode同値関係${\MNRel{\Lg} \subseteq \Word \times \Word}での同値類である。
                  }
-               +math(${\setsep{\equivClass{\word}{\MNRel{\Lg}}}{\word \in P} = \Lg/\MNRel{\Lg}});
+               +math(${\setsep{\equivClass{\word}{\MNRel{\Lg}}}{\word \in P} = \Word/\MNRel{\Lg}});
                +p{ 言い替えると、${\Lg}を認識する最小DFA${\paren{\alphabet,\Loc,\set{\loc_0},\AccLoc,\Transition}}の各状態${\loc \in \Loc}について、ある文字列${\word \in P}が存在して、初期状態${\loc_0}から${\word}を与えることで${\loc}に到達可能なとき${P}がlive-completeであるという。
                }
                +problem-nospace{Exact learning (IDアルゴリズム)}{

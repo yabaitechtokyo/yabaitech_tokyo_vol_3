@@ -23,7 +23,7 @@ let automata = '<+section?:(`sec:automata`){準備} <
 例えば文字の集合${\alphabet}が${\alphabet=\set{\text!{K,B,F}}}のとき、${\text!{KBF}}や
 ${\text!{BBKKBKK}}などは文字列となります。これらを結合した${\text!{KBF}\cdot \text!{BBKKBKK}}、つまり
 ${\text!{KBFBBKKBKK}}も文字列です。また、長さ0の特別な文字列として${\epsilon}を用います。任意の文字列${w}について${\epsilon}は${w\cdot\epsilon=\epsilon\cdot w=w}の性質が成り立ちます。
-以後長さ${n}の文字列${a_1a_2\cdots a_n}の集合を${\alphabet^n}、有限長についての集合和を${\alphabet^\ast=\bigcup_{i=0}^{\infty}\alphabet^n}と書きます。また、文字の集合として以後主に${\alphabet = \set{\text!{K,B,F}}}を用います。
+以後長さ${n}の文字列${a_1a_2\cdots a_n}の集合を${\alphabet^n}、有限長文字列の集合を${\alphabet^\ast=\bigcup_{i=0}^{\infty}\alphabet^n}と書きます。また、文字の集合として以後主に${\alphabet = \set{\text!{K,B,F}}}を用います。
 }
   +subsection{形式言語とオートマトン} <
 +p {
