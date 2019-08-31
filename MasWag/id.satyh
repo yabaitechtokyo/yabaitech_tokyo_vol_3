@@ -24,12 +24,13 @@ let id = '<
              +p {
                前節で定義した正規言語をNFAやDFAの形式で人間が書くことも当然できますが、これ以降本章では未知の正規言語を学習するという問題を主に考えます。機械学習の教師付き二値分類問題では「正例と負例からなる訓練用データを与えて、訓練用以外のデータについても高い確率で正しく分類する」という問題設定が良く用いられますが、ここでは\emph{exact learning}と呼ばれる学習を考えます。
                Exact learningでは、未知の正規言語を近似する正規言語を学習するのではなく、未知の正規言語と完全に等しい正規言語を表現するNFAやDFAを学習します。
+} +p {
                本節では学習対象の正規言語を表現する最小DFAを学習する、IDアルゴリズム\cite([`journals/iandc/Angluin81`]);を説明します。
                IDアルゴリズムでは訓練用データの代わりに、正規言語${\Lg}の\emph{live-complete}な文字列集合${P}と、文字列${\word}が${\Lg}に含まれるかを返答する神託を用いて学習を行います。現実的にこれらの入力をどうやって生成するかは本節では扱いませんが、例えば文字列集合${P}を十分大きく取ることで${P}がlive-completeになると期待することができますし、神託として適当なblack-box systemを用いることができます。
                }
                +definition ?:({live-complete}) ?:(`def:live-complete`) {
                  正規言語${\Lg \subseteq \Word}について、文字列集合${P \subseteq \Word}が以下を充たすとき、${P}がlive-completeであるという。
-                 但し${\equivClass{\word}{\MNRel{\Lg}}}は元${\word \in \Word}の、Myhill-Nerode同値関係${\MNRel{\Lg} \subseteq \Word \times \Word}での同値類である。
+                 但し${\equivClass{\word}{\MNRel{\Lg}}}は元${\word \in \Word}の、Myhill-Nerode同値関係${\MNRel{\Lg} \subseteq \Word \times \Word}上の同値類である。
                  }
                +math(${\setsep{\equivClass{\word}{\MNRel{\Lg}}}{\word \in P} = \Word/\MNRel{\Lg}});
                +p{ 言い替えると、${\Lg}を認識する最小DFA${\paren{\alphabet,\Loc,\set{\loc_0},\AccLoc,\Transition}}の各状態${\loc \in \Loc}について、ある文字列${\word \in P}が存在して、初期状態${\loc_0}から${\word}を与えることで${\loc}に到達可能なとき${P}がlive-completeであるという。
