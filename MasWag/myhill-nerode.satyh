@@ -16,11 +16,10 @@ let myhill-nerode = '<+subsection{Myhill-Nerodeの定理} <
   有限文字集合${\alphabet}上の言語${\Lg}について、${\Lg}が正規言語であることの必要十分条件は、商集合${\Word/\MNRel{\Lg}}が有限集合となることである。
 }
 +p {
-  \figure ?:(`fig:evenTree1`){a, bの個数が共に偶数の文字列の言語を認識する無限状態のオートマトンの例}<
-     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/evenTree.pdf`)(1);}
-  >
-  \figure ?:(`fig:evenTree2`){\ref-figure(`fig:evenTree1`);の無限状態オートマトンの状態aとabaを纏めたオートマトン}<
-     +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/evenTreeMerged.pdf`)(1);}
+  \figure ?:(`fig:evenTree1`){a, bの個数が共に偶数の文字列の言語を認識する無限状態のオートマトンの例 (右)及び 状態aとabaを纏めた無限状態のオートマトン (左)}<
+  +left-right
+    {\insert-pdf-image(6.5cm)(path-to-root ^ `figs/evenTree.pdf`)(1);}
+      {\insert-pdf-image(6.5cm)(path-to-root ^ `figs/evenTreeMerged.pdf`)(1);}
   >
 }
 +p {

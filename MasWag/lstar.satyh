@@ -20,7 +20,8 @@ let lstar = '<+section?:(`sec:lstar`){L\*アルゴリズム} <
   IDアルゴリズムは${P}がlive-completeであることを要請しますが、
   一方でIDアルゴリズムは${P}が大きくなると観察表が大きくなり必要な所属性神託の回数が増大するので、${P}を必要以上に大きくするのは良くありません。
   本節ではlive-completeな文字列集合${P}を実行時に生成するL\*アルゴリズム\cite([`journals/iandc/Angluin87`]);を説明します。
-  L\*アルゴリズムは次の二つの質問を神託に聞くことを通して学習を行ないます。今回も現実的にこんなことがわかる神託をどうやって用意するのか、という問題はここでは考えません。
+  L\*アルゴリズムは次の二つの質問を神託に聞くことを通して学習を行ないます。
+  現実的にこんなことがわかる神託をどうやって用意するのか、という問題はここでは考えません。
 }
 +p{
 \listing{
@@ -34,10 +35,6 @@ let lstar = '<+section?:(`sec:lstar`){L\*アルゴリズム} <
 * 各${w'\in P'}について、${T\[w,\text!{-}\]=T\[w',\text!{-}\]}を充たす${w\in P}が存在する
 * 各${w'\in P}、${a\in\alphabet}について、${w\cdot a\in P\cup P'}が成り立つ
 }
-}
-+subsection{L\* アルゴリズム} <
-+p {
-   本節も例として、 \ref-figure(`fig:mustHaveKBF`);のNFAが認識する${\Lg = \setsep{ a \in \set{\text!{K,B,F}}}{\text!{KBF を部分文字列として含む}}} を用います。
 }
 +p {
   \figure ?:(`fig:LStarObservationTable1`){一番始めの観察表(左)と所属性神託を使って内容を埋めた観察表(右)}<
@@ -54,51 +51,61 @@ let lstar = '<+section?:(`sec:lstar`){L\*アルゴリズム} <
      [{F};{-};];]);
  }
 >
+}
++subsection{L\* アルゴリズム} <
++p {
+   本節も例として、 \ref-figure(`fig:mustHaveKBF`);のNFAが認識する${\Lg = \setsep{ a \in \set{\text!{K,B,F}}}{\text!{KBF を部分文字列として含む}}} を用います。
+}
++p{
   L\*アルゴリズムではまず始めに\ref-figure(`fig:LStarObservationTable1`);左の観察表から始めます。最初に空欄になっているセル${T\[\epsilon, \epsilon\]}を所属性質問を用いて埋め、同時に${P'}にK,B,Fを追加し、同様に埋めます (\ref-figure(`fig:LStarObservationTable1`);右) 。
 }
 +p {
   ここで\ref-figure(`fig:LStarObservationTable1`);右の観察表が閉じているかを判定します。
   今回は任意の${w\in P'}について、${T\[w,\text!{-}\]=T\[\epsilon,\text!{-}\]}が成り立ちますし、各${a\in\alphabet}について、${a\in P'}が成り立つので観察表は閉じています。
   観察表が閉じている場合、IDアルゴリズムのときと同様に観察表からDFAを生成します。
-  \figure ?:(`fig:KBFStep1`){\ref-figure(`fig:LStarObservationTable1`);右の観察表に対応するDFA${\A_1}}<
+  \figure ?:(`fig:KBFStep1`){\ref-figure(`fig:LStarObservationTable1`);右の観察表に対応するDFA ${\A_1}}<
      +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/KBFStep1.pdf`)(1);}
   >
   \ref-figure(`fig:LStarObservationTable1`);右の観察表からは\ref-figure(`fig:KBFStep1`);のDFA、${\A_1}が生成されます。
 }
 +p {
-  \figure ?:(`fig:LStarObservationTable2`){KB、KBFを${P'}に追加した観察表}<
+  \figure ?:(`fig:LStarObservationTable2`){K、KB、KBFを${P}に追加した観察表}<
 +centering{
   \observationTable(
     [[{} ;{${\epsilon}} ;];
      [{${\epsilon}};{-};];
-     [{—————};{—————};];
      [{K};{-};];
-     [{B};{-};];
-     [{F};{-};];
      [{KB};{-};];
-     [{KBF};{+};];]);
-}
->
-DFA${\A_1}を生成することができたので等価性質問によって、DFA${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
-今回、DFA${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBF が返ります。
-ここで、${P'}にKBFのprefixで${P}にも${P'}にも含まれていないものを追加します。
-KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P'}にKBとKBFを追加し、観察表を埋めます。 (\ref-figure(`fig:LStarObservationTable2`);)
-}
-+p {
-  \figure ?:(`fig:LStarObservationTable3`){\ref-figure(`fig:LStarObservationTable2`);の観察表を閉じさせた観察表 (左)、及び更に一貫かつ閉じさせるまで${P,P',S}に文字列を追加した観察表 (右)}<
-+centering{
-  \observationTable(
-    [[{} ;{${\epsilon}} ;];
-     [{${\epsilon}};{-};];
      [{KBF};{+};];
      [{—————};{—————};];
+     [{B};{-};];
+     [{F};{-};];]);
+}
+>
+DFA ${\A_1}を生成することができたので等価性質問によって、DFA ${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
+今回、DFA ${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBF が返ります。
+ここで、${P}にKBFのprefixで${P}に含まれていないものを追加します。
+KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P}にKとKBとKBFを追加し、観察表を埋めます。 (\ref-figure(`fig:LStarObservationTable2`);)
+}
++p {
+  \figure ?:(`fig:LStarObservationTable3`){\ref-figure(`fig:LStarObservationTable2`);の観察表を閉じさせた観察表 (左)、及び更に一貫するまで${S}に文字列を追加した観察表 (右)}<
++left-right{
+  \observationTable(
+    [[{} ;{${\epsilon}} ;];
+     [{${\epsilon}};{-};];
      [{K};{-};];
+     [{KB};{-};];
+     [{KBF};{+};];
+     [{—————};{—————};];
      [{B};{-};];
      [{F};{-};];
-     [{KB};{-};];
+     [{KK};{-};];
+     [{KF};{-};];
+     [{KBK};{-};];
+     [{KBB};{-};];
      [{KBFK};{+};];
      [{KBFB};{+};];
-     [{KBFF};{+};];]);
+     [{KBFF};{+};];]);}{
   \observationTable(
     [[{} ;{${\epsilon}} ;{F};{BF};];
      [{${\epsilon}};{-};{-};{-};];
@@ -119,31 +126,39 @@ KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P'}にKBとKBF�
 >
 %      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
   \ref-figure(`fig:LStarObservationTable2`);の観察表は閉じていないので、\ref-figure(`fig:LStarObservationTable2`);の観察表が閉じるまで${P}及び${P'}に文字列を追加し、観察表を埋めます。 (\ref-figure(`fig:LStarObservationTable3`);左)
-  具体的にはまず、${T\[\text!{KBF},\text!{-}\]}が${T\[\epsilon,\text!{-}\]}と一致しないのでKBFを${P'}から取り除き${P}に追加します。
-  次に、${\text!{KBF} \in P}ですがKBFK、KBFB、KBFFが${P}にも${P'}にも含まれていないので、これらを${P'}に追加します。
+  具体的には${\text!{K},\text!{KB}\text!{KBF} \in P}ですがこれらの一文字加えた文字のうち、KK、KF、KBK、KBB、KBFK、KBFB、KBFFが${P}にも${P'}にも含まれていないので、これらを${P'}に追加します。
 }
 +p {
-   次に\ref-figure(`fig:LStarObservationTable3`);左の観察表が一貫するまで${S}に文字列を追加し、さらに観察表が閉じるまで${P}、${P'}に文字列を追加する、という操作を繰り返します (\ref-figure(`fig:LStarObservationTable3`);右)。
+   次に\ref-figure(`fig:LStarObservationTable3`);左の観察表が一貫するまで${S}に文字列を追加します (\ref-figure(`fig:LStarObservationTable3`);右)。
    観察表を一貫させる操作はIDアルゴリズムのものと同じです。
+   今回はここで観察表が閉じかつ一貫しましたが、一般には一度の操作で観察表が閉じかつ一貫するとは限りません。
+   その場合、観察表が閉じかつ一貫するまで${P'}や${S}に繰り返し文字列を追加します。
 }
 +p {
-  \figure ?:(`fig:evenDFAStep2`){\ref-figure(`fig:LStarObservationTable3`);左の観察表に対応するDFA${\A_2}} <
+  \figure ?:(`fig:evenDFAStep2`){\ref-figure(`fig:LStarObservationTable3`);右の観察表に対応するDFA ${\A_2}} <
      +image-frame{\insert-pdf-image(7cm)(path-to-root ^ `figs/mustHaveKBFDFA.pdf`)(1);}
   >
-  最後に\ref-figure(`fig:LStarObservationTable3`);左の観察表に対応するDFA${\A_2}を生成し、等価性質問によって${\Lgof{\A_2}}と学習したい正規言語が一致するかどうかを調べます。
+  最後に\ref-figure(`fig:LStarObservationTable3`);左の観察表に対応するDFA ${\A_2}を生成し、等価性質問によって${\Lgof{\A_2}}と学習したい正規言語が一致するかどうかを調べます。
   今回は${\Lgof{\A_2}}が学習したい正規言語と一致するので、L\*アルゴリズムはここで終了となります。
 }
 >
 +subsection{停止性} <
 +p {
   さて、Myhill-Nerodeの定理の立場からL\*アルゴリズムの観察表を見ていきます。
-まず、各${\word\in P}について行ベクトル${T\[w,\text!{-}\]}は互いに異なる、つまり適宜末尾に文字列を加えたときの受理/非受理の関係が異なるので、${P}の要素数は${\Word/\MNRel{\Lg}}の要素数以下になり、${L}が正規言語であるとならば上限が存在します。
-各${P'}の要素は${P}の要素に一文字付け加えたものであるので、${\abs{P'}\leq\abs{P}\times\abs{\alphabet}}となります。
-また、${S}に添字${w'}を追加する際は${w'}を追加することで新たに食い違うような${w'}のみを追加する、つまり各${w\in S}について${T\[u,w\]=T\[u',w\]}であるが${T\[u,w'\]\neq T\[u',w'\]}である様な${u,u' \in P\cup P'}が存在するときのみ${w'}を${S}に追加します。
-従って、${\abs{S}\leq \abs{\Word/\MNRel{\Lg}}\times \paren{1+ \abs{\alphabet}}}も成立します。
-更に観察表を閉じる際及び等価性質問の結果反例が返って来た際には${P}と${S}の大きさが1以上増えます。
-以上よりL\*アルゴリズムは${\Lg}が正規言語であれば常に停止し、${\Lgof{\A}=\Lg}を充たすDFA${\A}を返することがわかります。
-また、L\*アルゴリズムが生成するDFAの状態数は${\abs{P}}ですが、${L\paren{\A}=L}を充たす任意のDFAの状態数は${\Word/\MNRel{\Lg}}以下であることから、${\A}は${\Lgof{\A}=\Lg}を充たす状態数が最小のDFAであることもわかります。
+まず、行ベクトル${T\[\word,\text!{-}\]}が互いに異なるような${\word,\word' \in P}については、適宜末尾に文字列を加えたときの受理/非受理の関係が異なるので、${P / \oapprox_{T}}の要素数は${\Word/\MNRel{\Lg}}の要素数以下になり、${\Lg}が正規言語であるならば上限が存在します
+(${\oapprox_{T}}の定義は\ref-section(`sec:id`);を参照)。
+${P}に文字列を追加して観察表を閉じさせる操作を行うとき、任意の${\word \in P} について ${T\[\word' a,\text!{-}\] \neq T\[\word,\text!{-}\]}を充たすような ${\word' a} (但し${\word' \in P, a \in \alphabet}) を${P}に追加するので、
+${P / \oapprox_{T}}の要素数は1増加します。
+観察表が一貫していないとき、${S}に要素を追加して、つまり${\oapprox_{T}}の定義を厳しくすることで
+任意の${\word,\word' \in P, a \in \alphabet} について ${T\[\word,\text!{-}\] = T\[\word',\text!{-}\]}ならば${T\[\word a ,\text!{-}\] = T\[\word' a ,\text!{-}\]}を充たすようにするので、
+${P / \oapprox_{T}}の要素数は少なくとも1増加します。
+従って${\Lg}が正規言語であるとき、観察表を閉じるまたは一貫させる操作は有限回しか行われないことがわかります。
+また、等価性質問によって反例が返された後には少くとも一回以上${P}に文字列を追加して観察表を閉じさせる、または観察表を一貫させる操作を行うので、等価性質問も有限回しか行われません。
+${P'}に文字列を追加して観察表を閉じさせる操作を行うのは等価性質問によって反例が返されたとき、または${P}に文字列を追加して観察表を一貫させる操作を行った後なので、これも有限回しか行われません。
+以上より、${\Lg}が正規言語であるときL\*アルゴリズムが常に停止することがわかります。
+}
++p{
+また、L\*アルゴリズムが生成するDFAの状態数は${\abs{P / \oapprox_{T}}} ですが、${L\paren{\A}=L}を充たす任意のDFAの状態数は${\Word/\MNRel{\Lg}}以上であることから、${\A}は${\Lgof{\A}=\Lg}を充たす状態数が最小のDFAであることもわかります。
 }
 >
 >>

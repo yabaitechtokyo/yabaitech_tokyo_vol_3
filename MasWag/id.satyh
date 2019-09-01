@@ -2,6 +2,7 @@
 @import: local
 
 let id = '<
+        +clear-page;
         +section?:(`sec:id`) {IDアルゴリズム} <
             +dialog(
                 [(Some({絵美理}),{「Angluin の Automata Inferenceは嫌いですか…？});
@@ -26,41 +27,20 @@ let id = '<
                Exact learningでは、未知の正規言語を近似する正規言語を学習するのではなく、未知の正規言語と完全に等しい正規言語を表現するNFAやDFAを学習します。
 } +p {
                本節では学習対象の正規言語を表現する最小DFAを学習する、IDアルゴリズム\cite([`journals/iandc/Angluin81`]);を説明します。
-               IDアルゴリズムでは訓練用データの代わりに、正規言語${\Lg}の\emph{live-complete}な文字列集合${P}と、文字列${\word}が${\Lg}に含まれるかを返答する神託を用いて学習を行います。現実的にこれらの入力をどうやって生成するかは本節では扱いませんが、例えば文字列集合${P}を十分大きく取ることで${P}がlive-completeになると期待することができますし、神託として適当なblack-box systemを用いることができます。
-               }
+               IDアルゴリズムでは訓練用データの代わりに、正規言語${\Lg}の\emph{live-complete}な文字列集合${P}と、文字列${\word}が${\Lg}に含まれるかを返答する神託を用いて学習を行います。
+}
                +definition ?:({live-complete}) ?:(`def:live-complete`) {
                  正規言語${\Lg \subseteq \Word}について、文字列集合${P \subseteq \Word}が以下を充たすとき、${P}がlive-completeであるという。
                  但し${\equivClass{\word}{\MNRel{\Lg}}}は元${\word \in \Word}の、Myhill-Nerode同値関係${\MNRel{\Lg} \subseteq \Word \times \Word}上の同値類である。
-                 }
-               +math(${\setsep{\equivClass{\word}{\MNRel{\Lg}}}{\word \in P} = \Word/\MNRel{\Lg}});
-               +p{ 言い替えると、${\Lg}を認識する最小DFA${\paren{\alphabet,\Loc,\set{\loc_0},\AccLoc,\Transition}}の各状態${\loc \in \Loc}について、ある文字列${\word \in P}が存在して、初期状態${\loc_0}から${\word}を与えることで${\loc}に到達可能なとき${P}がlive-completeであるという。
+                 \eqn(${\setsep{\equivClass{\word}{\MNRel{\Lg}}}{\word \in P} = \Word/\MNRel{\Lg}});
+               言い替えると、${\Lg}を認識する最小DFA ${\paren{\alphabet,\Loc,\set{\loc_0},\AccLoc,\Transition}}の各状態${\loc \in \Loc}について、ある文字列${\word \in P}が存在して、初期状態${\loc_0}から${\word}を与えることで${\loc}に到達可能なとき${P}がlive-completeであるという。
                }
-               +problem-nospace{Exact learning (IDアルゴリズム)}{
-                 学習対象の正規言語を${\Lg}としたときに、
-                 \listing {
-                   * ${\Lg}の live-completeな有限の文字列集合 ${P \subseteq \Word}
-                   * ${\word \in \Word}を与えて、${\word \in \Lg}であるかどうかを返す神託 (所属性神託)
-                 }}{${\Lgof{\A} = \Lg}を充たす最小DFA}
-                 +p {
-                   本節では例として ${\Lg = \setsep{ a \in \set{\text!{K,B,F}}}{\text!{KBF を部分文字列として含む}}} を用います。例えば\ref-figure(`fig:mustHaveKBF`);のDFAがこの言語を認識します。
-}
-+subsection{観察表} <
-+p {
-  ID アルゴリズムでは \emph{観察表} (observation table) と呼ばれる表${T}に、各質問の結果を随時記入していくことで学習を進めていきます。観察表は\ref-figure(`fig:observationTable`);にある様に行、列が共に${\alphabet}上の文字列で添字付けされている表です。観察表の各セルには所属性質問の結果が記入されます。各セル${T\[w,w'\]}には文字列${w\cdot w'}の所属性質問の結果が記入されます。また、観察表には水平線より上側と下側の区別があります。
-水平線より上側の行の添字集合を${P\subseteq \Word},下側の添字集合を${P'\subseteq\Word},また、列の添字集合を${S\subseteq\Word}と呼びます。
-}
+               +p {
+               IDアルゴリズムの入力と出力は以下の様になります。
+現実的にこれらの入力をどうやって生成するかは本章では扱いませんが、例えば文字列集合${P}を十分大きく取ることで${P}がlive-completeになると期待することができます。
+        所属性神託については、例えば特定の正規言語に含まれるかどうかを判定することはわかっているが、内部状態などのわからないプログラムを用いることができます。
+               }
 +p{
-% 観察表が以下の条件を充たすとき、その観察表を\emph{閉じている (closed)}と言います。
-% \listing{
-% * 各${w'\in P'}について、${T\[w,\text!{-}\]=T\[w',\text!{-}\]}を充たす${w\in P}が存在する
-% * 各${w'\in P}、${a\in\alphabet}について、${w\cdot a\in P\cup P'}が成り立つ
-% }
-% また、
-観察表が以下の条件を充たすとき、その観察表を\emph{一貫している (consistent)}と言います。
-\listing{
-* 各${w,w'\in P}について、${T\[w,\text!{-}\]=T\[w',\text!{-}\]}を充たすとき、任意の${a \in \alphabet}について、${T\[w \cdot a,\text!{-}\]=T\[w' \cdot a,\text!{-}\]}が成り立つ
-}
-IDアルゴリズムにおいて、下側の添字集合${P'}は${P'=\setsep{\word \cdot a}{\word \in P,a \in \alphabet, \word \cdot a \nin P}}とします。
   \figure ?:(`fig:observationTable`){観察表の例。${P=\set{\epsilon,\text!{K,KB,KBF}}},${P'=\set{\text!{B,F,KK,KF,KBK,KBB,KBFK,KBFB,KBFF}}},${S=\set{\epsilon,\text!{F,BF}}}}<
 +centering {
 \observationTable(
@@ -82,11 +62,38 @@ IDアルゴリズムにおいて、下側の添字集合${P'}は${P'=\setsep{\wo
 }
   >
 }
+               +problem-nospace{Exact learning (IDアルゴリズム)}{
+                 学習対象の正規言語を${\Lg}としたときに、
+                 \listing {
+                   * ${\Lg}の live-completeな有限の文字列集合 ${P \subseteq \Word}
+                   * ${\word \in \Word}を与えて、${\word \in \Lg}であるかどうかを返す神託 (所属性神託)
+                 }}{${\Lgof{\A} = \Lg}を充たす最小DFA}
+                 +p {
+                   本節では例として ${\Lg = \setsep{ a \in \set{\text!{K,B,F}}}{\text!{KBF を部分文字列として含む}}} を用います。例えば\ref-figure(`fig:mustHaveKBF`);のDFAがこの言語を認識します。
+}
++subsection{観察表} <
++p {
+  ID アルゴリズムでは \emph{観察表} (observation table) と呼ばれる表${T}に、各質問の結果を随時記入していくことで学習を進めていきます。観察表は\ref-figure(`fig:observationTable`);にある様に行、列が共に${\alphabet}上の文字列で添字付けされている表です。観察表の各セルには所属性質問の結果が記入されます。各セル${T\[w,w'\]}には文字列${w\cdot w'}の所属性質問の結果が記入されます。また、観察表には水平線より上側と下側の区別があります。
+水平線より上側の行の添字集合を${P\subseteq \Word},下側の添字集合を${P'\subseteq\Word},また、列の添字集合を${S\subseteq\Word}と呼びます。
+}
++p{
+% 観察表が以下の条件を充たすとき、その観察表を\emph{閉じている (closed)}と言います。
+% \listing{
+% * 各${w'\in P'}について、${T\[w,\text!{-}\]=T\[w',\text!{-}\]}を充たす${w\in P}が存在する
+% * 各${w'\in P}、${a\in\alphabet}について、${w\cdot a\in P\cup P'}が成り立つ
+% }
+% また、
+観察表が以下の条件を充たすとき、その観察表を\emph{一貫している (consistent)}と言います: 
+各${w,w'\in P}について、${T\[w,\text!{-}\]=T\[w',\text!{-}\]}を充たすとき、任意の${a \in \alphabet}について、${T\[w \cdot a,\text!{-}\]=T\[w' \cdot a,\text!{-}\]}が成り立つ。
+}
++p{
+IDアルゴリズムにおいて、下側の添字集合${P'}は${P'=\setsep{\word \cdot a}{\word \in P,a \in \alphabet, \word \cdot a \nin P}}とします。
+}
 >
 +subsection{ID アルゴリズム} <
 +p {
   \figure ?:(`fig:IDObservationTable1`){一番始めの観察表(左)と所属性神託を使って内容を埋めた観察表(右)}<
-  +centering{\observationTable(
+  +left-right{\observationTable(
     [[{} ;{${\epsilon}} ;];
      [{${\epsilon}};];
      [{K};];
@@ -101,7 +108,7 @@ IDアルゴリズムにおいて、下側の添字集合${P'}は${P'=\setsep{\wo
      [{KBB};];
      [{KBFK};];
      [{KBFB};];
-     [{KBFF};];]);
+     [{KBFF};];]);}{
 \observationTable(
     [[{} ;{${\epsilon}} ;];
      [{${\epsilon}};{-};];
@@ -156,8 +163,6 @@ IDアルゴリズムにおいて、下側の添字集合${P'}は${P'=\setsep{\wo
 +p {
   今回は観察表が一貫しています。観察表が一貫している場合、次のルールに従って観察表からDFAを生成することができます。
   但し同値関係${\oapprox_{T} \subseteq \paren{P\cup P'} \times \paren{P\cup P'}}を${\word \approx_{T} \word' \iff T\[\word,\text!{-}\] = T\[\word',\text!{-}\]}と定義します。
-}
-+p{
 \listing{
 * 各${\equivClass{\word}{\oapprox_{T}}\in P/\oapprox_{T}}に対して、DFAの状態${\loc_\word}を生成する
 * DFAの初期状態は${\loc_{\equivClass{\epsilon}{\oapprox_{T}}}}とする

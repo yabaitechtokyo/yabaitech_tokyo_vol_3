@@ -31,7 +31,10 @@ let nlstar = '<
                NL\*アルゴリズムではIDアルゴリズムやL\*アルゴリズムで用いた「一貫」や「閉」の代わりに\emph{RFSA一貫(RFSA-Consistency)}と\emph{RFSA閉(RFSA-Closedness)}を用い、
                観察表からはDFAの代わりに\emph{residual finite-state automaton (RFSA)}と呼ばれるNFAのサブクラスを生成します。
                RFSAはDFAを含むNFAのサブクラスで、RFSAが表わす言語をDFAを用いて表わすと指数的に多くの状態数が必要となる場合があることが知られています。
-               また、本章では省きますがRFSAにはDFAでの最小DFAと同じ様に、canonicalなものが存在します。
+               また、本章では省きますがRFSAにはDFAでの最小DFAと同じ様に、canonical RFSAと呼ばれるものが存在します。
+               L\*アルゴリズムで最小DFAが学習されるのと対応して、
+               NL\*アルゴリズムによって学習されるRFSAはcanonical RFSAになります。
+               詳細は\cite([`conf/ijcai/BolligHKL09`]);を参照してください。
             }
             +definition ?:({residual言語}) ?:(`def:residual-language`) {
               言語${\Lg \subseteq \Word}及び${\word \in \Word}について、${\word^{-1}\Lg = \setsep{\word' \in \Word}{\word \word' \in \Lg}}と定義する。
@@ -44,7 +47,7 @@ let nlstar = '<
               NFA ${\A=\paren{\alphabet,\Loc,\InitLoc,\AccLoc,\Transition}}及び任意の${\loc \in \Loc}について、
               ${\Lg_{\loc} \in \Res{\Lgof{\A}}}を充たすとき、${\A}が\emph{residual finite-state automaton}であるという。
             }
-            +p {
+            +definition ?:({${\sqsubseteq, \sqcup}}) {
               ${P,P',S}を観察表${T}の添字集合とする。
               観察表${T}の行${T\[w,\text!{-}\]}と${T\[w',\text!{-}\]}について、
               任意の${u \in S}について${T\[w,u\] = \text!{+} \Rightarrow T\[w',u\] = \text!{+}}が成り立つとき、
@@ -84,10 +87,10 @@ let nlstar = '<
    }
 +p {
   \figure ?:(`fig:NLStarObservationTable1`){一番始めの観察表(左)と所属性神託を使って内容を埋めた観察表(右)}<
-  +centering{\observationTable(
+  +left-right{\observationTable(
     [[{} ;{${\epsilon}} ;];
      [{${\epsilon}};];
-     [{—————};{—————};];]);
+     [{—————};{—————};];]);}{
 \observationTable(
     [[{} ;{${\epsilon}} ;];
      [{${\epsilon}};{-};];
@@ -98,11 +101,14 @@ let nlstar = '<
  }
 >
   NL\*アルゴリズムでも、L\*アルゴリズムと同様にまず始めに\ref-figure(`fig:NLStarObservationTable1`);左の観察表から始めます。最初に空欄になっているセル${T\[\epsilon, \epsilon\]}を所属性質問を用いて埋め、同時に${P'}にK,B,Fを追加し、同様に埋めます (\ref-figure(`fig:NLStarObservationTable1`);右) 。
-}
-+p {
   ここで\ref-figure(`fig:NLStarObservationTable1`);右の観察表がRFSA閉であるかを判定します。
   今回は任意の${w\in P'}について、${T\[w,\text!{-}\]=T\[\epsilon,\text!{-}\]}が成り立ちますし、各${a\in\alphabet}について、${a\in P'}が成り立つので観察表は閉じています。
   }
++p{
+  \figure ?:(`fig:mustFinishKBFM1Step1`){\ref-figure(`fig:NLStarObservationTable1`);右の観察表に対応するRFSA ${\A_1}}<
+     +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/KBFStep1.pdf`)(1);}
+  >
+}
   +p {
   観察表がRFSA閉である場合、観察表からRFSAを生成します。
   観察表からRFSAを生成する方法は以下の様に、IDアルゴリズムでDFAを生成した方法と似ています。
@@ -112,10 +118,6 @@ let nlstar = '<
 * RFSAの受理状態は${\AccLoc = \setsep{\loc_\word}{\loc_\word \in \Loc, T\[\word,\epsilon\] = \text!{+}}}とする。
 * RFSAの遷移関係${\Transition \subseteq \Loc \times \alphabet \times \Loc}は、${\Transition = \setsep{\paren{\loc_{\word},a,\loc_{\word'}}}{T\[\word',\text!{-}\] \sqsubseteq T\[\word a,\text!{-}\]}}とする。
 }
-  \figure ?:(`fig:mustFinishKBFM1Step1`){\ref-figure(`fig:NLStarObservationTable1`);右の観察表に対応するRFSA${\A_1}}<
-     % +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/mustFinishKBFM1Step1.pdf`)(1);}
-     +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/KBFStep1.pdf`)(1);}
-  >
   \ref-figure(`fig:NLStarObservationTable1`);右の観察表からは\ref-figure(`fig:mustFinishKBFM1Step1`);のRFSA、${\A_1}が生成されます。
 }
 +p {
@@ -130,12 +132,7 @@ let nlstar = '<
      [{F};{-};{-};{-};{-};{+};]]);
 }
 >
-RFSA${\A_1}を生成することができたので等価性質問によって、RFSA${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
-今回、RFSA${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBFK が返ります。
-ここで、${S}にKBFKのsuffixで${S}に含まれていないものを追加します。
-KBFKのsuffixは${\epsilon}、K、FK、BFK、KBFKなので、今回は${S}にK、FK、BFK、KBFKを追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable2`);)
 }
-%      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
 +p{
 \figure ?:(`fig:NLStarObservationTable3`){Kを${P}に、KK、KB、KFを${P'}に追加した観察表}<
 +centering{
@@ -170,7 +167,15 @@ KBFKのsuffixは${\epsilon}、K、FK、BFK、KBFKなので、今回は${S}にK�
      [{KBF};{-};{+};{-};{-};{+};]]);
 }
 >
-} +p{
+}
+ +p{
+RFSA ${\A_1}を生成することができたので等価性質問によって、RFSA ${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
+今回、RFSA ${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBFK が返ります。
+ここで、${S}にKBFKのsuffixで${S}に含まれていないものを追加します。
+KBFKのsuffixは${\epsilon}、K、FK、BFK、KBFKなので、今回は${S}にK、FK、BFK、KBFKを追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable2`);)
+}
+%      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
++p{
   \figure ?:(`fig:NLStarObservationTable5`){KBFを${P}に、KBFK、KBFB、KBFFを${P'}に追加した観察表}<
 +centering{
   \observationTable(
@@ -214,13 +219,15 @@ KBFKのsuffixは${\epsilon}、K、FK、BFK、KBFKなので、今回は${S}にK�
      [{KBFBF};{-};{-};{-};{-};{+};]]);
 }
 >
+} 
++p{
   \ref-figure(`fig:NLStarObservationTable2`);の観察表は閉じていないので、\ref-figure(`fig:NLStarObservationTable2`);の観察表が閉じるまで${P}及び${P'}に文字列を追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable3`);\ref-figure(`fig:NLStarObservationTable4`);\ref-figure(`fig:NLStarObservationTable5`);\ref-figure(`fig:NLStarObservationTable6`);)
 }
 +p {
-  \figure ?:(`fig:mustFinishKBFM1Step2`){\ref-figure(`fig:NLStarObservationTable6`);の観察表に対応するRFSA${\A_2}}<
+  \figure ?:(`fig:mustFinishKBFM1Step2`){\ref-figure(`fig:NLStarObservationTable6`);の観察表に対応するRFSA ${\A_2}}<
      +image-frame{\insert-pdf-image(12cm)(path-to-root ^ `figs/mustFinishKBFM1Step2.pdf`)(1);}
   >
-  最後に\ref-figure(`fig:NLStarObservationTable6`);の観察表に対応するRFSA${\A_2}を生成し、等価性質問によって${\Lgof{\A_2}}と学習したい正規言語が一致するかどうかを調べます。
+  最後に\ref-figure(`fig:NLStarObservationTable6`);の観察表に対応するRFSA ${\A_2}を生成し、等価性質問によって${\Lgof{\A_2}}と学習したい正規言語が一致するかどうかを調べます。
   今回は${\Lgof{\A_2}}が学習したい正規言語と一致するので、NL\*アルゴリズムはここで終了となります。
 }
 +p{
@@ -235,7 +242,7 @@ KBFKのsuffixは${\epsilon}、K、FK、BFK、KBFKなので、今回は${S}にK�
   また、NL\*アルゴリズムでの観察表${T}について、${T}がRFSA閉かつRFSA一貫なとき、
   ${\word,\word' \in \Word}が
   ${\word \MNRel{L} \word'}を充たす
-  なら${\word}と${\word'}の少なくとも一つは素ではないので、${T}から生成されたRFSAは同じ言語を認識する最小DFAと状態数が同じか少なくなります\footnote{本当はNL\*アルゴリズムによって学習されるRFSAはcanonical RFSAと呼ばれる特別なRFSAです。詳細は\cite([`conf/ijcai/BolligHKL09`]);を参照してください。}。
+  なら${\word}と${\word'}の少なくとも一つは素ではないので、${T}から生成されたRFSAは同じ言語を認識する最小DFAと状態数が同じか少なくなります。
   }
   +p {
   本章では学習についての計算量解析や性能比較は基本的には省略するので、\cite([`conf/ijcai/BolligHKL09`]);を参照してください。

@@ -77,11 +77,17 @@ let-block ctx +frame content =
   let decoset = VDecoSet.simple-frame-stroke 1pt (Color.gray 0.75) in
     block-frame-breakable ctx pads decoset (fun ctx -> read-block ctx content)
 
-let-block ctx +centering it =
-  line-break true true ctx (inline-fil ++ read-inline ctx it ++ inline-fil)
-
 let-inline ctx \centering it =
   inline-fil ++ (read-inline ctx it) ++ inline-fil
+
+let-block ctx +centering it =
+  line-break true true ctx (read-inline ctx {\centering{#it;}})
+
+let-inline ctx \left-right it1 it2 =
+  inline-fil ++ (read-inline ctx it1) ++ inline-fil ++ (read-inline ctx it2) ++ inline-fil
+
+let-block ctx +left-right it1 it2 =
+  line-break true true ctx (read-inline ctx {\left-right{#it1;}{#it2;}})
 
 let-block ctx +image-frame content =
   let pads = (10pt, 10pt, 10pt, 10pt) in

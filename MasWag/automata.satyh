@@ -37,8 +37,8 @@ ${\text!{KBFBBKKBKK}}も文字列です。また、長さ0の特別な文字列�
   >
 
   \emph{非決定的有限オートマトン} (nondeterministic finite automata, NFA)は、様々な言語の中でも\emph{正規言語}と呼ばれる言語を表現する方法の中の一つです。NFAは例えば\ref-figure(`fig:mustHaveKBF`);にある、${\A}のような状態遷移図を用いて表されます。
-NFA${\A}が表現する言語を${\Lgof{\A}}と表記することとし、文字列${\word\in\Word}が${\Lgof{\A}}に含まれるとき、${\A}が${\word}を\emph{受理する}と言います。
-\ref-figure(`fig:mustHaveKBF`);にあるNFA${\A}は、文字集合${\set{\text!{K,B,F}}}の上で定義されたNFAで、「KBFという部分列が存在する文字列」を受理します。
+NFA ${\A}が表現する言語を${\Lgof{\A}}と表記することとし、文字列${\word\in\Word}が${\Lgof{\A}}に含まれるとき、${\A}が${\word}を\emph{受理する}と言います。
+\ref-figure(`fig:mustHaveKBF`);にあるNFA ${\A}は、文字集合${\set{\text!{K,B,F}}}の上で定義されたNFAで、「KBFという部分列が存在する文字列」を受理します。
 このNFAには状態が${\loc_0,\loc_1,\loc_2,\loc_3}の4つありますがその中に特別な役割をする状態が二種類あります。
 一つ目は\emph{初期状態}と呼ばれる状態です。
 本章では初期状態は"start"と書かれた矢印で外から指すことで表すこととします。
@@ -54,7 +54,7 @@ NFA${\A}が表現する言語を${\Lgof{\A}}と表記することとし、文字
   更に三文字目のBを読むと、${q_0}が始点でBのラベルが付いている辺の終点は${q_0}で、${q_1}が始点でBのラベルが付いている辺の終点は${q_2}なので、次の状態は${q_0}と${q_2}となります。
   最後に四文字目のFを読むと、${q_0}が始点でFのラベルが付いている辺の終点は${q_0}で、${q_2}が始点でFのラベルが付いている辺の終点は${q_3}なので、最後の状態は${q_0}と${q_3}となります。
 全ての文字を読み込んだ後で、現在居る状態に受理状態が存在するかどうかを調べます。
-今回の最後にいる状態のうち、${q_3}は二重丸の付いている受理状態なので、NFA${\mathcal{A}}は${w=\text!{KKBF}}を受理する、ということがわかります。
+今回の最後にいる状態のうち、${q_3}は二重丸の付いている受理状態なので、NFA ${\mathcal{A}}は${w=\text!{KKBF}}を受理する、ということがわかります。
 同様の手順を踏むことで、任意の文字列${w'\in\set{\text!{K,B,F}}^\ast}について${\mathcal{A}}が${w'}を受理するかどうかを調べることができます。
 }
 +p {
@@ -65,11 +65,11 @@ NFA${\A}が表現する言語を${\Lgof{\A}}と表記することとし、文字
   文字集合${\alphabet}上の非決定的有限オートマトン${\A}は5つ組${\paren{\alphabet,\Loc,\InitLoc,\AccLoc,\Transition}}である。但し${\alphabet}は有限の文字集合、${\Loc}は有限の状態集合、${\InitLoc \subseteq \Loc}は初期状態、${\AccLoc \subseteq \Loc}は受理状態の集合、${\Transition\subseteq \Loc \times\alphabet\times \Loc}は状態遷移関係である。
   文字列 ${\wordWithInside \in \Word} に対して、ある状態列${\loc_0,\loc_1,\ldots,\loc_n}で、${\loc_0 \in \InitLoc}、${\paren{\loc_i,a_i,\loc_{i + 1}} \in \Transition}、${q_n\in F}が成り立つものが存在するとき、${\A}は${\word}を\emph{受理する}という。
 また、${\A}が受理する文字列の集合を${\A}の\emph{受理言語}といい、${\Lgof{\A}}と表記する。
-また、NFA${\A}が言語${\Lgof{\A}}を\emph{認識する}、という。
+また、NFA ${\A}が言語${\Lgof{\A}}を\emph{認識する}、という。
 NFAによって受理される言語を\emph{正規言語} (regular language)という。
 }>
   +p {
-     NFA${\A = \paren{\alphabet,\Loc,\InitLoc,\AccLoc,\Transition}}について、${\InitLoc}が単集合で、各${\loc \in\Loc}、${a \in \alphabet}について${\paren{\loc,a,\loc'}}を充たす${\loc' \in \Loc}が一意に定まるとき、${\A}が\emph{決定的である}といいます。
+     NFA ${\A = \paren{\alphabet,\Loc,\InitLoc,\AccLoc,\Transition}}について、${\InitLoc}が単集合で、各${\loc \in\Loc}、${a \in \alphabet}について${\paren{\loc,a,\loc'}}を充たす${\loc' \in \Loc}が一意に定まるとき、${\A}が\emph{決定的である}といいます。
      決定的である有限オートマトンを\emph{決定的有限オートマトン (deterministic finite automaton, DFA)}と言います。
      本章では省きますが、任意の非決定的有限オートマトンに${\A}について、決定的有限オートマトン ${\A'}で${\Lgof{\A} = \Lgof{\A'}}を充たすものが存在することが知られています。
   }
