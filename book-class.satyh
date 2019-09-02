@@ -950,12 +950,13 @@ end = struct
       | Some(word) -> read-inline ctx {\ (#word;)}
     in
     let ib-inner = read-inline (ctxf ctx) inner in
+    let body = line-break true true ctx
+      (ib-dfn ++ ib-word ++ inline-skip (get-font-size ctx) ++ ib-inner ++ inline-fil) in
     let ctx-diamond =
         ctx |> set-font-size 24pt in
     let ib-diamond = read-inline (ctxf ctx-diamond) {${\diamond}} in
-      line-break true true ctx
-        (ib-dfn ++ ib-word ++ inline-skip (get-font-size ctx) ++ ib-inner ++ inline-fil ++ ib-diamond)
-
+    let diamond-box = line-break true true ctx (inline-fil ++ ib-diamond) in
+    body +++ diamond-box
 
   let make-label prefix labelopt =
     match labelopt with
