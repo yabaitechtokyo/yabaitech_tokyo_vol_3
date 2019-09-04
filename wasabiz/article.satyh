@@ -42,6 +42,9 @@ let-block ctx +figpic2 path1 path2 caption =
   ] in
   ctx |> Block.frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bbf
 
+let padding pads bbf ctx =
+  ctx |> Block.frame-breakable pads VDecoSet.empty bbf
+
 let article = '<
 +chapter ?:(`wasabiz-article`) (|
   bibliography = [];
@@ -76,45 +79,53 @@ let article = '<
 }
 +p{
   \tabular2(open Tabular2 in [
-    [c {2008年};
-     c {認知科学賞};
-     c {
-       \eval(Inline.of-block ?:(Top) 5cm (Block.of-inline false false (Inline.read {
-         単細胞生物の真正粘菌に、パズルを解く能力があったことを発見したことに対して
-       })));
-     };
-     c {
-       \eval(Inline.of-block ?:(Top) 5cm (Block.of-inline false false (Inline.read {
-         \listing{
-           * 中垣俊之（北海道大学/理化学研究所）
-           * 小林亮（広島大学）
-           * 石黒章夫（東北大学）
-           * 手老篤史（北海道大学/Presto JST）
-           * 山田裕康（名古屋大学/理化学研究所）
-         }
-       })));
-     };
+    [
+      c {
+        \eval(Inline.of-block ?:(Top) 3cm (padding (10pt, 10pt, 10pt, 10pt) (Block.of-inline ?:true true true (Inline.read {
+          \eval-const(Inline.fil); 2008年 \eval-const(Inline.fil);
+          \eval(Inline.mandatory-break);
+          認知科学賞
+        }))));
+      };
+      c {
+        \eval(Inline.of-block ?:(Top) 6cm (padding (10pt, 10pt, 10pt, 10pt) (Block.of-inline ?:true true true (Inline.read {
+          単細胞生物の真正粘菌に、パズルを解く能力があったことを発見したことに対して
+        }))));
+      };
+      c {
+        \eval(Inline.of-block ?:(Top) 5cm (padding (10pt, 10pt, 10pt, 10pt) (Block.of-inline ?:true false false (Inline.read {
+          中垣俊之（北海道大学/理化学研究所）\eval(Inline.mandatory-break);
+          小林亮（広島大学）\eval(Inline.mandatory-break);
+          石黒章夫（東北大学）\eval(Inline.mandatory-break);
+          手老篤史（北海道大学/Presto JST）\eval(Inline.mandatory-break);
+          山田裕康（名古屋大学/理化学研究所）
+        }))));
+      };
     ];
-    [c {2010年};
-     c {交通計画賞};
-     c {
-       \eval(Inline.of-block ?:(Top) 5cm (Block.of-inline false false (Inline.read {
-         鉄道網など都市のインフラストラクチャー整備を行う際、真正粘菌を用いて、輸送効率に優れた最適なネットワークを設計する研究に対して。
-       })));
-     };
-     c {
-       \eval(Inline.of-block ?:(Top) 5cm (Block.of-inline false false (Inline.read {
-         \listing{
-           * 中垣俊之（公立はこだて未来大学）
-           * 小林亮（広島大学）
-           * 手老篤史（科学技術振興機構さきがけプロジェクト）
-           * 高木清二（北海道大学）
-           * 三枝徹（北海道大学）
-           * 伊藤賢太郎（北海道大学）
-           * 弓木健嗣（広島大学）ら
-         }
-       })));
-     };
+    [
+      c {
+        \eval(Inline.of-block ?:(Top) 3cm (padding (10pt, 10pt, 10pt, 10pt) (Block.of-inline ?:true true true (Inline.read {
+          \eval-const(Inline.fil); 2010年 \eval-const(Inline.fil);
+          \eval(Inline.mandatory-break);
+          交通計画賞
+        }))));
+      };
+      c {
+        \eval(Inline.of-block ?:(Top) 6cm (padding (10pt, 10pt, 10pt, 10pt) (Block.of-inline ?:true false false (Inline.read {
+          鉄道網など都市のインフラストラクチャー整備を行う際、真正粘菌を用いて、輸送効率に優れた最適なネットワークを設計する研究に対して。
+        }))));
+      };
+      c {
+        \eval(Inline.of-block ?:(Top) 5cm (padding (10pt, 10pt, 10pt, 10pt) (Block.of-inline ?:true false false (Inline.read {
+          中垣俊之（公立はこだて未来大学）\eval(Inline.mandatory-break);
+          小林亮（広島大学）\eval(Inline.mandatory-break);
+          手老篤史（科学技術振興機構さきがけプロジェクト）\eval(Inline.mandatory-break);
+          高木清二（北海道大学）\eval(Inline.mandatory-break);
+          三枝徹（北海道大学）\eval(Inline.mandatory-break);
+          伊藤賢太郎（北海道大学）\eval(Inline.mandatory-break);
+          弓木健嗣（広島大学）ら
+        }))));
+      };
     ];
   ]);
 }
