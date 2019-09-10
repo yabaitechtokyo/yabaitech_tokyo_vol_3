@@ -6,7 +6,8 @@ ARTICLES := censored/article.satyh\
 	phidnight/article.satyh\
 	pohe/article.satyh\
 	wasabiz/article.satyh\
-	zpt/article.satyh
+	zpt/article.satyh\
+	postscript.satyh
 
 main.pdf: book-class.satyh $(ARTICLES) main.saty
 	satysfi -b main.saty -C .satysfi -o main.pdf

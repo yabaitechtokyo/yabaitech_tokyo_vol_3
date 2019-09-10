@@ -9,6 +9,7 @@
 @import: pohe/article
 @import: wasabiz/article
 @import: zpt/article
+@import: postscript
 @import: lib/debug
 
 let () = Debug.log ``
@@ -41,4 +42,5 @@ document (|
     #Pohe.article;
     #Wasabiz.article;
     #Zpt.article;
+    #Postscript.article;
 >
