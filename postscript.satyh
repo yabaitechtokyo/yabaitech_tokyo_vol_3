@@ -1,0 +1,22 @@
+@import: book-class
+
+module Postscript : sig
+  val article : block-text
+end = struct
+
+let-block ctx +right-align it =
+  line-break false false ctx (inline-fil ++ (read-inline ctx it))
+
+let article = '<
+  +chapter ?:(`postscript-article`) (|
+    bibliography = [];
+    title = {あとがき};
+    author = {};
+  |) <
+      +p{この度はyabaitech.tokyo vol.3をご購入いただきありがとうございます。目次を見るとお察しいただけると思いますが、本誌はコンピュータに多少なりとも関係しているトピックを闇鍋の如くごった煮にしたよろず本となっています。大学院時代の同期が集まって書きたいことを書いて寄稿するという主旨のサークルですから仕方ありますまい。そんな闇鍋本ではありますが、今回寄稿された記事のうち一つでもあなたの興味を惹き、好奇心を満たすものがあれば望外の喜びです。}
+      +p{今回で三つ目の同人誌になるので多少の経験もたまっており、その反省を踏まえて新しい試みをしています。例えば前回のvol.2では寄稿者の半数以上が脱稿の直前まで執筆しているという地獄絵図が発生していたため、今回は脱稿の二週間前に締切を設けてピアレビューの期間を設けることにしました。締切に間に合わなかったら原稿は落ちます。実際に落ちた原稿もありましたが、まあこれは致し方ない犠牲でしょう……}
+      +p{あばば}
+      +right-align{(文責: zeptometer)}
+    >
+>
+end
