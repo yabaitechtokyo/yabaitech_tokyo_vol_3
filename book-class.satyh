@@ -12,6 +12,7 @@
 @import: lib/pager
 @import: lib/block
 @import: lib/fn
+@import: lib/image
 
 type bib-in-proceedings =
   (|
@@ -681,13 +682,14 @@ end = struct
           (inline-fil ++ read-inline ctx it ++ inline-fil)
       in
       [
-        block-skip 54pt;
+        Block.skip 54pt;
         centerf ctx-title (embed-string title);
-        block-skip 30pt;
+        Block.skip 30pt;
         centerf ctx-date (embed-string (date ^ ` @ ` ^ venue));
-        block-skip 108pt;
+        Block.skip 108pt;
+        ctx-doc |> Block.centering (Fn.const (Inline.of-image 10cm (Image.of-pdf `QR_DL.pdf` 1)));
         clear-page;
-      ] |> List.fold-left (+++) block-nil
+      ] |> Block.concat
     in
 
     % -- main --
