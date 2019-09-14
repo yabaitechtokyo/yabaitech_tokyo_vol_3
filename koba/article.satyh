@@ -66,15 +66,20 @@ let article = '<
                 }
             }
         >
-        +section {起動安定化群定理} <
+        +section {軌道安定化群定理} <
             +p{
                 一般に部分群の位数や指数を求めるのは簡単なことではない。しかし安定化群\footnote{https://ja.wikipedia.org/wiki/群作用\#軌道と等方部分群}に限って言えば指数を求めるのは比較的簡単である。それには以下の定理が重要である。
                 \theorem{
                     群 ${G} を ${S_n} の部分群とし、集合 ${\set{0, 1, \ldots, n - 1}} の上の自然な作用を考える。
-                    ${x \in \set{0, \ldots, n-1}} の軌道 \footnote{https://ja.wikipedia.org/wiki/群作用\#軌道と等方部分群}を
-                    ${\mathrm{Orb}_G\(x\) := \setsep{ x^g }{g \in G}},
-                    ${x} の安定化群を ${\mathrm{Stab}_G\(x\) := \setsep{g \in G}{x^g = x}} と表記することにする。
-                    このとき、${\abs{\mathrm{Orb}_G\(x\)} \cdot \abs{\mathrm{Stab}_G\(x\)} = \abs{G}} が成り立つ。
+                    \eqn(${x \in \set{0, \ldots, n-1}});%
+                    の軌道 \footnote{https://ja.wikipedia.org/wiki/群作用\#軌道と等方部分群}を
+                    \eqn(${\mathrm{Orb}_G\(x\) := \setsep{ x^g }{g \in G},});%
+                    ${x} の安定化群を
+                    \eqn(${\mathrm{Stab}_G\(x\) := \setsep{g \in G}{x^g = x}});%
+                    と表記することにする。
+                    このとき、
+                    \eqn(${\abs{\mathrm{Orb}_G\(x\)} \cdot \abs{\mathrm{Stab}_G\(x\)} = \abs{G}});%
+                    が成り立つ。
                 }
 
                 ${\mathrm{Orb}_G\(x\)} はグラフ理論的なアルゴリズム(深さ優先探索)で効率的に計算できるため、
@@ -93,8 +98,8 @@ let article = '<
 
                 以上の議論において、各ステップで計算すべきものは二つある。
                 \listing{
-                    * ${G} の生成元が与えられたとき、${\mathrm{Orb}_G\(x\)}
-                    * ${G} の生成元が与えられたとき、 ${\mathrm{Stab}_G\(x\)} の生成元
+                    * ${G} の生成元と ${x} が与えられたとき、${\mathrm{Orb}_G\(x\)}
+                    * ${G} の生成元と ${x} が与えられたとき、 ${\mathrm{Stab}_G\(x\)} の生成元
                 }
                 ${\mathrm{Orb}_G\(x\)} は ${G} の作用によって到達可能な点全体の集合であるため、幅優先探索か深さ優先探索で計算できる。
                 ${\mathrm{Stab}_G\(x\)} の生成元は難しいが以下のアイディアによって計算できる。
@@ -113,15 +118,15 @@ let article = '<
                 function orbit_stabilizer(n: 要素数, gen: G の生成元のリスト, v: 固定する点) -> (軌道, 安定化群の生成元) {
                     que: キュー
                     stabilizer_gen: 安定化群の生成元のリスト
-                    (u, e) を que に積む
+                    (v, e) を que に積む (e は単位元)
                     stabilizer_gen <- []
                     for (y, g) in que {
                         if y に訪れたことがある {
-                            p(u) = y という情報が記録されていれば、 p^{-1} * g は y を固定する。
+                            p(v) = y という情報が記録されていれば、 p^{-1} * g は v を固定する。
                             gen.push(p^{-1} * g);
                             continue;
                         }
-                        y に訪れたことにし、g(u) = y という情報を記録する
+                        y に訪れたことにし、g(v) = y という情報を記録する
                         for x in gen {
                             (x(y), g * x) を que に積む
                         }
@@ -134,6 +139,7 @@ let article = '<
         +section{Schreier-Simsのアルゴリズム (愚直)} <
             +p{
                 0 から ${n - 1} までの点を順番に固定して、徐々に群を小さくするというのが基本方針である。
+                \footnote{ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs\#L126-L151}
                 上の数式でいうと ${u_0 = 0, u_1 = 1, \ldots, u_{n - 1} = n - 1} である。
 
                 \d-code(
@@ -142,7 +148,7 @@ let article = '<
                     gen := x;
                     ord := 1;
                     for i in 0..n {
-                        (orb, stab) := calc_orbit_stabilizer(n, i, x);
+                        (orb, stab) := calc_orbit_stabilizer(n, gen, i);
                         ord *= |orb|;
                         gen = stab;
                     }
@@ -150,7 +156,6 @@ let article = '<
                 }
                 `);
 
-                ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs
                 これの計算量はどうなるだろうか? 各ステップで、生成元の個数は最悪の場合 (軌道の大きさ) 倍になる。
                 ${i} を固定するときの軌道の大きさは最大で ${n - i} であるため、これらの積は最悪 ${\app{O}{n\!}} 程度である。
                 当初の目標は ${n = 48} の場合に群の位数を求めることだったため、これでは到底間に合わない。
@@ -166,7 +171,7 @@ let article = '<
             }
             +definition ?:({BSGS}) ?:(`def:BSGS`) {
                 正確な定義は \cite[`HoltSlide`]; に譲るとして、感覚的な概念を説明する。
-                Base and strong generating set (BSGS) とは、以下の列2個のペア ${\beta, S} である。
+                Base and strong generating set (BSGS) とは、以下の列2個のペア ${\angle-bracket{\beta, S}} である。
                 \listing {
                     * ${\beta_i} (${1 \leq i \leq l}): 頂点の列。${S} を "だんだん固定" していく列。
                     * ${S_i} (${1 \leq i \leq l}): 生成元の集合の列。${S_1 \supseteq S_2 \supseteq \cdots S_l} を満たす必要がある。
