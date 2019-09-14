@@ -35,12 +35,13 @@ let article = '<
         >
         +section {前提知識} <
              +p{
-             群論の初歩的な知識、およびグラフ理論の初歩的な知識を仮定する。
+             群論の初歩的な知識、およびグラフ理論の初歩的な知識を仮定する。また擬似コードも Rust 風に書くので、Rust の知識があることも望ましい。
              \listing{
              * 群論: (例えば \cite[`WikGroupTheory`];)
              * グラフ理論
                ** 深さ優先探索 (例えば \cite[`WikDFS`];)
                ** 幅優先探索 (例えば \cite[`WikBFS`];)
+             * Rust (例えば \cite[`RustLang`];)
              }%
              }
         >
