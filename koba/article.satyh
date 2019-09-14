@@ -115,7 +115,7 @@ let article = '<
 
                 \d-code(
                 `
-                function orbit_stabilizer(n: 要素数, gen: G の生成元のリスト, v: 固定する点) -> (軌道, 安定化群の生成元) {
+                fn orbit_stabilizer(n: 要素数, gen: G の生成元のリスト, v: 固定する点) -> (軌道, 安定化群の生成元) {
                     que: キュー
                     stabilizer_gen: 安定化群の生成元のリスト
                     (v, e) を que に積む (e は単位元)
@@ -144,11 +144,11 @@ let article = '<
 
                 \d-code(
                 `
-                function schreier_sims(n: 点数, x: 生成元の集合) -> 位数 {
+                fn schreier_sims(n: 点数, x: 生成元の集合) -> 位数 {
                     gen := x;
                     ord := 1;
                     for i in 0..n {
-                        (orb, stab) := calc_orbit_stabilizer(n, gen, i);
+                        (orb, stab) := orbit_stabilizer(n, gen, i);
                         ord *= |orb|;
                         gen = stab;
                     }
@@ -178,6 +178,10 @@ let article = '<
                     また、${\gen{S_i} = \mathrm{Stab}_{G}\(\set{\beta_1, \ldots, \beta_{i}}\)} を満たさなければならない。
                 }
             }
+            +definition ?:({Transversal}) ?:(`def:transversal`) {
+                ${x \in X} とする。各 ${u \in \mathrm{Orb}_G\(x\)} に対して ${\alpha_u \in G} であって ${x^{\alpha_u} = u} を満たすものを
+                集めた集合 ${\setsep{\alpha_u}{u \in \mathrm{Orb}_G\(x\)}} を transversal と呼ぶ。
+            }
             +p{
                 上で固定化部分群をとったときは生成元が膨らんでいったが、BSGS についていえば生成元はだんだん小さくなっていく。
                 (というよりも、だんだん小さくなるように余計な元を足しておくのである。)
@@ -186,27 +190,36 @@ let article = '<
                 擬似コードは以下である。
                 \d-code(
                 `
-                    // g を beta_transversal で示される部分群の元の積として表そうとする。
+                    fn orbit_transversal_stabilizer(n: 要素数, gen: G の生成元のリスト, v: 固定する点) -> (軌道と transversal の組, 安定化群の生成元) {
+                        /* orbit_stabilizer と同様。軌道の計算と同時に transversal の計算もできることに注意。*/
+                    }
+                    fn get_transversal(n: usize, orbit_transversal: 軌道と transversal の組) -> transversal の配列表現 {
+                        for a in 0..n {
+                            ans[a] = (a が軌道に含まれていれば x^g = a となる g を、そうでなければ None)
+                        }
+                        ans
+                    }
+                    // g を beta_transversal で示される固定化部分群の元の積として表そうとする。
                     // どうしても残ってしまう余りの部分も返す。
                     pub fn strip(
-                        g: &Perm,
+                        g: 置換,
                         beta_transversals: &[(usize, Transversal)]
                     ) -> (Vec<置換>, 余りの置換) {
-                        let mut h = g.clone();
-                        let mut us = vec![];
+                        h <- g;
+                        us <- [];
                         for &(beta, ref transversal) in beta_transversals {
                             let moved_to = h[beta];
                             match transversal[moved_to] {
                                 ダミー => break,
-                                repr => {
-                                    h = h.compose(&repr.inv());
+                                repr => { // repr は beta^{repr} = moved_to を満たす。
+                                    h <- h * repr^{-1}
                                     us.push(repr.clone());
                                 }
                             }
                         }
-                        (us, h)
+                        (us, h) // g = h * us[0] * ... * us[us.len() - 1] を満たす
                     }
-                    // Schreier-Sims のアルゴリズムの本処理。
+                    // 与えられた (beta の列, s) が BSGS かどうか調べ、そうでない場合は何を追加すべきかを返す。
                     fn schreier_sims(
                         n: usize,
                         beta_transversals: &[(usize, Transversal)],
@@ -221,9 +234,9 @@ let article = '<
                         // The first fixed point
                         let beta0 = beta_transversals[0].0;
                         let intersection = (s の中で、beta0 を保つ置換全体);
-                        schreier_sims(n, &beta_transversals[1..], &intersection)?;
+                        schreier_sims(n, &beta_transversals[1..], &intersection)?; // 再帰
                         // y はナイーブな方法で作った固定化群の生成元
-                        let (_, y) = orbit_transversal_stabilizer(n, s, beta0);
+                        let (_, y) = orbit_stabilizer(n, s, beta0);
                         for y in y {
                             let (us, 余り) = strip(&y, &beta_transversals[1..]);
                             if 余り が e でない {
@@ -243,8 +256,10 @@ let article = '<
                         let dummy_transversal = vec![]; // dummy transversals
                         loop {
                             {
-                                // TODO コメントを詳しくする
+                                // transversal を計算する。後の schreier_sims 用。
                                 let mut cur_s = s.clone();
+                                // beta を固定する固定化部分群のようなものを雑にとっていく。
+                                // (beta_transversal, s) が BSGS であれば、これは実際に固定化部分群になる。
                                 for (beta, transversal_ref) in beta_transversals {
                                     let (orbit_transversal, _) =
                                         orbit_transversal_stabilizer(n, &cur_s, beta);
@@ -275,7 +290,7 @@ let article = '<
                     }
                 `);
                 実装は schreier::incrementally_build_bsgs に与えた。
-                https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L59-L116
+                \footnote{ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L59-L116}
             }
         >
         +section{群の位数の計算} <
@@ -296,7 +311,7 @@ let article = '<
                     }
                 `);
                 実装は schreier::order に与えた。
-                https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L118-L132
+                \footnote{ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L118-L132}
             }
         >
         +section{謝辞} <
