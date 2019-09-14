@@ -30,7 +30,7 @@ let article = '<
 
             +p{
             この記事では、Schreier-Sims のアルゴリズムのアイディア、実装を追っていけたらと思います。今回はアルゴリズムの基本方針についてです。
-            なお、実装は GitHub のレポジトリ\cite[`GAPRepositoryKoba`]; に置いてあるので、興味のある方は読んでいただけたらと思います。
+            なお、実装は GitHub のリポジトリ\cite[`GAPRepositoryKoba`]; に置いてあるので、興味のある方は読んでいただけたらと思います。
             }
         >
         +section {前提知識} <
@@ -111,7 +111,7 @@ let article = '<
                 これを認めれば ${\mathrm{Stab}_G\(x\)} の生成元も計算できる。
 
                 実装には幅優先探索を用いた。以下に擬似コード (\cite[`HoltSlide`]; の p.6) を与える。
-                実装本体は GitHub レポジトリ \footnote{https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs\#L76-L110} にある。
+                実装本体は GitHub リポジトリ \footnote{https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs\#L76-L110} にある。
 
                 \d-code(
                 `
@@ -175,7 +175,7 @@ let article = '<
                 \listing {
                     * ${\beta_i} (${1 \leq i \leq l}): 頂点の列。${S} を "だんだん固定" していく列。
                     * ${S_i} (${1 \leq i \leq l}): 生成元の集合の列。${S_1 \supseteq S_2 \supseteq \cdots S_l} を満たす必要がある。
-                    また、${\gen{S_i} = \mathrm{Stab}_{\beta_1, \ldots, \beta_{i}}\(G\)} を満たさなければならない。
+                    また、${\gen{S_i} = \mathrm{Stab}_{G}\(\set{\beta_1, \ldots, \beta_{i}}\)} を満たさなければならない。
                 }
             }
             +p{
@@ -206,7 +206,7 @@ let article = '<
                         }
                         (us, h)
                     }
-                    // TODO コメント
+                    // Schreier-Sims のアルゴリズムの本処理。
                     fn schreier_sims(
                         n: usize,
                         beta_transversals: &[(usize, Transversal)],
