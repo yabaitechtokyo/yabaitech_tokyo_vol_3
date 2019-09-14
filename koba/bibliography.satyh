@@ -46,13 +46,13 @@ let bibliography = [
     (`WikBFS`, WebSite(|
         author = {| |};
         title = {幅優先探索};
-        url = `https://ja.wikipedia.org/wiki/%E5%B9%85%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2`;
+        url = `https://ja.wikipedia.org/wiki/幅優先探索`;
         year = 2019;
     |));
     (`WikDFS`, WebSite(|
         author = {| |};
         title = {深さ優先探索};
-        url = `https://ja.wikipedia.org/wiki/%E6%B7%B1%E3%81%95%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2`;
+        url = `https://ja.wikipedia.org/wiki/深さ優先探索`;
         year = 2019;
     |));
     (`HoltSlide`, WebSite(|
@@ -61,4 +61,10 @@ let bibliography = [
         url = `https://blogs.cs.st-andrews.ac.uk/codima/files/2015/11/CoDiMa2015_Holt.pdf`;
         year = 2015;
     |));
+    (`RustLang`, WebSite(|
+        author = {| The Rust team |};
+        title = {Rust Programming Language};
+        url = `https://www.rust-lang.org`;
+        year = 2019;
+    |))
 ]

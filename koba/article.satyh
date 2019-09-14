@@ -30,17 +30,18 @@ let article = '<
 
             +p{
             この記事では、Schreier-Sims のアルゴリズムのアイディア、実装を追っていけたらと思います。今回はアルゴリズムの基本方針についてです。
-            なお、実装は GitHub のレポジトリ\cite[`GAPRepositoryKoba`]; に置いてあるので、興味のある方は読んでいただけたらと思います。
+            なお、実装は GitHub のリポジトリ\cite[`GAPRepositoryKoba`]; に置いてあるので、興味のある方は読んでいただけたらと思います。
             }
         >
         +section {前提知識} <
              +p{
-             群論の初歩的な知識、およびグラフ理論の初歩的な知識を仮定する。
+             群論の初歩的な知識、およびグラフ理論の初歩的な知識を仮定する。また擬似コードも Rust 風に書くので、Rust の知識があることも望ましい。
              \listing{
              * 群論: (例えば \cite[`WikGroupTheory`];)
              * グラフ理論
                ** 深さ優先探索 (例えば \cite[`WikDFS`];)
                ** 幅優先探索 (例えば \cite[`WikBFS`];)
+             * Rust (例えば \cite[`RustLang`];)
              }%
              }
         >
@@ -66,15 +67,20 @@ let article = '<
                 }
             }
         >
-        +section {起動安定化群定理} <
+        +section {軌道安定化群定理} <
             +p{
                 一般に部分群の位数や指数を求めるのは簡単なことではない。しかし安定化群\footnote{https://ja.wikipedia.org/wiki/群作用\#軌道と等方部分群}に限って言えば指数を求めるのは比較的簡単である。それには以下の定理が重要である。
                 \theorem{
                     群 ${G} を ${S_n} の部分群とし、集合 ${\set{0, 1, \ldots, n - 1}} の上の自然な作用を考える。
-                    ${x \in \set{0, \ldots, n-1}} の軌道 \footnote{https://ja.wikipedia.org/wiki/群作用\#軌道と等方部分群}を
-                    ${\mathrm{Orb}_G\(x\) := \setsep{ x^g }{g \in G}},
-                    ${x} の安定化群を ${\mathrm{Stab}_G\(x\) := \setsep{g \in G}{x^g = x}} と表記することにする。
-                    このとき、${\abs{\mathrm{Orb}_G\(x\)} \cdot \abs{\mathrm{Stab}_G\(x\)} = \abs{G}} が成り立つ。
+                    \eqn(${x \in \set{0, \ldots, n-1}});%
+                    の軌道 \footnote{https://ja.wikipedia.org/wiki/群作用\#軌道と等方部分群}を
+                    \eqn(${\mathrm{Orb}_G\(x\) := \setsep{ x^g }{g \in G},});%
+                    ${x} の安定化群を
+                    \eqn(${\mathrm{Stab}_G\(x\) := \setsep{g \in G}{x^g = x}});%
+                    と表記することにする。
+                    このとき、
+                    \eqn(${\abs{\mathrm{Orb}_G\(x\)} \cdot \abs{\mathrm{Stab}_G\(x\)} = \abs{G}});%
+                    が成り立つ。
                 }
 
                 ${\mathrm{Orb}_G\(x\)} はグラフ理論的なアルゴリズム(深さ優先探索)で効率的に計算できるため、
@@ -93,8 +99,8 @@ let article = '<
 
                 以上の議論において、各ステップで計算すべきものは二つある。
                 \listing{
-                    * ${G} の生成元が与えられたとき、${\mathrm{Orb}_G\(x\)}
-                    * ${G} の生成元が与えられたとき、 ${\mathrm{Stab}_G\(x\)} の生成元
+                    * ${G} の生成元と ${x} が与えられたとき、${\mathrm{Orb}_G\(x\)}
+                    * ${G} の生成元と ${x} が与えられたとき、 ${\mathrm{Stab}_G\(x\)} の生成元
                 }
                 ${\mathrm{Orb}_G\(x\)} は ${G} の作用によって到達可能な点全体の集合であるため、幅優先探索か深さ優先探索で計算できる。
                 ${\mathrm{Stab}_G\(x\)} の生成元は難しいが以下のアイディアによって計算できる。
@@ -106,22 +112,22 @@ let article = '<
                 これを認めれば ${\mathrm{Stab}_G\(x\)} の生成元も計算できる。
 
                 実装には幅優先探索を用いた。以下に擬似コード (\cite[`HoltSlide`]; の p.6) を与える。
-                実装本体は GitHub レポジトリ \footnote{https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs\#L76-L110} にある。
+                実装本体は GitHub リポジトリ \footnote{https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs\#L76-L110} にある。
 
                 \d-code(
                 `
-                function orbit_stabilizer(n: 要素数, gen: G の生成元のリスト, v: 固定する点) -> (軌道, 安定化群の生成元) {
+                fn orbit_stabilizer(n: 要素数, gen: G の生成元のリスト, v: 固定する点) -> (軌道, 安定化群の生成元) {
                     que: キュー
                     stabilizer_gen: 安定化群の生成元のリスト
-                    (u, e) を que に積む
+                    (v, e) を que に積む (e は単位元)
                     stabilizer_gen <- []
                     for (y, g) in que {
                         if y に訪れたことがある {
-                            p(u) = y という情報が記録されていれば、 p^{-1} * g は y を固定する。
+                            p(v) = y という情報が記録されていれば、 p^{-1} * g は v を固定する。
                             gen.push(p^{-1} * g);
                             continue;
                         }
-                        y に訪れたことにし、g(u) = y という情報を記録する
+                        y に訪れたことにし、g(v) = y という情報を記録する
                         for x in gen {
                             (x(y), g * x) を que に積む
                         }
@@ -134,15 +140,16 @@ let article = '<
         +section{Schreier-Simsのアルゴリズム (愚直)} <
             +p{
                 0 から ${n - 1} までの点を順番に固定して、徐々に群を小さくするというのが基本方針である。
+                \footnote{ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs\#L126-L151}
                 上の数式でいうと ${u_0 = 0, u_1 = 1, \ldots, u_{n - 1} = n - 1} である。
 
                 \d-code(
                 `
-                function schreier_sims(n: 点数, x: 生成元の集合) -> 位数 {
+                fn schreier_sims(n: 点数, x: 生成元の集合) -> 位数 {
                     gen := x;
                     ord := 1;
                     for i in 0..n {
-                        (orb, stab) := calc_orbit_stabilizer(n, i, x);
+                        (orb, stab) := orbit_stabilizer(n, gen, i);
                         ord *= |orb|;
                         gen = stab;
                     }
@@ -150,7 +157,6 @@ let article = '<
                 }
                 `);
 
-                ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/754d0ad1/src/main.rs
                 これの計算量はどうなるだろうか? 各ステップで、生成元の個数は最悪の場合 (軌道の大きさ) 倍になる。
                 ${i} を固定するときの軌道の大きさは最大で ${n - i} であるため、これらの積は最悪 ${\app{O}{n\!}} 程度である。
                 当初の目標は ${n = 48} の場合に群の位数を求めることだったため、これでは到底間に合わない。
@@ -166,12 +172,16 @@ let article = '<
             }
             +definition ?:({BSGS}) ?:(`def:BSGS`) {
                 正確な定義は \cite[`HoltSlide`]; に譲るとして、感覚的な概念を説明する。
-                Base and strong generating set (BSGS) とは、以下の列2個のペア ${\beta, S} である。
+                Base and strong generating set (BSGS) とは、以下の列2個のペア ${\angle-bracket{\beta, S}} である。
                 \listing {
                     * ${\beta_i} (${1 \leq i \leq l}): 頂点の列。${S} を "だんだん固定" していく列。
                     * ${S_i} (${1 \leq i \leq l}): 生成元の集合の列。${S_1 \supseteq S_2 \supseteq \cdots S_l} を満たす必要がある。
-                    また、${\gen{S_i} = \mathrm{Stab}_{\beta_1, \ldots, \beta_{i}}\(G\)} を満たさなければならない。
+                    また、${\gen{S_i} = \mathrm{Stab}_{G}\(\set{\beta_1, \ldots, \beta_{i}}\)} を満たさなければならない。
                 }
+            }
+            +definition ?:({Transversal}) ?:(`def:transversal`) {
+                ${x \in X} とする。各 ${u \in \mathrm{Orb}_G\(x\)} に対して ${\alpha_u \in G} であって ${x^{\alpha_u} = u} を満たすものを
+                集めた集合 ${\setsep{\alpha_u}{u \in \mathrm{Orb}_G\(x\)}} を transversal と呼ぶ。
             }
             +p{
                 上で固定化部分群をとったときは生成元が膨らんでいったが、BSGS についていえば生成元はだんだん小さくなっていく。
@@ -181,27 +191,36 @@ let article = '<
                 擬似コードは以下である。
                 \d-code(
                 `
-                    // g を beta_transversal で示される部分群の元の積として表そうとする。
+                    fn orbit_transversal_stabilizer(n: 要素数, gen: G の生成元のリスト, v: 固定する点) -> (軌道と transversal の組, 安定化群の生成元) {
+                        /* orbit_stabilizer と同様。軌道の計算と同時に transversal の計算もできることに注意。*/
+                    }
+                    fn get_transversal(n: usize, orbit_transversal: 軌道と transversal の組) -> transversal の配列表現 {
+                        for a in 0..n {
+                            ans[a] = (a が軌道に含まれていれば x^g = a となる g を、そうでなければ None)
+                        }
+                        ans
+                    }
+                    // g を beta_transversal で示される固定化部分群の元の積として表そうとする。
                     // どうしても残ってしまう余りの部分も返す。
                     pub fn strip(
-                        g: &Perm,
+                        g: 置換,
                         beta_transversals: &[(usize, Transversal)]
                     ) -> (Vec<置換>, 余りの置換) {
-                        let mut h = g.clone();
-                        let mut us = vec![];
+                        h <- g;
+                        us <- [];
                         for &(beta, ref transversal) in beta_transversals {
                             let moved_to = h[beta];
                             match transversal[moved_to] {
                                 ダミー => break,
-                                repr => {
-                                    h = h.compose(&repr.inv());
+                                repr => { // repr は beta^{repr} = moved_to を満たす。
+                                    h <- h * repr^{-1}
                                     us.push(repr.clone());
                                 }
                             }
                         }
-                        (us, h)
+                        (us, h) // g = h * us[0] * ... * us[us.len() - 1] を満たす
                     }
-                    // TODO コメント
+                    // 与えられた (beta の列, s) が BSGS かどうか調べ、そうでない場合は何を追加すべきかを返す。
                     fn schreier_sims(
                         n: usize,
                         beta_transversals: &[(usize, Transversal)],
@@ -216,9 +235,9 @@ let article = '<
                         // The first fixed point
                         let beta0 = beta_transversals[0].0;
                         let intersection = (s の中で、beta0 を保つ置換全体);
-                        schreier_sims(n, &beta_transversals[1..], &intersection)?;
+                        schreier_sims(n, &beta_transversals[1..], &intersection)?; // 再帰
                         // y はナイーブな方法で作った固定化群の生成元
-                        let (_, y) = orbit_transversal_stabilizer(n, s, beta0);
+                        let (_, y) = orbit_stabilizer(n, s, beta0);
                         for y in y {
                             let (us, 余り) = strip(&y, &beta_transversals[1..]);
                             if 余り が e でない {
@@ -238,8 +257,10 @@ let article = '<
                         let dummy_transversal = vec![]; // dummy transversals
                         loop {
                             {
-                                // TODO コメントを詳しくする
+                                // transversal を計算する。後の schreier_sims 用。
                                 let mut cur_s = s.clone();
+                                // beta を固定する固定化部分群のようなものを雑にとっていく。
+                                // (beta_transversal, s) が BSGS であれば、これは実際に固定化部分群になる。
                                 for (beta, transversal_ref) in beta_transversals {
                                     let (orbit_transversal, _) =
                                         orbit_transversal_stabilizer(n, &cur_s, beta);
@@ -270,7 +291,7 @@ let article = '<
                     }
                 `);
                 実装は schreier::incrementally_build_bsgs に与えた。
-                https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L59-L116
+                \footnote{ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L59-L116}
             }
         >
         +section{群の位数の計算} <
@@ -291,7 +312,7 @@ let article = '<
                     }
                 `);
                 実装は schreier::order に与えた。
-                https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L118-L132
+                \footnote{ソースコード: https://github.com/koba-e964/rust-schreier-sims/blob/4e0be968/src/schreier.rs\#L118-L132}
             }
         >
         +section{謝辞} <
