@@ -54,8 +54,8 @@ let article = '<
         >
         +section {導入} <
             +p{
-                計算群論において、Schreier-Simsのアルゴリズム\footnote{https://en.wikipedia.org/wiki/Schreier\%E2\%80\%93Sims_algorithm} は
-                置換群\footnote{https://ja.wikipedia.org/wiki/\%E5\%AF\%BE\%E7\%A7\%B0\%E7\%BE\%A4}の位数を計算したり、
+                計算群論において、Schreier-Simsのアルゴリズムは
+                置換群の位数を計算したり、
                 置換群にある要素が含まれているかを高速に判定したり…などのクエリへの高速な応答を行うための前計算アルゴリズムである。
                 今回は置換群 ${G} の位数 ${\abs{G}} を求めるところに焦点を当てて議論する。
                 形式的に表記すると、対称群 ${S_n} が集合 ${\set{0, 1, \ldots, n - 1}} の上に作用するとしたとき、
