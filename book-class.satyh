@@ -13,7 +13,7 @@
 @import: lib/block
 @import: lib/fn
 @import: lib/image
-@import: lib/color2
+@import: lib/color-ext
 
 type bib-in-proceedings =
   (|

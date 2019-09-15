@@ -4,7 +4,7 @@
 @import: ../lib/inline
 @import: ../lib/block
 @import: ../lib/length
-@import: ../lib/color2
+@import: ../lib/color-ext
 @import: ../lib/graphics
 @import: ../lib/typeset/base
 @import: ../lib/typeset/tabular2
@@ -25,7 +25,7 @@ let-block ctx +figpic ?:ratio path caption =
   let cap-bb = Block.centering (Inline.read caption) in
   let cap-bb-with-pads = Block.frame-breakable (10pt, 10pt, 0pt, 10pt) VDecoSet.empty cap-bb in
   let bb ctx = Block.concat [im-bb ctx; cap-bb-with-pads ctx] in
-  ctx |> Block.frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bb
+  ctx |> Block.frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color.of-css `black`)) bb
 
 let-block ctx +figpic2 path1 path2 caption =
   let im-bbf = Block.centering (Inline.read {
@@ -40,7 +40,7 @@ let-block ctx +figpic2 path1 path2 caption =
     im-bbf ctx;
     cap-bbf ctx;
   ] in
-  ctx |> Block.frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color2.of-css `black`)) bbf
+  ctx |> Block.frame-breakable (10pt, 10pt, 20pt, 10pt) (VDecoSet.simple-frame-stroke .5pt (Color.of-css `black`)) bbf
 
 let padding pads bbf ctx =
   ctx |> Block.frame-breakable pads VDecoSet.empty bbf
