@@ -691,7 +691,7 @@ end = struct
         Block.concat [
           ctx-doc |> Block.centering (Fn.const (Inline.of-image 10cm (Image.of-pdf `QR_DL.pdf` 1)));
           Block.skip -50pt;
-          ctx-doc |> Block.centering (Inline.read {\url{https://hogehoge/fuga/}});
+          ctx-doc |> Block.centering (Inline.read {\url{https://bit.ly/ytt-2cu4p}});
           Block.skip -310pt;
           ctx-doc |> Block.centering (Inline.read {本誌のPDFとソースコードのダウンロードはこちらから});
         ];
