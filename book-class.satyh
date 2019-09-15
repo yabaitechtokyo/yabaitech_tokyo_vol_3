@@ -13,6 +13,7 @@
 @import: lib/block
 @import: lib/fn
 @import: lib/image
+@import: lib/color2
 
 type bib-in-proceedings =
   (|
@@ -686,8 +687,14 @@ end = struct
         centerf ctx-title (embed-string title);
         Block.skip 30pt;
         centerf ctx-date (embed-string (date ^ ` @ ` ^ venue));
-        Block.skip 108pt;
-        ctx-doc |> Block.centering (Fn.const (Inline.of-image 10cm (Image.of-pdf `QR_DL.pdf` 1)));
+        Block.skip 80pt;
+        Block.concat [
+          ctx-doc |> Block.centering (Fn.const (Inline.of-image 10cm (Image.of-pdf `QR_DL.pdf` 1)));
+          Block.skip -50pt;
+          ctx-doc |> Block.centering (Inline.read {\url{https://hogehoge/fuga/}});
+          Block.skip -310pt;
+          ctx-doc |> Block.centering (Inline.read {本誌のPDFとソースコードのダウンロードはこちらから});
+        ];
         clear-page;
       ] |> Block.concat
     in
