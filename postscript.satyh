@@ -10,7 +10,7 @@ let-block ctx +right-align it =
 let article = '<
   +chapter ?:(`postscript-article`) (|
     bibliography = [];
-    title = {あとがき：};
+    title = {あとがき};
     author = {};
   |) <
     +p{
