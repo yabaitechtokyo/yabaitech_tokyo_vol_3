@@ -147,7 +147,7 @@ KBFのprefixは${\epsilon}、K、KB、KBFなので、今回は${P}にKとKBとKB
   さて、Myhill-Nerodeの定理の立場からL\*アルゴリズムの観察表を見ていきます。
 まず、行ベクトル${T\[\word,\text!{-}\]}が互いに異なるような${\word,\word' \in P}については、適宜末尾に文字列を加えたときの受理/非受理の関係が異なるので、${P / \oapprox_{T}}の要素数は${\Word/\MNRel{\Lg}}の要素数以下になり、${\Lg}が正規言語であるならば上限が存在します
 (${\oapprox_{T}}の定義は\ref-section(`sec:id`);を参照)。
-${P}に文字列を追加して観察表を閉じさせる操作を行うとき、任意の${\word \in P} について ${T\[\word' a,\text!{-}\] \neq T\[\word,\text!{-}\]}を充たすような ${\word' a} (但し${\word' \in P, a \in \alphabet}) を${P}に追加するので、
+${P}に文字列を追加して観察表を閉じさせる操作を行うとき、任意の${\word \in P} について ${T\[\word' a,\text!{-}\] \neq} ${T\[\word,\text!{-}\]}を充たすような ${\word' a} (但し${\word' \in P, a \in \alphabet}) を${P}に追加するので、
 ${P / \oapprox_{T}}の要素数は1増加します。
 観察表が一貫していないとき、${S}に要素を追加して、つまり${\oapprox_{T}}の定義を厳しくすることで
 任意の${\word,\word' \in P, a \in \alphabet} について ${T\[\word,\text!{-}\] = T\[\word',\text!{-}\]}ならば${T\[\word a ,\text!{-}\] = T\[\word' a ,\text!{-}\]}を充たすようにするので、

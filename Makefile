@@ -3,6 +3,9 @@ ARTICLES := censored/article.satyh\
 	irnbru/article.satyh\
 	koba/article.satyh\
 	MasWag/article.satyh\
+	MasWag/nlstar.satyh\
+	MasWag/id.satyh\
+	MasWag/lstar.satyh\
 	phidnight/article.satyh\
 	pohe/article.satyh\
 	wasabiz/article.satyh\

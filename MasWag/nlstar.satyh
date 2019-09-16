@@ -108,6 +108,18 @@ let nlstar = '<
   \figure ?:(`fig:mustFinishKBFM1Step1`){\ref-figure(`fig:NLStarObservationTable1`);右の観察表に対応するRFSA ${\A_1}}<
      +image-frame{\insert-pdf-image(5cm)(path-to-root ^ `figs/KBFStep1.pdf`)(1);}
   >
+  \figure ?:(`fig:NLStarObservationTable2`){K、KB、KBF、KBFKを${S}に追加した観察表}<
+    +centering{
+      \observationTable([
+        [{} ;{${\epsilon}} ;{K};{KB};{KBF};{KBFK};];
+        [{${\epsilon}};{-};{-};{-};{-};{+};];
+        [{—————};{—————};{—————};{—————};{—————};{—————};];
+        [{K};{-};{-};{-};{+};{+};];
+        [{B};{-};{-};{-};{-};{+};];
+        [{F};{-};{-};{-};{-};{+};]
+      ]);
+    }
+  >
 }
   +p {
   観察表がRFSA閉である場合、観察表からRFSAを生成します。
@@ -120,19 +132,13 @@ let nlstar = '<
 }
   \ref-figure(`fig:NLStarObservationTable1`);右の観察表からは\ref-figure(`fig:mustFinishKBFM1Step1`);のRFSA、${\A_1}が生成されます。
 }
-+p {
-  \figure ?:(`fig:NLStarObservationTable2`){K、KB、KBF、KBFKを${S}に追加した観察表}<
-+centering{
-  \observationTable(
-    [[{} ;{${\epsilon}} ;{K};{KB};{KBF};{KBFK};];
-     [{${\epsilon}};{-};{-};{-};{-};{+};];
-     [{—————};{—————};{—————};{—————};{—————};{—————};];
-     [{K};{-};{-};{-};{+};{+};];
-     [{B};{-};{-};{-};{-};{+};];
-     [{F};{-};{-};{-};{-};{+};]]);
+ +p{
+  RFSA ${\A_1}を生成することができたので等価性質問によって、RFSA ${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
+  今回、RFSA ${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBFK が返ります。
+  ここで、${S}にKBFKのsuffixで${S}に含まれていないものを追加します。
+  KBFKのsuffixは${\epsilon}、K、FK、BFK、KBFKなので、今回は${S}にK、FK、BFK、KBFKを追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable2`);)
 }
->
-}
+%      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
 +p{
 \figure ?:(`fig:NLStarObservationTable3`){Kを${P}に、KK、KB、KFを${P'}に追加した観察表}<
 +centering{
@@ -148,8 +154,6 @@ let nlstar = '<
      [{KF};{-};{-};{-};{-};{+};]]);
 }
 >
-}
-+p{
   \figure ?:(`fig:NLStarObservationTable4`){KBを${P}に、KBK、KBB、KBFを${P'}に追加した観察表}<
 +centering{
   \observationTable(
@@ -167,15 +171,6 @@ let nlstar = '<
      [{KBF};{-};{+};{-};{-};{+};]]);
 }
 >
-}
- +p{
-RFSA ${\A_1}を生成することができたので等価性質問によって、RFSA ${\A_1}が学習したい正規言語を認識するかどうかを調べてみます。
-今回、RFSA ${\mathcal{A}_1}は言語${\Lg}を認識しないので、最短の反例 KBFK が返ります。
-ここで、${S}にKBFKのsuffixで${S}に含まれていないものを追加します。
-KBFKのsuffixは${\epsilon}、K、FK、BFK、KBFKなので、今回は${S}にK、FK、BFK、KBFKを追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable2`);)
-}
-%      page-break page pagecontf pagepartsf (bb-toc +++ bb-main)        
-+p{
   \figure ?:(`fig:NLStarObservationTable5`){KBFを${P}に、KBFK、KBFB、KBFFを${P'}に追加した観察表}<
 +centering{
   \observationTable(
@@ -195,7 +190,11 @@ KBFKのsuffixは${\epsilon}、K、FK、BFK、KBFKなので、今回は${S}にK�
      [{KBFB};{+};{-};{-};{-};{+};];
      [{KBFF};{+};{-};{-};{-};{+};]]);
 }
->} +p {
+>}
++p{
+  \ref-figure(`fig:NLStarObservationTable2`);の観察表は閉じていないので、\ref-figure(`fig:NLStarObservationTable2`);の観察表が閉じるまで${P}及び${P'}に文字列を追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable3`);\ref-figure(`fig:NLStarObservationTable4`);\ref-figure(`fig:NLStarObservationTable5`);\ref-figure(`fig:NLStarObservationTable6`);)
+}
++p {
   \figure ?:(`fig:NLStarObservationTable6`){KBFBを${P}に、KBFBK、KBFBB、KBFBFを${P'}に追加した観察表。この観察表はRSFA閉である}<
 +centering{
   \observationTable(
@@ -219,9 +218,6 @@ KBFKのsuffixは${\epsilon}、K、FK、BFK、KBFKなので、今回は${S}にK�
      [{KBFBF};{-};{-};{-};{-};{+};]]);
 }
 >
-} 
-+p{
-  \ref-figure(`fig:NLStarObservationTable2`);の観察表は閉じていないので、\ref-figure(`fig:NLStarObservationTable2`);の観察表が閉じるまで${P}及び${P'}に文字列を追加し、観察表を埋めます。 (\ref-figure(`fig:NLStarObservationTable3`);\ref-figure(`fig:NLStarObservationTable4`);\ref-figure(`fig:NLStarObservationTable5`);\ref-figure(`fig:NLStarObservationTable6`);)
 }
 +p {
   \figure ?:(`fig:mustFinishKBFM1Step2`){\ref-figure(`fig:NLStarObservationTable6`);の観察表に対応するRFSA ${\A_2}}<

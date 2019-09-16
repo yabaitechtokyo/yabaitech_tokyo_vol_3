@@ -1,8 +1,7 @@
 @require: itemize
 @import: local
 
-let id = '<
-        +clear-page;
+let id = '<        
         +section?:(`sec:id`) {IDアルゴリズム} <
             +dialog(
                 [(Some({絵美理}),{「Angluin の Automata Inferenceは嫌いですか…？});
@@ -133,7 +132,7 @@ IDアルゴリズムにおいて、下側の添字集合${P'}は${P'=\setsep{\wo
   最初に空欄になっているセルを所属性質問を用いて埋めます (\ref-figure(`fig:IDObservationTable1`);右) 。
 }
 +p {
-  次に\ref-figure(`fig:IDObservationTable1`);右の観察表が一貫しているかを判定します。今回は${\epsilon,\text!{KB}\in P}について、${T\[\epsilon,\text!{-}\] = T\[\text!{KB},\text!{-}\]}が成り立つ一方で${T\[\text!{F},\epsilon\] \neq T\[\text!{KBF},\epsilon\]}なので一貫していません。
+  次に\ref-figure(`fig:IDObservationTable1`);右の観察表が一貫しているかを判定します。今回は${\epsilon,\text!{KB}\in P}について、${T\[\epsilon,\text!{-}\]= \[\text!{KB},\text!{-}\]}が成り立つ一方で${T\[\text!{F},\epsilon\] \neq T\[\text!{KBF},\epsilon\]}なので一貫していません。
   そこで閉じていない原因の列Fを${S}に追加して、観察表の空欄を埋めます (\ref-figure(`fig:IDObservationTable2`);)。
 }
 +p {
@@ -157,7 +156,7 @@ IDアルゴリズムにおいて、下側の添字集合${P'}は${P'=\setsep{\wo
      [{KBFF};{+};{+};];]);
 }
 >
-  次に\ref-figure(`fig:IDObservationTable2`);の観察表が一貫しているかを判定します。今回は${\epsilon,\text!{K}\in P}について、${T\[\epsilon,\text!{-}\] = T\[\text!{K},\text!{-}\]}が成り立つ一方で${T\[\text!{B},\text!{F}\] \neq T\[\text!{KB},\text!{F}\]}なので一貫していません。
+  次に\ref-figure(`fig:IDObservationTable2`);の観察表が一貫しているかを判定します。今回は${\epsilon,\text!{K}\in P}について、${T\[\epsilon,\text!{-}\]} ${= T\[\text!{K},\text!{-}\]}が成り立つ一方で${T\[\text!{B},\text!{F}\] \neq T\[\text!{KB},\text!{F}\]}なので一貫していません。
   そこで閉じていない原因の列Fを${BF}に追加して、観察表の空欄を埋めます (\ref-figure(`fig:observationTable`);)。
 }
 +p {

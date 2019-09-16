@@ -103,6 +103,7 @@ module Book : sig
   direct \figure : [string?; inline-text; block-text] inline-cmd
   direct \table : [string?; inline-text; block-text] inline-cmd
   direct +p : [inline-text] block-cmd
+  direct +topic : [inline-text; inline-text] block-cmd
   direct +chapter : [string?; inline-text?; 'a; block-text] block-cmd
     constraint 'a :: (|
       title : inline-text;
@@ -845,6 +846,14 @@ end = struct
     let ib-inner = inline-skip len ++ read-inline ctx inner ++ inline-fil in
       form-paragraph ctx ib-inner
 
+  let-block ctx +topic topic inner =
+    let ctx-emph = ctx
+      |> set-font Latin font-latin-sans
+      |> set-cjk-font font-cjk-gothic in
+    let ib-topic = read-inline ctx-emph topic in
+    let len = get-font-size ctx *' font-ratio-cjk in
+    let ib-inner = ib-topic ++ inline-skip len ++ read-inline ctx inner ++ inline-fil in
+      form-paragraph ctx ib-inner
 
   let figure-scheme ctx labelopt prefix category caption inner =
     let () = num-figure <- !num-figure + 1 in
