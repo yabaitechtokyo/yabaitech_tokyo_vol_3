@@ -14,6 +14,7 @@
 @import: lib/fn
 @import: lib/image
 @import: lib/color-ext
+@import: lib/typeset/font
 
 type bib-in-proceedings =
   (|
@@ -266,7 +267,6 @@ end = struct
 
 %  let-inline ctx \math-default m =
 %    embed-math (ctx |> set-latin-font font-latin-roman) m
-
 
   let get-standard-context wid =
     get-initial-context wid (command \math)
@@ -959,13 +959,11 @@ end = struct
       | Some(word) -> read-inline ctx {\ (#word;)}
     in
     let ib-inner = read-inline (ctxf ctx) inner in
-    let body = line-break true true ctx
-      (ib-dfn ++ ib-word ++ inline-skip (get-font-size ctx) ++ ib-inner ++ inline-fil) in
-    let ctx-diamond =
-        ctx |> set-font-size 24pt in
-    let ib-diamond = read-inline (ctxf ctx-diamond) {${\diamond}} in
-    let diamond-box = line-break true true ctx (inline-fil ++ ib-diamond) in
-    body +++ diamond-box
+    let ib-diamond = read-inline (ctxf ctx) {\force-font(`ipaexg`){◇}} in
+    let ib-glue = discretionary 0 inline-fil inline-nil inline-nil in
+    line-break true true ctx
+      (ib-dfn ++ ib-word ++ inline-skip (get-font-size ctx) ++ ib-inner ++ inline-fil
+      ++ ib-glue ++ ib-diamond)
 
   let make-label prefix labelopt =
     match labelopt with
