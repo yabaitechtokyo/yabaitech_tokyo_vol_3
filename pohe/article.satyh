@@ -1,5 +1,6 @@
 @import: ../book-class
 @import: ../lib/typeset/code2
+@import: ../MasWag/local
 
 module Pohe : sig
   val article : block-text
