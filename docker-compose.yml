@@ -1,0 +1,13 @@
+version: '3'
+services:
+  qr_dl:
+    build: .
+    volumes:
+      - .:/workdir
+    command: QR_DL.png QR_DL.pdf
+
+  pdf:
+    image: amutake/satysfi:nightly
+    volumes:
+      - .:/satysfi
+    command: satysfi -b -C .satysfi -o main.pdf main.saty

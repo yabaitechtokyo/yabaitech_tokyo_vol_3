@@ -13,10 +13,10 @@ ARTICLES := censored/article.satyh\
 	postscript.satyh
 
 main.pdf: QR_DL.pdf book-class.satyh $(ARTICLES) main.saty
-	satysfi -b main.saty -C .satysfi -o main.pdf
+	docker-compose run pdf
 
 QR_DL.pdf: QR_DL.png
-	convert QR_DL.png QR_DL.pdf
+	docker-compose run qr_dl
 
 .PHONY: clean
 clean:
